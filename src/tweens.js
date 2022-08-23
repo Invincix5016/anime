@@ -47,14 +47,14 @@ function convertKeyframeToTween(keyframe, target, index, total) {
   return tween;
 }
 
-export function convertKeyframesToTweens(keyframes, target, propertyName, type, index, total) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total) {
   let prevTween;
   const tweens = [];
   for (let i = 0, l = keyframes.length; i < l; i++) {
     const keyframe = keyframes[i];
     const tween = convertKeyframeToTween(keyframe, target, index, total);
     const tweenValue = tween.value;
-    const originalValue = decomposeValue(getOriginalAnimatableValue(target, propertyName, type));
+    const originalValue = decomposeValue(getOriginalAnimatableValue(target, propertyName, animationType));
 
     let from, to;
 
@@ -142,14 +142,17 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, type, 
       if (cached) to.path.isTargetInsideSVG = cached.isSVG;
     }
 
-    tween.type = to.type;
+    tween.type = animationType;
     tween.property = propertyName;
+    tween.target = target;
     tween.from = from;
     tween.to = to;
     tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.progress = 0;
+    tween.timelineOffset = 0;
+    tween.currentValue = 0;
     prevTween = tween;
     tweens.push(tween);
   }

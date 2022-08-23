@@ -63,13 +63,14 @@ export function createInstance(params) {
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const properties = getKeyframesFromProperties(tweenSettings, params);
   const targets = getAnimatables(params.targets);
-  const animations = getAnimations(targets, properties);
+  const { animations, tweens } = getAnimations(targets, properties);
   const timings = getTimingsFromAnimations(animations, tweenSettings);
   return mergeObjects(instanceSettings, {
     id: instancesId++,
     children: [],
     targets: targets,
     animations: animations,
+    tweens: tweens,
     delay: timings.delay,
     duration: timings.duration,
     endDelay: timings.endDelay,
@@ -128,31 +129,39 @@ export function animate(params = {}) {
 
   function setAnimationsProgress(insTime) {
     let i = 0;
-    const animations = instance.animations;
-    const animationsLength = animations.length;
-    while (i < animationsLength) {
-      const animation = animations[i];
-      const target = animation.target;
-      const animType = animation.type;
-      const tweens = animation.tweens;
-      const tweensLength = tweens.length - 1;
-      let tween = tweens[tweensLength];
-      // Only check for keyframes if there is more than one tween
-      if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
+    // const animations = instance.animations;
+    // const animationsLength = animations.length;
+    const tweens = instance.tweens;
+    const tweensLength = tweens.length;
+    while (i < tweensLength) {
+      // const animation = animations[i];
+      // const tweens = animation.tweens;
+      // const tweensLength = tweens.length - 1;
+      // let tween = tweens[tweensLength];
+      // // Only check for keyframes if there is more than one tween
+      // if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
+      const tween = tweens[i++];
+      const nextTween = tweens[i];
+      // if (nextTween) {
+      //   if (nextTween)
+      // }
+      console.log(insTime, tween, nextTween);
       const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       const tweenProperty = tween.property;
-      const tweenType = tween.type;
       const tweenRound = tween.round;
       const tweenFrom = tween.from;
       const tweenTo = tween.to;
+      const tweenType = tween.type;
+      const tweenValueType = tweenTo.type;
+      const tweenTarget = tween.target;
 
       let value;
 
-      if (tweenType == valueTypes.NUMBER) {
+      if (tweenValueType == valueTypes.NUMBER) {
         value = getTweenProgress(tweenFrom.number, tweenTo.number, tweenProgress, tweenRound);
-      } else if (tweenType == valueTypes.UNIT) {
+      } else if (tweenValueType == valueTypes.UNIT) {
         value = getTweenProgress(tweenFrom.number, tweenTo.number, tweenProgress, tweenRound) + tweenTo.unit;
-      } else if (tweenType == valueTypes.COLOR) {
+      } else if (tweenValueType == valueTypes.COLOR) {
         const fn = tweenFrom.numbers;
         const tn = tweenTo.numbers;
         value = rgbaString;
@@ -160,9 +169,9 @@ export function animate(params = {}) {
         value += getTweenProgress(fn[1], tn[1], tweenProgress, 1) + commaString;
         value += getTweenProgress(fn[2], tn[2], tweenProgress, 1) + commaString;
         value += getTweenProgress(fn[3], tn[3], tweenProgress) + closeParenthesisString;
-      } else if (tweenType == valueTypes.PATH) {
+      } else if (tweenValueType == valueTypes.PATH) {
         value = getPathProgress(tweenTo.path, tweenProgress * tweenTo.number, tweenRound) + tweenTo.unit;
-      } else if (tweenType == valueTypes.COMPLEX) {
+      } else if (tweenValueType == valueTypes.COMPLEX) {
         value = tweenTo.strings[0];
         for (let j = 0, l = tweenTo.numbers.length; j < l; j++) {
           const number = getTweenProgress(tweenFrom.numbers[j], tweenTo.numbers[j], tweenProgress, tweenRound);
@@ -175,26 +184,26 @@ export function animate(params = {}) {
         }
       }
 
-      if (animType == animationTypes.OBJECT) {
-        target[tweenProperty] = value;
-      } else if (animType == animationTypes.TRANSFORM) {
-        const cached = cache.DOM.get(target);
+      if (tweenType == animationTypes.OBJECT) {
+        tweenTarget[tweenProperty] = value;
+      } else if (tweenType == animationTypes.TRANSFORM) {
+        const cached = cache.DOM.get(tweenTarget);
         const cachedTransforms = cached.transforms;
         cachedTransforms[tweenProperty] = value;
-        if (animation.renderTransforms) {
+        if (tween.renderTransforms) {
           cached.transformString = emptyString;
           for (let key in cachedTransforms) {
             cached.transformString += transformsFragmentStrings[key]+cachedTransforms[key]+closeParenthesisWithSpaceString;
           }
-          target.style.transform = cached.transformString;
+          tweenTarget.style.transform = cached.transformString;
         }
-      } else if (animType == animationTypes.CSS) {
-        target.style[tweenProperty] = value;
-      } else if (animType == animationTypes.ATTRIBUTE) {
-        target.setAttribute(tweenProperty, value);
+      } else if (tweenType == animationTypes.CSS) {
+        tweenTarget.style[tweenProperty] = value;
+      } else if (tweenType == animationTypes.ATTRIBUTE) {
+        tweenTarget.setAttribute(tweenProperty, value);
       }
-      animation.currentValue = value;
-      i++;
+      tween.progress = tweenProgress;
+      tween.currentValue = value;
     }
   }
 

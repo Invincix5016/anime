@@ -20,6 +20,7 @@ import {
 
 export function getAnimations(targets, keyframes) {
   const animations = [];
+  const tweens = [];
   let animationsIndex = 0;
   for (let i = 0, targetsLength = targets.length; i < targetsLength; i++) {
     const target = targets[i];
@@ -31,13 +32,11 @@ export function getAnimations(targets, keyframes) {
         const animationType = getAnimationType(target, animationKeyframesPropertyName);
         const tweenPropertyName = sanitizePropertyName(animationKeyframesPropertyName, target, animationType);
         if (is.num(animationType)) {
-          const tweens = convertKeyframesToTweens(animationKeyframes, target, tweenPropertyName, animationType, i, targetsLength);
-          const firstTween = tweens[0];
-          const lastTween = tweens[tweens.length - 1];
+          const animationTweens = convertKeyframesToTweens(animationKeyframes, target, tweenPropertyName, animationType, i, targetsLength);
+          const firstTween = animationTweens[0];
+          const lastTween = animationTweens[animationTweens.length - 1];
           const animation = {
-            type: animationType,
-            target: target,
-            tweens: tweens,
+            tweens: animationTweens,
             delay: firstTween.delay,
             duration: lastTween.end,
             endDelay: lastTween.endDelay,
@@ -47,13 +46,14 @@ export function getAnimations(targets, keyframes) {
             lastAnimatableTransformAnimationIndex = animationsIndex;
           }
           animations.push(animation);
+          animationTweens.forEach(tween => tweens.push(tween));
           animationsIndex++;
         }
       }
       if (!is.und(lastAnimatableTransformAnimationIndex)) {
-        animations[lastAnimatableTransformAnimationIndex].renderTransforms = true;
+        animations[lastAnimatableTransformAnimationIndex].tweens.forEach(tween => tween.renderTransforms = true);
       }
     }
   }
-  return animations;
+  return {animations, tweens};
 }

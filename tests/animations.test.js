@@ -13,8 +13,8 @@ describe('Animations', () => {
       d: 'M80 20c-30 0 0 30-30 30'
     });
 
-    expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
-    expect(animation.animations[1].type).toBe(animationTypes.ATTRIBUTE);
+    expect(animation.animations[0].tweens[0].type).toBe(animationTypes.ATTRIBUTE);
+    expect(animation.animations[1].tweens[0].type).toBe(animationTypes.ATTRIBUTE);
   });
 
   test('Get attribute animation type with DOM attribute values', () => {
@@ -23,7 +23,7 @@ describe('Animations', () => {
       width: 100,
     });
 
-    expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
+    expect(animation.animations[0].tweens[0].type).toBe(animationTypes.ATTRIBUTE);
   });
 
   test('Get transform animation type with mixed transforms values', () => {
@@ -49,7 +49,7 @@ describe('Animations', () => {
     });
 
     animation.animations.forEach( a => {
-      expect(a.type).toBe(animationTypes.TRANSFORM);
+      expect(a.tweens[0].type).toBe(animationTypes.TRANSFORM);
     });
   });
 
@@ -63,7 +63,7 @@ describe('Animations', () => {
     });
 
     animation.animations.forEach( a => {
-      expect(a.type).toBe(animationTypes.CSS);
+      expect(a.tweens[0].type).toBe(animationTypes.CSS);
     });
   });
 
@@ -73,7 +73,7 @@ describe('Animations', () => {
       value: 50,
     });
 
-    expect(animation.animations[0].type).toBe(animationTypes.ATTRIBUTE);
+    expect(animation.animations[0].tweens[0].type).toBe(animationTypes.ATTRIBUTE);
   });
 
   test('Get Object animation type with plain JS object values', () => {
@@ -86,7 +86,7 @@ describe('Animations', () => {
     });
 
     animation.animations.forEach( a => {
-      expect(a.type).toBe(animationTypes.OBJECT);
+      expect(a.tweens[0].type).toBe(animationTypes.OBJECT);
     });
   });
 
@@ -96,7 +96,7 @@ describe('Animations', () => {
       innerHTML: 9999,
     });
 
-    expect(animation.animations[0].type).toBe(animationTypes.OBJECT);
+    expect(animation.animations[0].tweens[0].type).toBe(animationTypes.OBJECT);
   });
 
   test('Animation\'s tweens timing inheritance', () => {

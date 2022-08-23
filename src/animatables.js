@@ -46,9 +46,13 @@ export function getAnimatables(targets) {
 
 function removeAnimationsWithTargets(targetsArray, animations) {
   for (let i = animations.length; i--;) {
-    if (arrayContains(targetsArray, animations[i].target)) {
-      animations.splice(i, 1);
+    const animationTweens = animations[i].tweens;
+    for (let j = animationTweens.length; j--;) {
+      if (arrayContains(targetsArray, animationTweens[j].target)) {
+        animationTweens.splice(j, 1);
+      }
     }
+    if (!animationTweens.length) animations.splice(i, 1);
   }
 }
 

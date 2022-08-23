@@ -32,7 +32,7 @@ function parseTimelineOffset(timelineOffset, timelineDuration) {
   if (operatorMatch) {
     const parsedOffset = +timelineOffset.slice(2);
     const operator = operatorMatch[0][0];
-    return getRelativeValue(timelineDuration, parsedOffset, operator); // NEEDS FIX
+    return getRelativeValue(timelineDuration, parsedOffset, operator);
   }
 }
 

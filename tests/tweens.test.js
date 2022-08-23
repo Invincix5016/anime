@@ -77,7 +77,7 @@ describe('Tweens', () => {
       backgroundColor: '#000',
     });
 
-    expect(animation.animations[1].type).toBe(valueTypes.COLOR);
+    expect(animation.animations[1].tweens[0].type).toBe(valueTypes.COLOR);
     expect(animation.animations[1].tweens[0].from.type).toBe(valueTypes.COLOR);
     expect(animation.animations[1].tweens[0].to.type).toBe(valueTypes.COLOR);
   });
