@@ -59,7 +59,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, type, 
     let from, to;
 
     // Decompose values
-
     if (is.arr(tweenValue)) {
       from = decomposeValue(tweenValue[0]);
       to = decomposeValue(tweenValue[1]);
@@ -93,17 +92,14 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, type, 
     }
 
     // Apply operators
-
     if (from.operator) {
       from.number = getRelativeValue(!prevTween ? originalValue.number : prevTween.to.number, from.number, from.operator);
     }
-
     if (to.operator) {
       to.number = getRelativeValue(from.number, to.number, to.operator);
     }
 
     // Values omogenisation in cases of type difference between "from" and "to"
-
     if (from.type !== to.type) {
       if (from.type === valueTypes.COMPLEX || to.type === valueTypes.COMPLEX) {
         const complexValue = from.type === valueTypes.COMPLEX ? from : to;
@@ -127,23 +123,23 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, type, 
       }
     }
 
+    // Unit conversion
     if (from.unit !== to.unit) {
       const valueToConvert = to.unit ? from : to;
       const unitToConvertTo = to.unit ? to.unit : from.unit;
       convertValueUnit(target, valueToConvert, unitToConvertTo);
     }
 
-    // Default to 0 for values 
+    // Default to 0 for non existing complex values
     if (to.numbers && from.numbers && (to.numbers.length !== from.numbers.length)) {
       to.numbers.forEach((number, i) => from.numbers[i] = 0);
       to.strings.forEach((string, i) => from.strings[i] = string);
     }
 
+    // Check if target is a children of an SVG element for path animation
     if (to.type === valueTypes.PATH) {
       const cached = cache.DOM.get(target);
-      if (cached) {
-        to.path.isTargetInsideSVG = cached.isSVG;
-      }
+      if (cached) to.path.isTargetInsideSVG = cached.isSVG;
     }
 
     tween.type = to.type;
