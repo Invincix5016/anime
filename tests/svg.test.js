@@ -5,9 +5,9 @@ describe('SVG', () => {
       strokeDashoffset: [anime.setDashoffset, 0]
     });
 
-    expect(dashOffsetAnimation.animations[0].tweens[0].from.number).toBeCloseTo(138.59292602539062, -.5);
-    expect(dashOffsetAnimation.animations[1].tweens[0].from.number).toBeCloseTo(138.59292602539062, -.5);
-    expect(dashOffsetAnimation.animations[2].tweens[0].from.number).toBeCloseTo(313.6517028808594, -.5);
+    expect(dashOffsetAnimation.tweens[0].from.number).toBeCloseTo(138.59292602539062, -.5);
+    expect(dashOffsetAnimation.tweens[1].from.number).toBeCloseTo(138.59292602539062, -.5);
+    expect(dashOffsetAnimation.tweens[2].from.number).toBeCloseTo(313.6517028808594, -.5);
   });
 
   test('getPath', () => {
@@ -24,6 +24,6 @@ describe('SVG', () => {
   //     targets: '#target-id',
   //     translateX: path('x'),
   //   });
-  //   expect(animation.animations[0].tweens[0].from.number).toBeCloseTo(399.06207275390625, -.5);
+  //   expect(animation.tweens[0].from.number).toBeCloseTo(399.06207275390625, -.5);
   // });
 });

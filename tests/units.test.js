@@ -16,20 +16,20 @@ describe('Units', () => {
     });
 
     // Translate
-    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[1].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[2].tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[1].from.unit).toBe('px');
+    expect(animation.tweens[2].from.unit).toBe('px');
     // Rotate
-    expect(animation.animations[3].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[4].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[5].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[6].tweens[0].from.unit).toBe('deg');
+    expect(animation.tweens[3].from.unit).toBe('deg');
+    expect(animation.tweens[4].from.unit).toBe('deg');
+    expect(animation.tweens[5].from.unit).toBe('deg');
+    expect(animation.tweens[6].from.unit).toBe('deg');
     // Skew
-    expect(animation.animations[7].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[8].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[9].tweens[0].from.unit).toBe('deg');
+    expect(animation.tweens[7].from.unit).toBe('deg');
+    expect(animation.tweens[8].from.unit).toBe('deg');
+    expect(animation.tweens[9].from.unit).toBe('deg');
     // Perspective
-    expect(animation.animations[10].tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[10].from.unit).toBe('px');
   });
 
   test('Specified unit on a simple tween', () => {
@@ -38,7 +38,7 @@ describe('Units', () => {
       translateX: '100%',
     });
 
-    expect(animation.animations[0].tweens[0].to.unit).toBe('%');
+    expect(animation.tweens[0].to.unit).toBe('%');
   });
 
   test('Units inheritance on From To Values', () => {
@@ -47,7 +47,7 @@ describe('Units', () => {
       translateX: [-50, '50%'],
     });
 
-    expect(animation.animations[0].tweens[0].from.unit).toBe('%');
-    expect(animation.animations[0].tweens[0].to.unit).toBe('%');
+    expect(animation.tweens[0].from.unit).toBe('%');
+    expect(animation.tweens[0].to.unit).toBe('%');
   });
 });

@@ -53,7 +53,6 @@ export function stagger(val, params = {}) {
       if (direction === 'reverse') values = values.map(val => axis ? (val < 0) ? val * -1 : -val : Math.abs(maxValue - val));
     }
     const spacing = isRange ? (val2 - val1) / maxValue : val1;
-    console.log(val, (val2 - val1) / maxValue);
     return start + (spacing * (Math.round(values[i] * 100) / 100)) + unit;
   }
 }

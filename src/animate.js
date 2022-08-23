@@ -129,25 +129,14 @@ export function animate(params = {}) {
 
   function setAnimationsProgress(insTime) {
     let i = 0;
-    // const animations = instance.animations;
-    // const animationsLength = animations.length;
     const tweens = instance.tweens;
     const tweensLength = tweens.length;
     while (i < tweensLength) {
-      // const animation = animations[i];
-      // const tweens = animation.tweens;
-      // const tweensLength = tweens.length - 1;
-      // let tween = tweens[tweensLength];
       // // Only check for keyframes if there is more than one tween
       // if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
       const prevTween = tweens[i - 1];
       const tween = tweens[i++];
-      const nextTween = tweens[i];
-      if (prevTween && prevTween.groupId == tween.groupId && insTime < prevTween.end) continue;
-      // if (nextTween && (nextTween.groupId === nextTween.groupId)) {
-      //   if (insTime >= tween.end && insTime < nextTween.end) continue;
-      // }
-      // console.log(insTime, tween, nextTween);
+      if (prevTween && prevTween.groupId === tween.groupId && insTime < prevTween.end) continue;
       const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       const tweenProperty = tween.property;
       const tweenRound = tween.round;

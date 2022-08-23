@@ -28,9 +28,9 @@ describe('Values', () => {
       funcString: () => 42,
     });
 
-    animation.animations.forEach( a => {
-      expect(a.tweens[0].from.type).toBe(valueTypes.NUMBER);
-      expect(a.tweens[0].to.type).toBe(valueTypes.NUMBER);
+    animation.tweens.forEach( tween => {
+      expect(tween.from.type).toBe(valueTypes.NUMBER);
+      expect(tween.to.type).toBe(valueTypes.NUMBER);
     });
   });
 
@@ -47,9 +47,9 @@ describe('Values', () => {
       funcString: () => '42',
     });
 
-    animation.animations.forEach( a => {
-      expect(a.tweens[0].from.type).toBe(valueTypes.NUMBER);
-      expect(a.tweens[0].to.type).toBe(valueTypes.NUMBER);
+    animation.tweens.forEach( tween => {
+      expect(tween.from.type).toBe(valueTypes.NUMBER);
+      expect(tween.to.type).toBe(valueTypes.NUMBER);
     });
   });
 
@@ -66,10 +66,10 @@ describe('Values', () => {
       funcString: () => '+=42',
     });
 
-    animation.animations.forEach( a => {
-      expect(a.tweens[0].from.type).toBe(valueTypes.NUMBER);
-      expect(a.tweens[0].to.type).toBe(valueTypes.NUMBER);
-      expect(a.tweens[0].to.operator).toBe('+');
+    animation.tweens.forEach( tween => {
+      expect(tween.from.type).toBe(valueTypes.NUMBER);
+      expect(tween.to.type).toBe(valueTypes.NUMBER);
+      expect(tween.to.operator).toBe('+');
     });
   });
 
@@ -97,12 +97,12 @@ describe('Values', () => {
       funcUnit: () => 42,
     });
 
-    animation.animations.forEach( a => {
-      expect(a.tweens[0].from.type).toBe(valueTypes.UNIT);
-      expect(a.tweens[0].from.unit).toBe('px');
-      expect(a.tweens[0].to.type).toBe(valueTypes.UNIT);
-      expect(a.tweens[0].to.number).toBe(42);
-      expect(a.tweens[0].to.unit).toBe('px');
+    animation.tweens.forEach( tween => {
+      expect(tween.from.type).toBe(valueTypes.UNIT);
+      expect(tween.from.unit).toBe('px');
+      expect(tween.to.type).toBe(valueTypes.UNIT);
+      expect(tween.to.number).toBe(42);
+      expect(tween.to.unit).toBe('px');
     });
   });
 
@@ -148,10 +148,10 @@ describe('Values', () => {
       func: () => 'hsla(180, 100%, 50%, .8)',
     });
 
-    animation.animations.forEach( a => {
-      expect(a.tweens[0].from.type).toBe(valueTypes.COLOR);
-      expect(a.tweens[0].to.type).toBe(valueTypes.COLOR);
-      expect(a.tweens[0].to.numbers).toStrictEqual([0, 255, 255, .8]);
+    animation.tweens.forEach( tween => {
+      expect(tween.from.type).toBe(valueTypes.COLOR);
+      expect(tween.to.type).toBe(valueTypes.COLOR);
+      expect(tween.to.numbers).toStrictEqual([0, 255, 255, .8]);
     });
   });
 
@@ -180,13 +180,13 @@ describe('Values', () => {
       funcFromNumber: () => 'blur(42px) constrast(42)',
     });
 
-    animation.animations.forEach( a => {
-      expect(a.tweens[0].from.type).toBe(valueTypes.COMPLEX);
-      expect(a.tweens[0].to.type).toBe(valueTypes.COMPLEX);
-      if (a.tweens[0].to.numbers.length === 4) {
-        expect(a.tweens[0].to.numbers).toStrictEqual([42, 42, 42, 42]);
+    animation.tweens.forEach( tween => {
+      expect(tween.from.type).toBe(valueTypes.COMPLEX);
+      expect(tween.to.type).toBe(valueTypes.COMPLEX);
+      if (tween.to.numbers.length === 4) {
+        expect(tween.to.numbers).toStrictEqual([42, 42, 42, 42]);
       } else {
-        expect(a.tweens[0].to.numbers).toStrictEqual([42, 42]);
+        expect(tween.to.numbers).toStrictEqual([42, 42]);
       }
     });
   });
@@ -213,65 +213,65 @@ describe('Values', () => {
     });
 
     // Property value
-    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[1].tweens[0].from.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[2].tweens[0].from.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[3].tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[1].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[2].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[3].from.type).toBe(valueTypes.UNIT);
 
-    expect(animation.animations[0].tweens[0].from.number).toBe(0);
-    expect(animation.animations[1].tweens[0].from.number).toBe(0);
-    expect(animation.animations[2].tweens[0].from.number).toBe(0);
-    expect(animation.animations[3].tweens[0].from.number).toBe(0);
+    expect(animation.tweens[0].from.number).toBe(0);
+    expect(animation.tweens[1].from.number).toBe(0);
+    expect(animation.tweens[2].from.number).toBe(0);
+    expect(animation.tweens[3].from.number).toBe(0);
 
-    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[1].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[2].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[3].tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[1].from.unit).toBe('px');
+    expect(animation.tweens[2].from.unit).toBe('px');
+    expect(animation.tweens[3].from.unit).toBe('px');
 
-    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[1].tweens[0].to.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[2].tweens[0].to.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[3].tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[1].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[2].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[3].to.type).toBe(valueTypes.UNIT);
 
-    expect(animation.animations[0].tweens[0].to.number).toBe(0);
-    expect(animation.animations[1].tweens[0].to.number).toBe(1);
-    expect(animation.animations[2].tweens[0].to.number).toBe(2);
-    expect(animation.animations[3].tweens[0].to.number).toBe(3);
+    expect(animation.tweens[0].to.number).toBe(0);
+    expect(animation.tweens[1].to.number).toBe(1);
+    expect(animation.tweens[2].to.number).toBe(2);
+    expect(animation.tweens[3].to.number).toBe(3);
 
-    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
-    expect(animation.animations[1].tweens[0].to.unit).toBe('px');
-    expect(animation.animations[2].tweens[0].to.unit).toBe('px');
-    expect(animation.animations[3].tweens[0].to.unit).toBe('px');
+    expect(animation.tweens[0].to.unit).toBe('px');
+    expect(animation.tweens[1].to.unit).toBe('px');
+    expect(animation.tweens[2].to.unit).toBe('px');
+    expect(animation.tweens[3].to.unit).toBe('px');
 
-    expect(animation.animations[0].currentValue).toBe('0px');
-    expect(animation.animations[1].currentValue).toBe('0px');
-    expect(animation.animations[2].currentValue).toBe('0px');
-    expect(animation.animations[3].currentValue).toBe('0px');
+    expect(animation.tweens[0].currentValue).toBe('0px');
+    expect(animation.tweens[1].currentValue).toBe('0px');
+    expect(animation.tweens[2].currentValue).toBe('0px');
+    expect(animation.tweens[3].currentValue).toBe('0px');
 
     animation.seek(animation.duration);
 
-    expect(animation.animations[0].currentValue).toBe('0px');
-    expect(animation.animations[1].currentValue).toBe('1px');
-    expect(animation.animations[2].currentValue).toBe('2px');
-    expect(animation.animations[3].currentValue).toBe('3px');
+    expect(animation.tweens[0].currentValue).toBe('0px');
+    expect(animation.tweens[1].currentValue).toBe('1px');
+    expect(animation.tweens[2].currentValue).toBe('2px');
+    expect(animation.tweens[3].currentValue).toBe('3px');
 
     // Duration
-    expect(animation.animations[0].tweens[0].duration).toBe(4);
-    expect(animation.animations[1].tweens[0].duration).toBe(204);
-    expect(animation.animations[2].tweens[0].duration).toBe(404);
-    expect(animation.animations[3].tweens[0].duration).toBe(604);
+    expect(animation.tweens[0].duration).toBe(4);
+    expect(animation.tweens[1].duration).toBe(204);
+    expect(animation.tweens[2].duration).toBe(404);
+    expect(animation.tweens[3].duration).toBe(604);
 
     // Delay
-    expect(animation.animations[0].tweens[0].delay).toBe(4);
-    expect(animation.animations[1].tweens[0].delay).toBe(204);
-    expect(animation.animations[2].tweens[0].delay).toBe(404);
-    expect(animation.animations[3].tweens[0].delay).toBe(604);
+    expect(animation.tweens[0].delay).toBe(4);
+    expect(animation.tweens[1].delay).toBe(204);
+    expect(animation.tweens[2].delay).toBe(404);
+    expect(animation.tweens[3].delay).toBe(604);
 
     // EndDelay
-    expect(animation.animations[0].tweens[0].endDelay).toBe(4);
-    expect(animation.animations[1].tweens[0].endDelay).toBe(204);
-    expect(animation.animations[2].tweens[0].endDelay).toBe(404);
-    expect(animation.animations[3].tweens[0].endDelay).toBe(604);
+    expect(animation.tweens[0].endDelay).toBe(4);
+    expect(animation.tweens[1].endDelay).toBe(204);
+    expect(animation.tweens[2].endDelay).toBe(404);
+    expect(animation.tweens[3].endDelay).toBe(604);
   });
 
   test('Get CSS computed values', () => {
@@ -283,22 +283,22 @@ describe('Values', () => {
 
     animation.seek(animation.duration);
 
-    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[1].tweens[0].from.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[0].tweens[0].from.number).toBe(150);
-    expect(animation.animations[1].tweens[0].from.number).toBe(20);
-    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[1].tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[1].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[0].from.number).toBe(150);
+    expect(animation.tweens[1].from.number).toBe(20);
+    expect(animation.tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[1].from.unit).toBe('px');
 
-    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[1].tweens[0].to.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[0].tweens[0].to.number).toBe(100);
-    expect(animation.animations[1].tweens[0].to.number).toBe(10);
-    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
-    expect(animation.animations[1].tweens[0].to.unit).toBe('px');
+    expect(animation.tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[1].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[0].to.number).toBe(100);
+    expect(animation.tweens[1].to.number).toBe(10);
+    expect(animation.tweens[0].to.unit).toBe('px');
+    expect(animation.tweens[1].to.unit).toBe('px');
 
-    expect(animation.animations[0].currentValue).toBe('100px');
-    expect(animation.animations[1].currentValue).toBe('10px');
+    expect(animation.tweens[0].currentValue).toBe('100px');
+    expect(animation.tweens[1].currentValue).toBe('10px');
   });
 
   test('Get CSS inline values', () => {
@@ -309,15 +309,15 @@ describe('Values', () => {
 
     animation.seek(animation.duration);
 
-    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[0].tweens[0].from.number).toBe(200);
-    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[0].from.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[0].from.number).toBe(200);
+    expect(animation.tweens[0].from.unit).toBe('px');
 
-    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.UNIT);
-    expect(animation.animations[0].tweens[0].to.number).toBe(100);
-    expect(animation.animations[0].tweens[0].to.unit).toBe('px');
+    expect(animation.tweens[0].to.type).toBe(valueTypes.UNIT);
+    expect(animation.tweens[0].to.number).toBe(100);
+    expect(animation.tweens[0].to.unit).toBe('px');
     
-    expect(animation.animations[0].currentValue).toBe('100px');
+    expect(animation.tweens[0].currentValue).toBe('100px');
   });
 
   test('Get default transforms values', () => {
@@ -343,54 +343,54 @@ describe('Values', () => {
     animation.seek(animation.duration);
 
     // Translate
-    expect(animation.animations[0].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[1].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[2].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[0].tweens[0].from.number).toBe(0);
-    expect(animation.animations[1].tweens[0].from.number).toBe(0);
-    expect(animation.animations[2].tweens[0].from.number).toBe(0);
-    expect(animation.animations[0].currentValue).toBe('100px');
-    expect(animation.animations[1].currentValue).toBe('100px');
-    expect(animation.animations[2].currentValue).toBe('100px');
+    expect(animation.tweens[0].from.unit).toBe('px');
+    expect(animation.tweens[1].from.unit).toBe('px');
+    expect(animation.tweens[2].from.unit).toBe('px');
+    expect(animation.tweens[0].from.number).toBe(0);
+    expect(animation.tweens[1].from.number).toBe(0);
+    expect(animation.tweens[2].from.number).toBe(0);
+    expect(animation.tweens[0].currentValue).toBe('100px');
+    expect(animation.tweens[1].currentValue).toBe('100px');
+    expect(animation.tweens[2].currentValue).toBe('100px');
     // Rotate
-    expect(animation.animations[3].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[4].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[5].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[6].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[3].tweens[0].from.number).toBe(0);
-    expect(animation.animations[4].tweens[0].from.number).toBe(0);
-    expect(animation.animations[5].tweens[0].from.number).toBe(0);
-    expect(animation.animations[6].tweens[0].from.number).toBe(0);
-    expect(animation.animations[3].currentValue).toBe('360deg');
-    expect(animation.animations[4].currentValue).toBe('360deg');
-    expect(animation.animations[5].currentValue).toBe('360deg');
-    expect(animation.animations[6].currentValue).toBe('360deg');
+    expect(animation.tweens[3].from.unit).toBe('deg');
+    expect(animation.tweens[4].from.unit).toBe('deg');
+    expect(animation.tweens[5].from.unit).toBe('deg');
+    expect(animation.tweens[6].from.unit).toBe('deg');
+    expect(animation.tweens[3].from.number).toBe(0);
+    expect(animation.tweens[4].from.number).toBe(0);
+    expect(animation.tweens[5].from.number).toBe(0);
+    expect(animation.tweens[6].from.number).toBe(0);
+    expect(animation.tweens[3].currentValue).toBe('360deg');
+    expect(animation.tweens[4].currentValue).toBe('360deg');
+    expect(animation.tweens[5].currentValue).toBe('360deg');
+    expect(animation.tweens[6].currentValue).toBe('360deg');
     // Skew
-    expect(animation.animations[7].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[8].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[9].tweens[0].from.unit).toBe('deg');
-    expect(animation.animations[7].tweens[0].from.number).toBe(0);
-    expect(animation.animations[8].tweens[0].from.number).toBe(0);
-    expect(animation.animations[9].tweens[0].from.number).toBe(0);
-    expect(animation.animations[7].currentValue).toBe('45deg');
-    expect(animation.animations[8].currentValue).toBe('45deg');
-    expect(animation.animations[9].currentValue).toBe('45deg');
+    expect(animation.tweens[7].from.unit).toBe('deg');
+    expect(animation.tweens[8].from.unit).toBe('deg');
+    expect(animation.tweens[9].from.unit).toBe('deg');
+    expect(animation.tweens[7].from.number).toBe(0);
+    expect(animation.tweens[8].from.number).toBe(0);
+    expect(animation.tweens[9].from.number).toBe(0);
+    expect(animation.tweens[7].currentValue).toBe('45deg');
+    expect(animation.tweens[8].currentValue).toBe('45deg');
+    expect(animation.tweens[9].currentValue).toBe('45deg');
     // Scale
-    expect(animation.animations[10].tweens[0].from.unit).toBe(undefined);
-    expect(animation.animations[11].tweens[0].from.unit).toBe(undefined);
-    expect(animation.animations[12].tweens[0].from.unit).toBe(undefined);
-    expect(animation.animations[13].tweens[0].from.unit).toBe(undefined);
-    expect(animation.animations[10].tweens[0].from.number).toBe(1);
-    expect(animation.animations[11].tweens[0].from.number).toBe(1);
-    expect(animation.animations[12].tweens[0].from.number).toBe(1);
-    expect(animation.animations[13].tweens[0].from.number).toBe(1);
-    expect(animation.animations[10].currentValue).toBe(10);
-    expect(animation.animations[11].currentValue).toBe(10);
-    expect(animation.animations[12].currentValue).toBe(10);
-    expect(animation.animations[13].currentValue).toBe(10);
+    expect(animation.tweens[10].from.unit).toBe(undefined);
+    expect(animation.tweens[11].from.unit).toBe(undefined);
+    expect(animation.tweens[12].from.unit).toBe(undefined);
+    expect(animation.tweens[13].from.unit).toBe(undefined);
+    expect(animation.tweens[10].from.number).toBe(1);
+    expect(animation.tweens[11].from.number).toBe(1);
+    expect(animation.tweens[12].from.number).toBe(1);
+    expect(animation.tweens[13].from.number).toBe(1);
+    expect(animation.tweens[10].currentValue).toBe(10);
+    expect(animation.tweens[11].currentValue).toBe(10);
+    expect(animation.tweens[12].currentValue).toBe(10);
+    expect(animation.tweens[13].currentValue).toBe(10);
     // Perspective
-    expect(animation.animations[14].tweens[0].from.unit).toBe('px');
-    expect(animation.animations[14].tweens[0].from.number).toBe(0);
+    expect(animation.tweens[14].from.unit).toBe('px');
+    expect(animation.tweens[14].from.number).toBe(0);
 
     const targetEl = document.querySelector('#target-id');
     expect(targetEl.style.transform).toBe('translateX(100px) translateY(100px) translateZ(100px) rotate(360deg) rotateX(360deg) rotateY(360deg) rotateZ(360deg) skew(45deg) skewX(45deg) skewY(45deg) scale(10) scaleX(10) scaleY(10) scaleZ(10) perspective(1000px) ');
@@ -403,21 +403,21 @@ describe('Values', () => {
       duration: 10
     });
 
-    expect(animation.animations[0].tweens[0].from.type).toBe(valueTypes.COMPLEX);
-    expect(animation.animations[0].tweens[0].from.numbers[0]).toBe(100);
-    expect(animation.animations[0].tweens[0].from.strings[0]).toBe('auto ');
-    expect(animation.animations[0].tweens[0].from.strings[1]).toBe('%');
+    expect(animation.tweens[0].from.type).toBe(valueTypes.COMPLEX);
+    expect(animation.tweens[0].from.numbers[0]).toBe(100);
+    expect(animation.tweens[0].from.strings[0]).toBe('auto ');
+    expect(animation.tweens[0].from.strings[1]).toBe('%');
 
-    expect(animation.animations[0].tweens[0].to.type).toBe(valueTypes.COMPLEX);
-    expect(animation.animations[0].tweens[0].to.numbers[0]).toBe(200);
-    expect(animation.animations[0].tweens[0].to.strings[0]).toBe('auto ');
-    expect(animation.animations[0].tweens[0].to.strings[1]).toBe('%');
+    expect(animation.tweens[0].to.type).toBe(valueTypes.COMPLEX);
+    expect(animation.tweens[0].to.numbers[0]).toBe(200);
+    expect(animation.tweens[0].to.strings[0]).toBe('auto ');
+    expect(animation.tweens[0].to.strings[1]).toBe('%');
 
-    expect(animation.animations[0].currentValue).toBe('auto 100%');
+    expect(animation.tweens[0].currentValue).toBe('auto 100%');
 
     animation.seek(animation.duration);
 
-    expect(animation.animations[0].currentValue).toBe('auto 200%');
+    expect(animation.tweens[0].currentValue).toBe('auto 200%');
   });
 
   test('Complex CSS values', () => {
@@ -429,10 +429,10 @@ describe('Values', () => {
     });
 
     animation.seek(animation.duration);
-    expect(animation.animations[0].currentValue).toBe('blur(10px) constrast(200)');
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual([10, 200]);
-    expect(animation.animations[1].currentValue).toBe('calc( calc(15px * 2) -42rem)');
-    expect(animation.animations[1].tweens[0].to.numbers).toStrictEqual([15, 2, -42]);
+    expect(animation.tweens[0].currentValue).toBe('blur(10px) constrast(200)');
+    expect(animation.tweens[0].to.numbers).toStrictEqual([10, 200]);
+    expect(animation.tweens[1].currentValue).toBe('calc( calc(15px * 2) -42rem)');
+    expect(animation.tweens[1].to.numbers).toStrictEqual([15, 2, -42]);
   });
 
   test('Relative values with operators +=, -=, *=', () => {
@@ -447,15 +447,15 @@ describe('Values', () => {
       duration: 10
     });
 
-    expect(animation.animations[0].currentValue).toBe('100px');
-    expect(animation.animations[1].currentValue).toBe('28px');
-    expect(animation.animations[2].currentValue).toBe('0turn');
+    expect(animation.tweens[0].currentValue).toBe('100px');
+    expect(animation.tweens[1].currentValue).toBe('28px');
+    expect(animation.tweens[2].currentValue).toBe('0turn');
 
     animation.seek(animation.duration);
 
-    expect(animation.animations[0].currentValue).toBe('250px');
-    expect(animation.animations[1].currentValue).toBe('8px');
-    expect(animation.animations[2].currentValue).toBe('2turn');
+    expect(animation.tweens[0].currentValue).toBe('250px');
+    expect(animation.tweens[1].currentValue).toBe('8px');
+    expect(animation.tweens[2].currentValue).toBe('2turn');
   });
 
   test('Relative values inside from to values', () => {
@@ -470,15 +470,15 @@ describe('Values', () => {
       duration: 10,
     });
 
-    expect(animation.animations[0].currentValue).toBe('250px');
-    expect(animation.animations[1].currentValue).toBe('100px');
-    expect(animation.animations[2].currentValue).toBe('2turn');
+    expect(animation.tweens[0].currentValue).toBe('250px');
+    expect(animation.tweens[1].currentValue).toBe('100px');
+    expect(animation.tweens[2].currentValue).toBe('2turn');
 
     animation.seek(animation.duration);
 
-    expect(animation.animations[0].currentValue).toBe('10px');
-    expect(animation.animations[1].currentValue).toBe('80px');
-    expect(animation.animations[2].currentValue).toBe('1turn');
+    expect(animation.tweens[0].currentValue).toBe('10px');
+    expect(animation.tweens[1].currentValue).toBe('80px');
+    expect(animation.tweens[2].currentValue).toBe('1turn');
 
   });
 });

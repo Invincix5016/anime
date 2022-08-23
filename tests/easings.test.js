@@ -27,6 +27,6 @@ describe('Easings', () => {
     animationParams.duration = 500;
     const animation = anime(animationParams);
 
-    expect(animation.animations[0].tweens[0].duration).toBeGreaterThan(1000);
+    expect(animation.tweens[0].duration).toBeGreaterThan(1000);
   });
 });

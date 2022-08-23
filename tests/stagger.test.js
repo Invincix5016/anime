@@ -31,17 +31,17 @@ describe('Stagger', () => {
       translateX: anime.stagger([-10, 10]),
       duration: 10,
       complete: () => {
-        expect(animation.animations[0].tweens[0].to.number).toBe(-10);
-        expect(animation.animations[1].tweens[0].to.number).toBe(-5);
-        expect(animation.animations[2].tweens[0].to.number).toBe(0);
-        expect(animation.animations[3].tweens[0].to.number).toBe(5);
-        expect(animation.animations[4].tweens[0].to.number).toBe(10);
+        expect(animation.tweens[0].to.number).toBe(-10);
+        expect(animation.tweens[1].to.number).toBe(-5);
+        expect(animation.tweens[2].to.number).toBe(0);
+        expect(animation.tweens[3].to.number).toBe(5);
+        expect(animation.tweens[4].to.number).toBe(10);
 
-        expect(animation.animations[0].tweens[0].currentValue).toBe('-10px');
-        expect(animation.animations[1].tweens[0].currentValue).toBe('-5px');
-        expect(animation.animations[2].tweens[0].currentValue).toBe('0px');
-        expect(animation.animations[3].tweens[0].currentValue).toBe('5px');
-        expect(animation.animations[4].tweens[0].currentValue).toBe('10px');
+        expect(animation.tweens[0].currentValue).toBe('-10px');
+        expect(animation.tweens[1].currentValue).toBe('-5px');
+        expect(animation.tweens[2].currentValue).toBe('0px');
+        expect(animation.tweens[3].currentValue).toBe('5px');
+        expect(animation.tweens[4].currentValue).toBe('10px');
 
         resolve();
       }
@@ -54,11 +54,11 @@ describe('Stagger', () => {
       translateX: anime.stagger(['-10rem', '10rem']),
       duration: 10,
       complete: () => {
-        expect(animation.animations[0].tweens[0].currentValue).toBe('-10rem');
-        expect(animation.animations[1].tweens[0].currentValue).toBe('-5rem');
-        expect(animation.animations[2].tweens[0].currentValue).toBe('0rem');
-        expect(animation.animations[3].tweens[0].currentValue).toBe('5rem');
-        expect(animation.animations[4].tweens[0].currentValue).toBe('10rem');
+        expect(animation.tweens[0].currentValue).toBe('-10rem');
+        expect(animation.tweens[1].currentValue).toBe('-5rem');
+        expect(animation.tweens[2].currentValue).toBe('0rem');
+        expect(animation.tweens[3].currentValue).toBe('5rem');
+        expect(animation.tweens[4].currentValue).toBe('10rem');
 
         resolve();
       }
@@ -163,40 +163,40 @@ describe('Stagger', () => {
       translateY: anime.stagger(10, {grid: [5, 3], from: 'center', axis: 'y'})
     });
 
-    expect(animation.animations[0].tweens[0].to.number).toBe(-20);
-    expect(animation.animations[2].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[4].tweens[0].to.number).toBe(0);
-    expect(animation.animations[6].tweens[0].to.number).toBe(10);
-    expect(animation.animations[8].tweens[0].to.number).toBe(20);
+    expect(animation.tweens[0].to.number).toBe(-20);
+    expect(animation.tweens[2].to.number).toBe(-10);
+    expect(animation.tweens[4].to.number).toBe(0);
+    expect(animation.tweens[6].to.number).toBe(10);
+    expect(animation.tweens[8].to.number).toBe(20);
 
-    expect(animation.animations[10].tweens[0].to.number).toBe(-20);
-    expect(animation.animations[12].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[14].tweens[0].to.number).toBe(0);
-    expect(animation.animations[16].tweens[0].to.number).toBe(10);
-    expect(animation.animations[18].tweens[0].to.number).toBe(20);
+    expect(animation.tweens[10].to.number).toBe(-20);
+    expect(animation.tweens[12].to.number).toBe(-10);
+    expect(animation.tweens[14].to.number).toBe(0);
+    expect(animation.tweens[16].to.number).toBe(10);
+    expect(animation.tweens[18].to.number).toBe(20);
 
-    expect(animation.animations[20].tweens[0].to.number).toBe(-20);
-    expect(animation.animations[22].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[24].tweens[0].to.number).toBe(0);
-    expect(animation.animations[26].tweens[0].to.number).toBe(10);
-    expect(animation.animations[28].tweens[0].to.number).toBe(20);
+    expect(animation.tweens[20].to.number).toBe(-20);
+    expect(animation.tweens[22].to.number).toBe(-10);
+    expect(animation.tweens[24].to.number).toBe(0);
+    expect(animation.tweens[26].to.number).toBe(10);
+    expect(animation.tweens[28].to.number).toBe(20);
 
-    expect(animation.animations[1].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[3].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[5].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[7].tweens[0].to.number).toBe(-10);
-    expect(animation.animations[9].tweens[0].to.number).toBe(-10);
+    expect(animation.tweens[1].to.number).toBe(-10);
+    expect(animation.tweens[3].to.number).toBe(-10);
+    expect(animation.tweens[5].to.number).toBe(-10);
+    expect(animation.tweens[7].to.number).toBe(-10);
+    expect(animation.tweens[9].to.number).toBe(-10);
 
-    expect(animation.animations[11].tweens[0].to.number).toBe(0);
-    expect(animation.animations[13].tweens[0].to.number).toBe(0);
-    expect(animation.animations[15].tweens[0].to.number).toBe(0);
-    expect(animation.animations[17].tweens[0].to.number).toBe(0);
-    expect(animation.animations[19].tweens[0].to.number).toBe(0);
+    expect(animation.tweens[11].to.number).toBe(0);
+    expect(animation.tweens[13].to.number).toBe(0);
+    expect(animation.tweens[15].to.number).toBe(0);
+    expect(animation.tweens[17].to.number).toBe(0);
+    expect(animation.tweens[19].to.number).toBe(0);
 
-    expect(animation.animations[21].tweens[0].to.number).toBe(10);
-    expect(animation.animations[23].tweens[0].to.number).toBe(10);
-    expect(animation.animations[25].tweens[0].to.number).toBe(10);
-    expect(animation.animations[27].tweens[0].to.number).toBe(10);
-    expect(animation.animations[29].tweens[0].to.number).toBe(10);
+    expect(animation.tweens[21].to.number).toBe(10);
+    expect(animation.tweens[23].to.number).toBe(10);
+    expect(animation.tweens[25].to.number).toBe(10);
+    expect(animation.tweens[27].to.number).toBe(10);
+    expect(animation.tweens[29].to.number).toBe(10);
   });
 });

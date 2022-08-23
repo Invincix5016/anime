@@ -113,20 +113,31 @@ describe('Timelines', () => {
     })
     .add({ translateX: 100 })
     .add({ translateX: 200 }, '-=5')
-    .add({ translateX: 300 }, '-=5');
+    .add({ translateX: 300 }, '-=5')
+    .add({
+      translateX: [
+        { value: 250, duration: 5, delay: 5 },
+        { value: 350, duration: 10 },
+        { value: 150, duration: 15 }
+      ]
+    });
 
+    expect(tl.children[0].tweens[0].currentValue).toBe('0px');
+    expect(tl.children[1].tweens[0].currentValue).toBe('50px');
+    expect(tl.children[2].tweens[0].currentValue).toBe('125px');
+    expect(targetEl.style.transform).toBe('translateX(0px) ');
     tl.seek(10);
-    expect(tl.children[0].animations[0].currentValue).toBe('100px');
-    expect(tl.children[1].animations[0].currentValue).toBe('125px');
-    expect(tl.children[2].animations[0].currentValue).toBe('125px');
+    expect(tl.children[0].tweens[0].currentValue).toBe('100px');
+    expect(tl.children[1].tweens[0].currentValue).toBe('125px');
+    expect(tl.children[2].tweens[0].currentValue).toBe('125px');
     expect(targetEl.style.transform).toBe('translateX(125px) ');
     tl.seek(15);
-    expect(tl.children[0].animations[0].currentValue).toBe('100px');
-    expect(tl.children[1].animations[0].currentValue).toBe('200px');
-    expect(tl.children[2].animations[0].currentValue).toBe('212.5px');
+    expect(tl.children[0].tweens[0].currentValue).toBe('100px');
+    expect(tl.children[1].tweens[0].currentValue).toBe('200px');
+    expect(tl.children[2].tweens[0].currentValue).toBe('212.5px');
     expect(targetEl.style.transform).toBe('translateX(212.5px) ');
 
     tl.seek(tl.duration);
-    expect(targetEl.style.transform).toBe('translateX(300px) ');
+    expect(targetEl.style.transform).toBe('translateX(150px) ');
   });
 });

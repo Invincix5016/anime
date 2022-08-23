@@ -16,9 +16,8 @@ describe('Tweens', () => {
       endDelay: endDelay
     });
 
-    const tween = animation.animations[0].tweens[0];
-    expect(tween.start).toBe(0);
-    expect(tween.end).toBe(delay + duration + endDelay);
+    expect(animation.tweens[0].start).toBe(0);
+    expect(animation.tweens[0].end).toBe(delay + duration + endDelay);
   });
 
   test('Keyframes tween timings', () => {
@@ -38,13 +37,11 @@ describe('Tweens', () => {
       ],
     });
 
-    const tween1 = animation.animations[0].tweens[0];
-    expect(tween1.start).toBe(0);
-    expect(tween1.end).toBe(delay1 + duration1 + endDelay1);
+    expect(animation.tweens[0].start).toBe(0);
+    expect(animation.tweens[0].end).toBe(delay1 + duration1 + endDelay1);
 
-    const tween2 = animation.animations[0].tweens[1];
-    expect(tween2.start).toBe(delay1 + duration1 + endDelay1);
-    expect(tween2.end).toBe((delay1 + duration1 + endDelay1) + (delay2 + duration2 + endDelay2));
+    expect(animation.tweens[1].start).toBe(delay1 + duration1 + endDelay1);
+    expect(animation.tweens[1].end).toBe((delay1 + duration1 + endDelay1) + (delay2 + duration2 + endDelay2));
   });
 
   test('Simple tween easing', () => {
@@ -54,8 +51,7 @@ describe('Tweens', () => {
       easing: 'linear'
     });
 
-    const tween = animation.animations[0].tweens[0];
-    expect(tween.easing(.5)).toBe(.5);
+    expect(animation.tweens[0].easing(.5)).toBe(.5);
   });
 
   // Can't be tested in Jest...
@@ -66,8 +62,7 @@ describe('Tweens', () => {
   //     translateX: '100%',
   //   });
 
-  //   const tween = animation.animations[0].tweens[0];
-  //   expect(tween.isPath).toBe(true);
+  //   expect(animation.tweens[0].isPath).toBe(true);
   // });
 
   test('Color tween', () => {
@@ -77,8 +72,8 @@ describe('Tweens', () => {
       backgroundColor: '#000',
     });
 
-    expect(animation.animations[1].tweens[0].type).toBe(valueTypes.COLOR);
-    expect(animation.animations[1].tweens[0].from.type).toBe(valueTypes.COLOR);
-    expect(animation.animations[1].tweens[0].to.type).toBe(valueTypes.COLOR);
+    expect(animation.tweens[1].type).toBe(valueTypes.COLOR);
+    expect(animation.tweens[1].from.type).toBe(valueTypes.COLOR);
+    expect(animation.tweens[1].to.type).toBe(valueTypes.COLOR);
   });
 });

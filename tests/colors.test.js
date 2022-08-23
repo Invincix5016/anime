@@ -48,13 +48,13 @@ const colors = {
 function createColorTest(testName, inFrom, inTo, outFrom, outTo) {
   return test(testName, () => {
     const animation = anime({ targets: '#target-id', color: [inFrom, inTo] });
-    expect(animation.animations[0].tweens[0].from.type).toStrictEqual(valueTypes.COLOR);
-    expect(animation.animations[0].tweens[0].from.numbers).toStrictEqual(outFrom);
-    expect(animation.animations[0].tweens[0].to.type).toStrictEqual(valueTypes.COLOR);
-    expect(animation.animations[0].tweens[0].to.numbers).toStrictEqual(outTo);
-    expect(animation.animations[0].currentValue).toBe(`rgba(${outFrom[0]},${outFrom[1]},${outFrom[2]},${outFrom[3]})`);
+    expect(animation.tweens[0].from.type).toStrictEqual(valueTypes.COLOR);
+    expect(animation.tweens[0].from.numbers).toStrictEqual(outFrom);
+    expect(animation.tweens[0].to.type).toStrictEqual(valueTypes.COLOR);
+    expect(animation.tweens[0].to.numbers).toStrictEqual(outTo);
+    expect(animation.tweens[0].currentValue).toBe(`rgba(${outFrom[0]},${outFrom[1]},${outFrom[2]},${outFrom[3]})`);
     animation.seek(animation.duration);
-    expect(animation.animations[0].currentValue).toBe(`rgba(${outTo[0]},${outTo[1]},${outTo[2]},${outTo[3]})`);
+    expect(animation.tweens[0].currentValue).toBe(`rgba(${outTo[0]},${outTo[1]},${outTo[2]},${outTo[3]})`);
   });
 }
 

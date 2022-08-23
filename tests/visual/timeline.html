@@ -80,7 +80,7 @@
     .add({
       targets: '.square',
       translateX: [
-        { value: anime.stagger(100, {from: 1}), duration: 1000, delay: 500 },
+        { value: anime.stagger([-100, 100]), duration: 1000, delay: 500 },
         { value: 0, duration: 1000, delay: 500 }
       ],
       translateY: [
@@ -89,22 +89,22 @@
         { value: -150, duration: 500, delay: 1000 }
       ],
       scaleX: [
-        { value: .5, duration: 500, delay: anime.stagger(100, {start: 0}), easing: 'easeOutExpo' },
+        { value: .25, duration: 500, delay: anime.stagger(100, {start: 0}), easing: 'easeInOutExpo' },
         { value: 1, duration: 1000 },
-        { value: .25, duration: 500, easing: 'easeOutExpo' },
+        { value: .5, duration: 500, easing: 'easeInOutExpo' },
         { value: 1, duration: 500 }
       ],
       scaleY: [
         { value: 1, duration: 500, delay: anime.stagger(100, {start: 0}) },
-        { value: 1.5, duration: 500, delay: 500, easing: 'easeOutExpo' },
+        { value: 1.5, duration: 500, delay: 500, easing: 'easeInOutExpo' },
         { value: 1, duration: 500 },
-        { value: 2, duration: 500, delay: 500, easing: 'easeOutExpo' },
+        { value: 2, duration: 500, delay: 500, easing: 'easeInOutExpo' },
         { value: 1, duration: 500 }
       ],
     })
     .add({
       targets: '.square',
-      rotate: 180,
+      rotate: -180,
       scale: .5,
       backgroundColor: red,
       delay: anime.stagger(100),
@@ -126,7 +126,7 @@
     }, '-=' + duration)
     .add({
       targets: '.square',
-      rotate: -180,
+      rotate: '-=180',
       scale: 1,
       backgroundColor: yellow,
       opacity: .5,
