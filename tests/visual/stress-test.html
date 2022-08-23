@@ -40,9 +40,13 @@
 </body>
 <script type="module">
   import anime from '../../lib/anime.esm.js';
-  // import anime from 'https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.es.min.js';
+  // import anime from './assets/anime.3.2.1.js';
 
   const particlesEl = document.querySelector('#particles');
+
+  let halfW = window.innerWidth * .5;
+  let halfH = window.innerHeight * .5;
+  let radius = Math.sqrt(halfW * halfW + halfH * halfH);
 
   function createParticule() {
     const el = document.createElement('div');
@@ -67,15 +71,16 @@
 
   function animateParticle(particleEl, i, total) {
     // const angle = anime.random(-360, 360);
-    const angle = (i / total) * 360;
-    const duration = 3000;
+    // const angle = (i / total) * 360;
+    const angle = Math.random() * Math.PI * 2;
+    const duration = 1000;
     const delay = anime.random(0, duration);
     anime({
       targets: particleEl,
-      rotate: [angle, angle],
+      // rotate: [angle, angle],
       // opacity: [1, 0],
-      translateX: 1200,
-      translateY: 800,
+      translateX: Math.cos(angle) * radius,
+      translateY: Math.sin(angle) * radius,
       scale: [0.05, 2],
       easing: 'easeInCubic',
       delay: delay,
@@ -84,7 +89,7 @@
     });
   }
 
-  for (let i = 0, l = 1500; i < l; i++) {
+  for (let i = 0, l = 1000; i < l; i++) {
     const particleEl = createParticule();
     particlesEl.appendChild(particleEl);
     // anime.set(particleEl, {rotate: anime.random(-360, 360)});

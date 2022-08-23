@@ -178,15 +178,13 @@ export function animate(params = {}) {
       if (tweenType == animationTypes.OBJECT) {
         tweenTarget[tweenProperty] = value;
       } else if (tweenType == animationTypes.TRANSFORM) {
-        const cached = cache.DOM.get(tweenTarget);
-        const cachedTransforms = cached.transforms;
-        cachedTransforms[tweenProperty] = value;
+        tween.cachedTransforms[tweenProperty] = value;
         if (tween.renderTransforms) {
-          cached.transformString = emptyString;
-          for (let key in cachedTransforms) {
-            cached.transformString += transformsFragmentStrings[key]+cachedTransforms[key]+closeParenthesisWithSpaceString;
+          let str = emptyString;
+          for (let key in tween.cachedTransforms) {
+            str += transformsFragmentStrings[key]+tween.cachedTransforms[key]+closeParenthesisWithSpaceString;
           }
-          tweenTarget.style.transform = cached.transformString;
+          tweenTarget.style.transform = str;
         }
       } else if (tweenType == animationTypes.CSS) {
         tweenTarget.style[tweenProperty] = value;

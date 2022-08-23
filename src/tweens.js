@@ -1,5 +1,6 @@
 import {
   valueTypes,
+  animationTypes,
   minValue,
 } from './consts.js';
 
@@ -29,7 +30,7 @@ import {
 
 // Tweens
 
-function convertKeyframeToTween(keyframe, target, index, total) {
+function convertKeyframeToTweenObject(keyframe, target, index, total) {
   const tween = {};
   for (let p in keyframe) {
     let prop = getFunctionValue(keyframe[p], target, index, total);
@@ -52,7 +53,7 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
   const tweens = [];
   for (let i = 0, l = keyframes.length; i < l; i++) {
     const keyframe = keyframes[i];
-    const tween = convertKeyframeToTween(keyframe, target, index, total);
+    const tween = convertKeyframeToTweenObject(keyframe, target, index, total);
     const tweenValue = tween.value;
     const originalValue = decomposeValue(getOriginalAnimatableValue(target, propertyName, animationType));
 
@@ -140,6 +141,12 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     if (to.type === valueTypes.PATH) {
       const cached = cache.DOM.get(target);
       if (cached) to.path.isTargetInsideSVG = cached.isSVG;
+    }
+
+    // Reference the cached transforms here to avoid unnecessary call to .get() during render
+
+    if (animationType === animationTypes.TRANSFORM) {
+      tween.cachedTransforms = cache.DOM.get(target).transforms;
     }
 
     tween.type = animationType;
