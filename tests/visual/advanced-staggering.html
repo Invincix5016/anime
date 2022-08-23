@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timeline tests | anime.js</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="assets/css/styles.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      height: 100%;
+    }
+    #test-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      width: 100%;
+    }
+    .demo {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 0;
+      flex-shrink: 0;
+      width: 20rem;
+      height: 16rem;
+      padding: 2rem;
+      border-bottom: none;
+      border: 1px dotted rgba(255,255,255,.2);
+    }
+    .demo h1 {
+      position: absolute;
+      top: .75rem;
+      left: 1rem;
+    }
+    .demo div {
+      width: 1rem;
+      height: 1rem;
+      /*background-color: currentColor;*/
+      border: 2px solid currentColor;
+    }
+    .demo .grid-wrapper {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 10rem;
+      height: 5rem;
+      margin: auto;
+      border: none;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="test-wrapper">
+    <section class="demo normal">
+      <h1>Normal</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo normal-reversed">
+      <h1>Normal reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo from-last">
+      <h1>From last</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo from-last-reversed">
+      <h1>From last reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo from-center">
+      <h1>From center</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo from-center-reversed">
+      <h1>From center reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo from-index">
+      <h1>From index</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo from-index-reversed">
+      <h1>From index reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo range">
+      <h1>Range</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo range-reversed">
+      <h1>Range reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo range-from-last">
+      <h1>Range from last</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo range-from-last-reversed">
+      <h1>Range from last reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo range-from-center">
+      <h1>Range from center</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo range-from-center-reversed">
+      <h1>Range from center reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo easing">
+      <h1>Easing</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo easing-reversed">
+      <h1>Easing reversed</h1>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </section>
+
+    <section class="demo">
+      <h1>Coordinates</h1>
+      <div class="grid-wrapper grid">
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h1>Coordinates reversed</h1>
+      <div class="grid-wrapper grid-reversed">
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h1>Coordinates reversed</h1>
+      <div class="grid-wrapper grid-axis">
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h1>Coordinates reversed</h1>
+      <div class="grid-wrapper grid-axis-reversed">
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      </div>
+    </section>
+  </div>
+  <script type="module">
+    import anime from '../../src/anime.js';
+    // import anime from './assets/anime.3.2.1.js';
+    import { test, expect } from './assets/js/tests.js';
+
+    const red = '#F64E4D';
+
+    const animations = anime.timeline({
+      easing: 'linear',
+      // direction: 'alternate',
+      // loop: true
+    })
+    .add({
+      targets: '.normal div',
+      translateY: anime.stagger('-.5em'),
+      color: red,
+      delay: anime.stagger(200)
+    }, 0)
+    .add({
+      targets: '.normal-reversed div',
+      translateY: anime.stagger('-.5em', { direction: 'reverse' }),
+      color: red,
+      delay: anime.stagger(200, { direction: 'reverse' }),
+    }, 0)
+    .add({
+      targets: '.from-last div',
+      translateY: anime.stagger('-.5em', {from: 'last'}),
+      color: red,
+      delay: anime.stagger(200, {from: 'last'})
+    }, 0)
+    .add({
+      targets: '.from-last-reversed div',
+      translateY: anime.stagger('-.5em', { from: 'last', direction: 'reverse' }),
+      color: red,
+      delay: anime.stagger(200, { from: 'last', direction: 'reverse' }),
+    }, 0)
+    .add({
+      targets: '.from-center div',
+      translateY: anime.stagger('-.5em', {from: 'center'}),
+      color: red,
+      delay: anime.stagger(200, {from: 'center'})
+    }, 0)
+    .add({
+      targets: '.from-center-reversed div',
+      translateY: anime.stagger('-.5em', { from: 'center', direction: 'reverse' }),
+      color: red,
+      delay: anime.stagger(200, { from: 'center', direction: 'reverse' }),
+    }, 0)
+    .add({
+      targets: '.from-index div',
+      translateY: anime.stagger('-.5em', {from: 3}),
+      color: red,
+      delay: anime.stagger(200, {from: 3})
+    }, 0)
+    .add({
+      targets: '.from-index-reversed div',
+      translateY: anime.stagger('-.5em', { from: 3, direction: 'reverse' }),
+      color: red,
+      delay: anime.stagger(200, { from: 3, direction: 'reverse' }),
+    }, 0)
+    .add({
+      targets: '.range div',
+      translateY: anime.stagger(['-2em', '2em']),
+      color: red,
+      delay: anime.stagger([0, 600])
+    }, 0)
+    .add({
+      targets: '.range-reversed div',
+      translateY: anime.stagger(['-2em', '2em'], { direction: 'reverse'}),
+      color: red,
+      delay: anime.stagger([0, 600], { direction: 'reverse'}),
+    }, 0)
+    .add({
+      targets: '.range-from-last div',
+      translateY: anime.stagger(['-2em', '2em'], {from: 'last'}),
+      color: red,
+      delay: anime.stagger([0, 600], {from: 'last'})
+    }, 0)
+    .add({
+      targets: '.range-from-last-reversed div',
+      translateY: anime.stagger(['-2em', '2em'], { from: 'last', direction: 'reverse'}),
+      color: red,
+      delay: anime.stagger([0, 600], { from: 'last', direction: 'reverse'}),
+    }, 0)
+    .add({
+      targets: '.range-from-center div',
+      translateY: anime.stagger(['-2em', '2em'], {from: 'center'}),
+      color: red,
+      delay: anime.stagger([0, 600], {from: 'center'})
+    }, 0)
+    .add({
+      targets: '.range-from-center-reversed div',
+      translateY: anime.stagger(['-2em', '2em'], { from: 'center', direction: 'reverse'}),
+      color: red,
+      delay: anime.stagger([0, 600], { from: 'center', direction: 'reverse'}),
+    }, 0)
+    .add({
+      targets: '.easing div',
+      translateY: anime.stagger(['2rem', '-2rem'], {from: 'center', easing: 'easeOutExpo'}),
+      color: red,
+      delay: anime.stagger([0, 600], {from: 'center', easing: 'easeOutExpo'})
+    }, 0)
+    .add({
+      targets: '.easing-reversed div',
+      translateY: anime.stagger(['2rem', '-2rem'], {from: 'center', direction: 'reverse', easing: 'easeOutExpo'}),
+      color: red,
+      delay: anime.stagger([0, 600], {from: 'center', direction: 'reverse', easing: 'easeOutExpo'}),
+    }, 0)
+    .add({
+      targets: '.grid div',
+      scale: anime.stagger([1, 0], {grid: [10, 5], from: 38}),
+      color: red,
+      delay: anime.stagger(100, {grid: [10, 5], from: 38})
+    }, 0)
+    .add({
+      targets: '.grid-reversed div',
+      scale: anime.stagger([1, 0], {grid: [10, 5], from: 38, direction: 'reverse'}),
+      color: red,
+      delay: anime.stagger(100, {grid: [10, 5], from: 38, direction: 'reverse'})
+    }, 0)
+    .add({
+      targets: '.grid-axis div',
+      translateX: anime.stagger('.5rem', {grid: [10, 5], from: 38, axis: 'x'}),
+      translateY: anime.stagger('.5rem', {grid: [10, 5], from: 38, axis: 'y'}),
+      color: red,
+      delay: anime.stagger(100, {grid: [10, 5], from: 38})
+    }, 0)
+    .add({
+      targets: '.grid-axis-reversed div',
+      translateX: anime.stagger('.5rem', {grid: [10, 5], from: 38, axis: 'x', direction: 'reverse'}),
+      translateY: anime.stagger('.5rem', {grid: [10, 5], from: 38, axis: 'y', direction: 'reverse'}),
+      color: red,
+      delay: anime.stagger(100, {grid: [10, 5], from: 38, direction: 'reverse'})
+    }, 0);
+
+  </script>
+</body>
+</html>

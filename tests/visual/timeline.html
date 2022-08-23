@@ -60,15 +60,16 @@
       easing: 'easeInOutQuad',
       duration: duration,
       direction: 'alternate',
+      autoplay: true,
     })
     .add({
       targets: '#square-1',
-      translateY: -200,
+      translateY: -100,
       backgroundColor: green,
     })
     .add({
       targets: '#square-2',
-      translateY: -200,
+      translateY: -150,
       backgroundColor: green,
     })
     .add({
@@ -79,26 +80,26 @@
     .add({
       targets: '.square',
       translateX: [
-        { value: 250, duration: 1000, delay: 500 },
+        { value: anime.stagger(100, {from: 1}), duration: 1000, delay: 500 },
         { value: 0, duration: 1000, delay: 500 }
       ],
       translateY: [
-        { value: -40, duration: 500 },
-        { value: 40, duration: 500, delay: 1000 },
-        { value: 0, duration: 500, delay: 1000 }
+        { value: -50, duration: 500, delay: anime.stagger(100, {start: 0}) },
+        { value: -100, duration: 500, delay: 1000 },
+        { value: -150, duration: 500, delay: 1000 }
       ],
       scaleX: [
-        { value: .4, duration: 100, delay: 500, easing: 'easeOutExpo' },
-        { value: 1, duration: 900 },
-        { value: .4, duration: 100, delay: 500, easing: 'easeOutExpo' },
-        { value: 1, duration: 900 }
+        { value: .5, duration: 500, delay: anime.stagger(100, {start: 0}), easing: 'easeOutExpo' },
+        { value: 1, duration: 1000 },
+        { value: .25, duration: 500, easing: 'easeOutExpo' },
+        { value: 1, duration: 500 }
       ],
       scaleY: [
+        { value: 1, duration: 500, delay: anime.stagger(100, {start: 0}) },
+        { value: 1.5, duration: 500, delay: 500, easing: 'easeOutExpo' },
         { value: 1, duration: 500 },
-        { value: 2, duration: 50, delay: 1000, easing: 'easeOutExpo' },
-        { value: 1, duration: 450 },
-        { value: 1.75, duration: 50, delay: 1000, easing: 'easeOutExpo' },
-        { value: 1, duration: 450 }
+        { value: 2, duration: 500, delay: 500, easing: 'easeOutExpo' },
+        { value: 1, duration: 500 }
       ],
     })
     .add({
@@ -110,31 +111,34 @@
     })
     .add({
       targets: '#square-1',
-      translateY: -100,
+      translateY: -200,
       backgroundColor: blue,
     })
     .add({
       targets: '#square-2',
-      translateY: -100,
+      translateY: -200,
       backgroundColor: blue,
-    }, '-=' + duration * .5)
+    }, '-=' + duration)
     .add({
       targets: '#square-3',
-      translateY: -100,
+      translateY: -200,
       backgroundColor: blue,
-    }, '-=' + duration * .5)
+    }, '-=' + duration)
     .add({
       targets: '.square',
       rotate: -180,
       scale: 1,
       backgroundColor: yellow,
       opacity: .5,
-    }, '-=' + duration * .5)
+      duration: duration * 2,
+      delay: anime.stagger(100),
+    }, '-=' + duration * .75)
     .add({
       targets: '.square',
       translateY: 0,
       backgroundColor: red,
-    }, '-=' + duration * .5)
+      delay: anime.stagger(100),
+    }, '-=' + duration)
 
     const seekProgressEl = document.getElementById('progress-bar');
 

@@ -49,7 +49,7 @@ import {
 } from './animatables.js';
 
 import {
-  getTimingsFromAnimations,
+  getTimingsFromAnimationsOrInstances,
 } from './timings.js';
 
 import {
@@ -64,7 +64,7 @@ export function createInstance(params) {
   const properties = getKeyframesFromProperties(tweenSettings, params);
   const targets = getAnimatables(params.targets);
   const { animations, tweens } = getAnimations(targets, properties);
-  const timings = getTimingsFromAnimations(animations, tweenSettings);
+  const timings = getTimingsFromAnimationsOrInstances(animations, tweenSettings);
   return mergeObjects(instanceSettings, {
     id: instancesId++,
     children: [],
@@ -140,12 +140,14 @@ export function animate(params = {}) {
       // let tween = tweens[tweensLength];
       // // Only check for keyframes if there is more than one tween
       // if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
+      const prevTween = tweens[i - 1];
       const tween = tweens[i++];
       const nextTween = tweens[i];
-      // if (nextTween) {
-      //   if (nextTween)
+      if (prevTween && prevTween.groupId == tween.groupId && insTime < prevTween.end) continue;
+      // if (nextTween && (nextTween.groupId === nextTween.groupId)) {
+      //   if (insTime >= tween.end && insTime < nextTween.end) continue;
       // }
-      console.log(insTime, tween, nextTween);
+      // console.log(insTime, tween, nextTween);
       const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       const tweenProperty = tween.property;
       const tweenRound = tween.round;

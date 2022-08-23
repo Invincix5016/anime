@@ -18,6 +18,8 @@ import {
   getAnimationType,
 } from './values.js';
 
+let tweensGroupsId = 0;
+
 export function getAnimations(targets, keyframes) {
   const animations = [];
   const tweens = [];
@@ -40,18 +42,23 @@ export function getAnimations(targets, keyframes) {
             delay: firstTween.delay,
             duration: lastTween.end,
             endDelay: lastTween.endDelay,
-            timelineOffset: 0
           }
-          if (animationType === animationTypes.TRANSFORM) {
+          if (animationType == animationTypes.TRANSFORM) {
             lastAnimatableTransformAnimationIndex = animationsIndex;
           }
           animations.push(animation);
-          animationTweens.forEach(tween => tweens.push(tween));
+          animationTweens.forEach(tween => {
+            tween.groupId = tweensGroupsId;
+            tweens.push(tween);
+          });
+          tweensGroupsId++;
           animationsIndex++;
         }
       }
       if (!is.und(lastAnimatableTransformAnimationIndex)) {
-        animations[lastAnimatableTransformAnimationIndex].tweens.forEach(tween => tween.renderTransforms = true);
+        animations[lastAnimatableTransformAnimationIndex].tweens.forEach(tween => {
+          tween.renderTransforms = true;
+        });
       }
     }
   }

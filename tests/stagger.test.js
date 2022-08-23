@@ -37,11 +37,11 @@ describe('Stagger', () => {
         expect(animation.animations[3].tweens[0].to.number).toBe(5);
         expect(animation.animations[4].tweens[0].to.number).toBe(10);
 
-        expect(animation.animations[0].currentValue).toBe('-10px');
-        expect(animation.animations[1].currentValue).toBe('-5px');
-        expect(animation.animations[2].currentValue).toBe('0px');
-        expect(animation.animations[3].currentValue).toBe('5px');
-        expect(animation.animations[4].currentValue).toBe('10px');
+        expect(animation.animations[0].tweens[0].currentValue).toBe('-10px');
+        expect(animation.animations[1].tweens[0].currentValue).toBe('-5px');
+        expect(animation.animations[2].tweens[0].currentValue).toBe('0px');
+        expect(animation.animations[3].tweens[0].currentValue).toBe('5px');
+        expect(animation.animations[4].tweens[0].currentValue).toBe('10px');
 
         resolve();
       }
@@ -54,11 +54,11 @@ describe('Stagger', () => {
       translateX: anime.stagger(['-10rem', '10rem']),
       duration: 10,
       complete: () => {
-        expect(animation.animations[0].currentValue).toBe('-10rem');
-        expect(animation.animations[1].currentValue).toBe('-5rem');
-        expect(animation.animations[2].currentValue).toBe('0rem');
-        expect(animation.animations[3].currentValue).toBe('5rem');
-        expect(animation.animations[4].currentValue).toBe('10rem');
+        expect(animation.animations[0].tweens[0].currentValue).toBe('-10rem');
+        expect(animation.animations[1].tweens[0].currentValue).toBe('-5rem');
+        expect(animation.animations[2].tweens[0].currentValue).toBe('0rem');
+        expect(animation.animations[3].tweens[0].currentValue).toBe('5rem');
+        expect(animation.animations[4].tweens[0].currentValue).toBe('10rem');
 
         resolve();
       }

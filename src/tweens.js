@@ -151,7 +151,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.progress = 0;
-    tween.timelineOffset = 0;
     tween.currentValue = 0;
     prevTween = tween;
     tweens.push(tween);

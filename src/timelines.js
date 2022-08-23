@@ -14,7 +14,7 @@ import {
 } from './values.js';
 
 import {
-  getTimingsFromAnimations,
+  getTimingsFromAnimationsOrInstances,
 } from './timings.js';
 
 import {
@@ -53,7 +53,7 @@ export function createTimeline(params = {}) {
     const ins = animate(insParams);
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
-    const timings = getTimingsFromAnimations(children, params);
+    const timings = getTimingsFromAnimationsOrInstances(children, params);
     tl.delay = timings.delay;
     tl.endDelay = timings.endDelay;
     tl.duration = timings.duration;
