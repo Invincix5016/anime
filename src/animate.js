@@ -32,7 +32,7 @@ import {
 } from './engine.js';
 
 import {
-  getAnimations,
+  createAnimation,
 } from './animations.js';
 
 import {
@@ -44,38 +44,8 @@ import {
 } from './svg.js';
 
 import {
-  getAnimatables,
   removeAnimatablesFromInstance,
 } from './animatables.js';
-
-import {
-  getTimingsFromAnimationsOrInstances,
-} from './timings.js';
-
-import {
-  getKeyframesFromProperties,
-} from './keyframes.js';
-
-let instancesId = 0;
-
-export function createInstance(params) {
-  const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
-  const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
-  const properties = getKeyframesFromProperties(tweenSettings, params);
-  const targets = getAnimatables(params.targets);
-  const { animations, tweens } = getAnimations(targets, properties);
-  const timings = getTimingsFromAnimationsOrInstances(animations, tweenSettings);
-  return mergeObjects(instanceSettings, {
-    id: instancesId++,
-    children: [],
-    targets: targets,
-    animations: animations,
-    tweens: tweens,
-    delay: timings.delay,
-    duration: timings.duration,
-    endDelay: timings.endDelay,
-  });
-}
 
 export function animate(params = {}) {
   let startTime = 0, lastTime = 0, now = 0;
@@ -88,7 +58,7 @@ export function animate(params = {}) {
     return promise;
   }
 
-  let instance = createInstance(params);
+  let instance = createAnimation(params);
   let promise = makePromise(instance);
 
   function toggleInstanceDirection() {

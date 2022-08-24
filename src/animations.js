@@ -1,14 +1,30 @@
 import {
+  defaultInstanceSettings,
+  defaultTweenSettings,
   animationTypes,
 } from './consts.js';
 
 import {
   is,
+  replaceObjectProps,
+  mergeObjects,
 } from './utils.js';
 
 import {
   sanitizePropertyName,
 } from './properties.js';
+
+import {
+  getAnimatables,
+} from './animatables.js';
+
+import {
+  getTimingsFromAnimationsOrInstances,
+} from './timings.js';
+
+import {
+  getKeyframesFromProperties,
+} from './keyframes.js';
 
 import {
   convertKeyframesToTweens,
@@ -19,8 +35,9 @@ import {
 } from './values.js';
 
 let tweensGroupsId = 0;
+let animationsId = 0;
 
-export function getAnimations(targets, keyframes) {
+function getAnimations(targets, keyframes) {
   const animations = [];
   const tweens = [];
   let animationsIndex = 0;
@@ -63,4 +80,23 @@ export function getAnimations(targets, keyframes) {
     }
   }
   return {animations, tweens};
+}
+
+export function createAnimation(params) {
+  const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
+  const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
+  const properties = getKeyframesFromProperties(tweenSettings, params);
+  const targets = getAnimatables(params.targets);
+  const { animations, tweens } = getAnimations(targets, properties);
+  const timings = getTimingsFromAnimationsOrInstances(animations, tweenSettings);
+  return mergeObjects(instanceSettings, {
+    id: animationsId++,
+    children: [],
+    targets: targets,
+    animations: animations,
+    tweens: tweens,
+    delay: timings.delay,
+    duration: timings.duration,
+    endDelay: timings.endDelay,
+  });
 }
