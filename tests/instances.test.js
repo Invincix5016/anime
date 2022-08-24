@@ -21,10 +21,10 @@ describe('Instances', () => {
     expect(instance01.targets).toEqual(expect.any(Array));
   });
 
-  test('Must have an array of animations', () => {
+  test('Must have an array of tweens', () => {
     const instance01 = anime();
 
-    expect(instance01.animations).toEqual(expect.any(Array));
+    expect(instance01.tweens).toEqual(expect.any(Array));
   });
 
   test('.progress should update from 0 to 1', () => {

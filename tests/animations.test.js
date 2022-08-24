@@ -122,8 +122,8 @@ describe('Animations', () => {
       ]
     });
 
-    expect(animation.animations[0].delay).toBe(150);
-    expect(animation.animations[0].duration).toBe(150 + 100 + 200 + 350 + 300 + 400 + 150 + 100 + 500);
-    expect(animation.animations[0].endDelay).toBe(500);
+    expect(animation.changeStartTime).toBe(150);
+    expect(animation.duration).toBe(150 + 100 + 200 + 350 + 300 + 400 + 150 + 100 + 500);
+    expect(animation.changeEndTime).toBe(500);
   });
 });

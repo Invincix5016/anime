@@ -30,6 +30,8 @@ import {
 
 // Tweens
 
+let tweenId = 0;
+
 export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId) {
   let prevTween;
   const tweens = [];
@@ -143,6 +145,7 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
       tween.cachedTransforms = cache.DOM.get(target).transforms;
     }
 
+    tween.id = tweenId++;
     tween.groupId = groupId;
     tween.type = animationType;
     tween.property = propertyName;

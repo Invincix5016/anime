@@ -6,10 +6,10 @@ describe('Stagger', () => {
       duration: 10,
       delay: anime.stagger(10)
     });
-    expect(animation.animations[0].delay).toBe(0);
-    expect(animation.animations[1].delay).toBe(10);
-    expect(animation.animations[2].delay).toBe(20);
-    expect(animation.animations[3].delay).toBe(30);
+    expect(animation.tweens[0].delay).toBe(0);
+    expect(animation.tweens[1].delay).toBe(10);
+    expect(animation.tweens[2].delay).toBe(20);
+    expect(animation.tweens[3].delay).toBe(30);
   });
 
   test('Starts the staggering effect from a specific value', () => {
@@ -19,10 +19,10 @@ describe('Stagger', () => {
       duration: 10,
       delay: anime.stagger(10, {start: 5})
     });
-    expect(animation.animations[0].delay).toBe(5);
-    expect(animation.animations[1].delay).toBe(15);
-    expect(animation.animations[2].delay).toBe(25);
-    expect(animation.animations[3].delay).toBe(35);
+    expect(animation.tweens[0].delay).toBe(5);
+    expect(animation.tweens[1].delay).toBe(15);
+    expect(animation.tweens[2].delay).toBe(25);
+    expect(animation.tweens[3].delay).toBe(35);
   });
 
   test('Distributes evenly values between two numbers', resolve => {
@@ -71,11 +71,11 @@ describe('Stagger', () => {
       translateX: 10,
       delay: anime.stagger(10, {from: 'center'})
     });
-    expect(animation.animations[0].delay).toBe(20);
-    expect(animation.animations[1].delay).toBe(10);
-    expect(animation.animations[2].delay).toBe(0);
-    expect(animation.animations[3].delay).toBe(10);
-    expect(animation.animations[4].delay).toBe(20);
+    expect(animation.tweens[0].delay).toBe(20);
+    expect(animation.tweens[1].delay).toBe(10);
+    expect(animation.tweens[2].delay).toBe(0);
+    expect(animation.tweens[3].delay).toBe(10);
+    expect(animation.tweens[4].delay).toBe(20);
   });
 
   test('Starts the stagger effect from the last element', () => {
@@ -84,11 +84,11 @@ describe('Stagger', () => {
       translateX: 10,
       delay: anime.stagger(10, {from: 'last'})
     });
-    expect(animation.animations[0].delay).toBe(40);
-    expect(animation.animations[1].delay).toBe(30);
-    expect(animation.animations[2].delay).toBe(20);
-    expect(animation.animations[3].delay).toBe(10);
-    expect(animation.animations[4].delay).toBe(0);
+    expect(animation.tweens[0].delay).toBe(40);
+    expect(animation.tweens[1].delay).toBe(30);
+    expect(animation.tweens[2].delay).toBe(20);
+    expect(animation.tweens[3].delay).toBe(10);
+    expect(animation.tweens[4].delay).toBe(0);
   });
 
   test('Starts the stagger effect from specific index', () => {
@@ -97,11 +97,11 @@ describe('Stagger', () => {
       translateX: 10,
       delay: anime.stagger(10, {from: 1})
     });
-    expect(animation.animations[0].delay).toBe(10);
-    expect(animation.animations[1].delay).toBe(0);
-    expect(animation.animations[2].delay).toBe(10);
-    expect(animation.animations[3].delay).toBe(20);
-    expect(animation.animations[4].delay).toBe(30);
+    expect(animation.tweens[0].delay).toBe(10);
+    expect(animation.tweens[1].delay).toBe(0);
+    expect(animation.tweens[2].delay).toBe(10);
+    expect(animation.tweens[3].delay).toBe(20);
+    expect(animation.tweens[4].delay).toBe(30);
   });
 
   test('Changes the order in which the stagger operates', () => {
@@ -110,11 +110,11 @@ describe('Stagger', () => {
       translateX: 10,
       delay: anime.stagger(10, {from: 1, direction: 'reverse'})
     });
-    expect(animation.animations[0].delay).toBe(20);
-    expect(animation.animations[1].delay).toBe(30);
-    expect(animation.animations[2].delay).toBe(20);
-    expect(animation.animations[3].delay).toBe(10);
-    expect(animation.animations[4].delay).toBe(0);
+    expect(animation.tweens[0].delay).toBe(20);
+    expect(animation.tweens[1].delay).toBe(30);
+    expect(animation.tweens[2].delay).toBe(20);
+    expect(animation.tweens[3].delay).toBe(10);
+    expect(animation.tweens[4].delay).toBe(0);
   });
 
   test('Stagger values using an easing function', () => {
@@ -123,11 +123,11 @@ describe('Stagger', () => {
       translateX: 10,
       delay: anime.stagger(10, {easing: 'easeInOutQuad'})
     });
-    expect(animation.animations[0].delay).toBe(0);
-    expect(animation.animations[1].delay).toBe(5);
-    expect(animation.animations[2].delay).toBe(20);
-    expect(animation.animations[3].delay).toBe(35);
-    expect(animation.animations[4].delay).toBe(40);
+    expect(animation.tweens[0].delay).toBe(0);
+    expect(animation.tweens[1].delay).toBe(5);
+    expect(animation.tweens[2].delay).toBe(20);
+    expect(animation.tweens[3].delay).toBe(35);
+    expect(animation.tweens[4].delay).toBe(40);
   });
 
   test('Grid staggering with a 2D array', () => {
@@ -137,23 +137,23 @@ describe('Stagger', () => {
       delay: anime.stagger(10, {grid: [5, 3], from: 'center'})
     });
 
-    expect(animation.animations[0].delay).toBeCloseTo(22.4);
-    expect(animation.animations[1].delay).toBe(14.1);
-    expect(animation.animations[2].delay).toBe(10);
-    expect(animation.animations[3].delay).toBe(14.1);
-    expect(animation.animations[4].delay).toBeCloseTo(22.4);
+    expect(animation.tweens[0].delay).toBeCloseTo(22.4);
+    expect(animation.tweens[1].delay).toBe(14.1);
+    expect(animation.tweens[2].delay).toBe(10);
+    expect(animation.tweens[3].delay).toBe(14.1);
+    expect(animation.tweens[4].delay).toBeCloseTo(22.4);
 
-    expect(animation.animations[5].delay).toBe(20);
-    expect(animation.animations[6].delay).toBe(10);
-    expect(animation.animations[7].delay).toBe(0);
-    expect(animation.animations[8].delay).toBe(10);
-    expect(animation.animations[9].delay).toBe(20);
+    expect(animation.tweens[5].delay).toBe(20);
+    expect(animation.tweens[6].delay).toBe(10);
+    expect(animation.tweens[7].delay).toBe(0);
+    expect(animation.tweens[8].delay).toBe(10);
+    expect(animation.tweens[9].delay).toBe(20);
 
-    expect(animation.animations[10].delay).toBeCloseTo(22.4);
-    expect(animation.animations[11].delay).toBe(14.1);
-    expect(animation.animations[12].delay).toBe(10);
-    expect(animation.animations[13].delay).toBe(14.1);
-    expect(animation.animations[14].delay).toBeCloseTo(22.4);
+    expect(animation.tweens[10].delay).toBeCloseTo(22.4);
+    expect(animation.tweens[11].delay).toBe(14.1);
+    expect(animation.tweens[12].delay).toBe(10);
+    expect(animation.tweens[13].delay).toBe(14.1);
+    expect(animation.tweens[14].delay).toBeCloseTo(22.4);
   });
 
   test('Grid staggering with a 2D array', () => {
