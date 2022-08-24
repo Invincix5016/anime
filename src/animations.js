@@ -19,10 +19,6 @@ import {
 } from './animatables.js';
 
 import {
-  getTimingsFromAnimationsOrInstances,
-} from './timings.js';
-
-import {
   getKeyframesFromProperties,
 } from './keyframes.js';
 
@@ -37,11 +33,15 @@ import {
 let tweensGroupsId = 0;
 let animationsId = 0;
 
-function getAnimations(targets, keyframes) {
+function getAnimations(targets, keyframes, tweenSettings) {
   const animations = [];
   const tweens = [];
+  const targetsLength = targets.length;
   let animationsIndex = 0;
-  for (let i = 0, targetsLength = targets.length; i < targetsLength; i++) {
+  let minDelay = !targetsLength ? tweenSettings.delay : null;
+  let maxDuration = !targetsLength ? tweenSettings.duration : 0;
+  let maxEndDelay = !targetsLength ? tweenSettings.delay : 0;
+  for (let i = 0; i < targetsLength; i++) {
     const target = targets[i];
     if (target) {
       let lastAnimatableTransformAnimationIndex;
@@ -51,9 +51,13 @@ function getAnimations(targets, keyframes) {
         const animationType = getAnimationType(target, animationKeyframesPropertyName);
         const tweenPropertyName = sanitizePropertyName(animationKeyframesPropertyName, target, animationType);
         if (is.num(animationType)) {
-          const animationTweens = convertKeyframesToTweens(animationKeyframes, target, tweenPropertyName, animationType, i, targetsLength);
+          const animationTweens = convertKeyframesToTweens(animationKeyframes, target, tweenPropertyName, animationType, i, targetsLength, tweensGroupsId);
           const firstTween = animationTweens[0];
           const lastTween = animationTweens[animationTweens.length - 1];
+          const endDelay = lastTween.end - lastTween.endDelay;
+          if (is.nil(minDelay) || firstTween.delay < minDelay) minDelay = firstTween.delay;
+          if (lastTween.end > maxDuration) maxDuration = lastTween.end;
+          if (endDelay > maxEndDelay) maxEndDelay = endDelay;
           const animation = {
             tweens: animationTweens,
             delay: firstTween.delay,
@@ -64,10 +68,7 @@ function getAnimations(targets, keyframes) {
             lastAnimatableTransformAnimationIndex = animationsIndex;
           }
           animations.push(animation);
-          animationTweens.forEach(tween => {
-            tween.groupId = tweensGroupsId;
-            tweens.push(tween);
-          });
+          tweens.push(...animationTweens);
           tweensGroupsId++;
           animationsIndex++;
         }
@@ -79,7 +80,8 @@ function getAnimations(targets, keyframes) {
       }
     }
   }
-  return {animations, tweens};
+  maxEndDelay = maxDuration - maxEndDelay;
+  return { animations, tweens, minDelay, maxDuration, maxEndDelay };
 }
 
 export function createAnimation(params) {
@@ -87,16 +89,15 @@ export function createAnimation(params) {
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const properties = getKeyframesFromProperties(tweenSettings, params);
   const targets = getAnimatables(params.targets);
-  const { animations, tweens } = getAnimations(targets, properties);
-  const timings = getTimingsFromAnimationsOrInstances(animations, tweenSettings);
+  const { animations, tweens, minDelay, maxDuration, maxEndDelay } = getAnimations(targets, properties, tweenSettings);
   return mergeObjects(instanceSettings, {
     id: animationsId++,
     children: [],
     targets: targets,
     animations: animations,
     tweens: tweens,
-    delay: timings.delay,
-    duration: timings.duration,
-    endDelay: timings.endDelay,
+    duration: maxDuration,
+    changeStartTime: minDelay,
+    changeEndTime: maxEndDelay,
   });
 }

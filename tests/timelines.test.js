@@ -34,14 +34,14 @@ describe('Timelines', () => {
   // const childTL2 = parameterInheritanceTL.children[2];
   // const childTL3 = parameterInheritanceTL.children[3];
 
-  test('Root timeline delay should inherit the main parameters', () => {
+  test('Root timeline changeStartTime should inherit the main parameters delay', () => {
     const parameterInheritanceTL = createTimeline();
-    expect(parameterInheritanceTL.delay).toBe(0);
+    expect(parameterInheritanceTL.changeStartTime).toBe(0);
   });
 
-  test('Root timeline endDelay should inherit the main parameters', () => {
+  test('Root timeline changeEndTime should inherit the main parameters endDelay', () => {
     const parameterInheritanceTL = createTimeline();
-    expect(parameterInheritanceTL.endDelay).toBe(40);
+    expect(parameterInheritanceTL.changeEndTime).toBe(40);
   });
 
   test('Basic timeline time offsets', () => {

@@ -57,9 +57,9 @@ describe('Timings', () => {
     endDelay: () => 50
   };
 
-  test('Delay must be the smallest delay of the all the animations', () => {
+  test('changeStartTime must be equal to the smallest delay of the all the animations', () => {
     const animation = anime(complexTimingsParams);
-    expect(animation.delay).toBe(10);
+    expect(animation.changeStartTime).toBe(10);
   });
 
   test('Duration must be the longest delay + duration of the all the animations', () => {
@@ -67,8 +67,8 @@ describe('Timings', () => {
     expect(animation.duration).toBe(105);
   });
 
-  test('EndDelay must be the smallest endDelay from the the longest animation', () => {
+  test('changeEndTime must be equal to the smallest endDelay from the the longest animation', () => {
     const animation = anime(complexTimingsParams);
-    expect(animation.endDelay).toBe(40);
+    expect(animation.changeEndTime).toBe(40);
   });
 });

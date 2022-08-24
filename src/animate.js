@@ -174,8 +174,8 @@ export function animate(params = {}) {
 
   function setInstanceProgress(engineTime) {
     const insDuration = instance.duration;
-    const insDelay = instance.delay;
-    const insEndDelay = insDuration - instance.endDelay;
+    const insChangeStartTime = instance.changeStartTime;
+    const insChangeEndTime = insDuration - instance.changeEndTime;
     const insTime = adjustTime(engineTime);
     instance.progress = clamp((insTime / insDuration), 0, 1);
     instance.reversePlayback = insTime < instance.currentTime;
@@ -188,13 +188,13 @@ export function animate(params = {}) {
       instance.loopBegan = true;
       instance.loopBegin(instance);
     }
-    if (insTime <= insDelay && instance.currentTime !== 0) {
+    if (insTime <= insChangeStartTime && instance.currentTime !== 0) {
       setAnimationsProgress(0);
     }
-    if ((insTime >= insEndDelay && instance.currentTime !== insDuration) || !insDuration) {
+    if ((insTime >= insChangeEndTime && instance.currentTime !== insDuration) || !insDuration) {
       setAnimationsProgress(insDuration);
     }
-    if (insTime > insDelay && insTime < insEndDelay) {
+    if (insTime > insChangeStartTime && insTime < insChangeEndTime) {
       if (!instance.changeBegan) {
         instance.changeBegan = true;
         instance.changeCompleted = false;

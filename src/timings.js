@@ -5,26 +5,30 @@ import {
 export function getTimingsFromAnimationsOrInstances(animationsOrInstances, tweenSettings) {
   const animationsLength = animationsOrInstances.length;
   if (!animationsLength) {
-    return tweenSettings;
+    return {
+      duration: tweenSettings.duration,
+      changeStartTime: tweenSettings.delay,
+      changeEndTime: tweenSettings.endDelay,
+    };
   } else {
     const timings = {};
     for (let i = 0; i < animationsLength; i++) {
       const anim = animationsOrInstances[i];
       const timelineOffset = anim.timelineOffset ? anim.timelineOffset : 0;
-      const delay = timelineOffset + anim.delay;
-      if (is.und(timings.delay) || delay < timings.delay) {
-        timings.delay = delay;
+      const changeStartTime = timelineOffset + anim.changeStartTime;
+      if (is.und(timings.changeStartTime) || changeStartTime < timings.changeStartTime) {
+        timings.changeStartTime = changeStartTime;
       }
       const duration = timelineOffset + anim.duration;
       if (is.und(timings.duration) || duration > timings.duration) {
         timings.duration = duration;
       }
-      const endDelay = timelineOffset + anim.duration - anim.endDelay;
-      if (is.und(timings.endDelay) || endDelay > timings.endDelay) {
-        timings.endDelay = endDelay;
+      const changeEndTime = timelineOffset + anim.duration - anim.changeEndTime;
+      if (is.und(timings.changeEndTime) || changeEndTime > timings.changeEndTime) {
+        timings.changeEndTime = changeEndTime;
       }
     }
-    timings.endDelay = timings.duration - timings.endDelay;
+    timings.changeEndTime = timings.duration - timings.changeEndTime;
     return timings;
   }
 }

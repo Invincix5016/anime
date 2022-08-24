@@ -30,33 +30,27 @@ import {
 
 // Tweens
 
-function convertKeyframeToTweenObject(keyframe, target, index, total) {
-  const tween = {};
-  for (let p in keyframe) {
-    let prop = getFunctionValue(keyframe[p], target, index, total);
-    if (is.arr(prop)) {
-      prop = prop.map(v => getFunctionValue(v, target, index, total));
-      if (prop.length === 1) {
-        prop = prop[0];
-      }
-    }
-    tween[p] = prop;
-  }
-  // Make sure duration is not equal to 0 to prevents NaN when (progress = 0 / duration = 0);
-  tween.duration = parseFloat(tween.duration) || minValue;
-  tween.delay = parseFloat(tween.delay);
-  return tween;
-}
-
-export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId) {
   let prevTween;
   const tweens = [];
+
   for (let i = 0, l = keyframes.length; i < l; i++) {
-    const keyframe = keyframes[i];
-    const tween = convertKeyframeToTweenObject(keyframe, target, index, total);
+
+    const tween = {};
+
+    for (let key in keyframes[i]) {
+      let prop = getFunctionValue(keyframes[i][key], target, index, total);
+      if (is.arr(prop)) {
+        prop = prop.map(v => getFunctionValue(v, target, index, total));
+        if (prop.length === 1) {
+          prop = prop[0];
+        }
+      }
+      tween[key] = prop;
+    }
+
     const tweenValue = tween.value;
     const originalValue = decomposeValue(getOriginalAnimatableValue(target, propertyName, animationType));
-
     let from, to;
 
     // Decompose values
@@ -149,11 +143,14 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
       tween.cachedTransforms = cache.DOM.get(target).transforms;
     }
 
+    tween.groupId = groupId;
     tween.type = animationType;
     tween.property = propertyName;
     tween.target = target;
     tween.from = from;
     tween.to = to;
+    tween.duration = parseFloat(tween.duration) || minValue;
+    tween.delay = parseFloat(tween.delay);
     tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
     tween.easing = parseEasings(tween.easing, tween.duration);
@@ -161,7 +158,9 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.currentValue = 0;
     prevTween = tween;
     tweens.push(tween);
+
   }
+
   return tweens;
 }
 

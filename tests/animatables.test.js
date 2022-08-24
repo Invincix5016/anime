@@ -90,16 +90,14 @@ describe('Animatables', () => {
     expect(animation.targets.length).toBe(5);
   });
 
-  test('Animations without targets', resolve => {
+  test('Animations without targets', () => {
     const animation = anime({
-      duration: 100,
-      complete: () => {
-        expect(animation.targets.length).toBe(0);
-        expect(animation.animations.length).toBe(0);
-        expect(animation.duration).toBe(100);
-        resolve();
-      }
+      duration: 100
     });
+    animation.seek(animation.duration);
+    expect(animation.targets.length).toBe(0);
+    expect(animation.animations.length).toBe(0);
+    expect(animation.duration).toBe(100);
   });
 
   test('Remove targets with Objects ref', () => {
