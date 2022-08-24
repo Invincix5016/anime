@@ -20,7 +20,7 @@ export function selectString(str) {
 // Numbers functions
 
 export function clamp(val, min, max) {
-  return Math.min(Math.max(val, min), max);
+  return val < min ? min : val > max ? max : val;
 }
 
 export function round(val, base = 1) {

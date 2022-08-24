@@ -74,7 +74,7 @@
     // const angle = (i / total) * 360;
     const angle = Math.random() * Math.PI * 2;
     const duration = 1000;
-    const delay = anime.random(0, duration);
+    const delay = (duration / total) * i;
     anime({
       targets: particleEl,
       // rotate: [angle, angle],
