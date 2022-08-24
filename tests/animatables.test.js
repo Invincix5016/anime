@@ -92,12 +92,16 @@ describe('Animatables', () => {
 
   test('Animations without targets', () => {
     const animation = anime({
-      duration: 100
+      duration: 100,
+      delay: 10,
+      endDelay: 20,
     });
     animation.seek(animation.duration);
     expect(animation.targets.length).toBe(0);
     expect(animation.tweens.length).toBe(0);
     expect(animation.duration).toBe(100);
+    expect(animation.changeStartTime).toBe(10);
+    expect(animation.changeEndTime).toBe(20);
   });
 
   test('Remove targets with Objects ref', () => {
