@@ -1,13 +1,10 @@
 import {
   settings,
-  defaultAnimationSettings,
-  defaultTweenSettings,
   animationTypes,
   valueTypes,
   minValue,
   rgbaString,
   commaString,
-  openParenthesisString,
   closeParenthesisString,
   closeParenthesisWithSpaceString,
   emptyString,
@@ -15,15 +12,8 @@ import {
 } from './consts.js';
 
 import {
-  cache,
-} from './cache.js';
-
-import {
   clamp,
-  round,
-  filterArray,
-  replaceObjectProps,
-  mergeObjects,
+  // filterArray,
 } from './utils.js';
 
 import {
