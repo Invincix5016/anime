@@ -69,17 +69,17 @@ export function animate(params = {}) {
     lastTime = adjustTime(animation.currentTime) * (1 / settings.speed);
   }
 
-  function seekChild(time, child, muteCallbacks) {
-    if (child) {
-      child.seek(time - child.timelineOffset, muteCallbacks);
-    }
-  }
-
-  function syncAnimationChildren(time, muteCallbacks) {
-    if (!animation.reversePlayback) {
-      for (let i = 0; i < childrenLength; i++) seekChild(time, children[i], muteCallbacks);
+  function syncAnimationChildren(time, muteCallbacks, manual) {
+    if (!manual || !animation.reversePlayback) {
+      for (let i = 0; i < childrenLength; i++) {
+        const child = children[i];
+        child.seek(time - child.timelineOffset, muteCallbacks);
+      }
     } else {
-      for (let j = childrenLength; j--;) seekChild(time, children[j], muteCallbacks);
+      for (let j = childrenLength; j--;) {
+        const child = children[j];
+        child.seek(time - child.timelineOffset, muteCallbacks);
+      }
     }
   }
 
@@ -89,8 +89,12 @@ export function animate(params = {}) {
     const tweensLength = tweens.length;
     while (i < tweensLength) {
       const prevTween = tweens[i - 1];
+      const nextTween = tweens[i + 1];
       const tween = tweens[i++];
-      if (prevTween && prevTween.groupId == tween.groupId && insTime < prevTween.end) continue;
+      if (
+        (prevTween && prevTween.groupId == tween.groupId && insTime < prevTween.end) || 
+        (animation.reversePlayback && nextTween && nextTween.groupId == tween.groupId && insTime > nextTween.start)
+      ) continue;
       const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       const tweenProperty = tween.property;
       const tweenRound = tween.round;
@@ -150,7 +154,7 @@ export function animate(params = {}) {
     }
   }
 
-  function setAnimationProgress(engineTime) {
+  function setAnimationProgress(engineTime, manual) {
     const insDuration = animation.duration;
     const insChangeStartTime = animation.changeStartTime;
     const insChangeEndTime = insDuration - animation.changeEndTime;
@@ -159,7 +163,7 @@ export function animate(params = {}) {
     let canRender = 0;
     animation.progress = clamp((insTime / insDuration), 0, 1);
     animation.reversePlayback = insTime < animation.currentTime;
-    if (children) { syncAnimationChildren(insTime); }
+    if (children) { syncAnimationChildren(insTime, false, manual); }
     if (!animation.began && animation.currentTime > 0) {
       animation.began = true;
       animation.begin(animation);
@@ -253,7 +257,7 @@ export function animate(params = {}) {
       if (children) { syncAnimationChildren(time, true); }
       setTweensProgress(time);
     } else {
-      setAnimationProgress(adjustTime(time));
+      setAnimationProgress(adjustTime(time), true);
     }
   }
 
