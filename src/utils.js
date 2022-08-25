@@ -1,5 +1,5 @@
 import {
-  defaultInstanceSettings,
+  defaultAnimationSettings,
   defaultTweenSettings,
   hexTestRgx,
   rgbTestRgx,
@@ -47,7 +47,7 @@ export const is = {
   rgb: a => rgbTestRgx.test(a),
   hsl: a => hslTestRgx.test(a),
   col: a => (is.hex(a) || is.rgb(a) || is.hsl(a)),
-  key: a => !defaultInstanceSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes',
+  key: a => !defaultAnimationSettings.hasOwnProperty(a) && !defaultTweenSettings.hasOwnProperty(a) && a !== 'targets' && a !== 'keyframes',
 }
 
 // Arrays

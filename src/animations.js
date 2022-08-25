@@ -1,5 +1,5 @@
 import {
-  defaultInstanceSettings,
+  defaultAnimationSettings,
   defaultTweenSettings,
   animationTypes,
 } from './consts.js';
@@ -34,7 +34,7 @@ let animationsId = 0;
 let tweensGroupsId = 0;
 
 export function createAnimation(params) {
-  const instanceSettings = replaceObjectProps(defaultInstanceSettings, params);
+  const instanceSettings = replaceObjectProps(defaultAnimationSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
   const targets = getAnimatables(params.targets);

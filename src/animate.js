@@ -1,6 +1,6 @@
 import {
   settings,
-  defaultInstanceSettings,
+  defaultAnimationSettings,
   defaultTweenSettings,
   animationTypes,
   valueTypes,
@@ -28,7 +28,7 @@ import {
 
 import {
   startEngine,
-  activeInstances,
+  activeAnimations,
 } from './engine.js';
 
 import {
@@ -44,7 +44,7 @@ import {
 } from './svg.js';
 
 import {
-  removeAnimatablesFromInstance,
+  removeAnimatablesFromAnimation,
 } from './animatables.js';
 
 export function animate(params = {}) {
@@ -61,7 +61,7 @@ export function animate(params = {}) {
   let animation = createAnimation(params);
   let promise = makePromise(animation);
 
-  function toggleInstanceDirection() {
+  function toggleAnimationDirection() {
     const direction = animation.direction;
     if (direction !== 'alternate') {
       animation.direction = direction !== 'normal' ? 'normal' : 'reverse';
@@ -89,7 +89,7 @@ export function animate(params = {}) {
     }
   }
 
-  function syncInstanceChildren(time, muteCallbacks) {
+  function syncAnimationChildren(time, muteCallbacks) {
     if (!animation.reversePlayback) {
       for (let i = 0; i < childrenLength; i++) seekChild(time, children[i], muteCallbacks);
     } else {
@@ -172,14 +172,14 @@ export function animate(params = {}) {
     }
   }
 
-  function setInstanceProgress(engineTime) {
+  function setAnimationProgress(engineTime) {
     const insDuration = animation.duration;
     const insChangeStartTime = animation.changeStartTime;
     const insChangeEndTime = insDuration - animation.changeEndTime;
     const insTime = adjustTime(engineTime);
     animation.progress = clamp((insTime / insDuration), 0, 1);
     animation.reversePlayback = insTime < animation.currentTime;
-    if (children) { syncInstanceChildren(insTime); }
+    if (children) { syncAnimationChildren(insTime); }
     if (!animation.began && animation.currentTime > 0) {
       animation.began = true;
       animation.begin(animation);
@@ -228,7 +228,7 @@ export function animate(params = {}) {
         animation.loopComplete(animation);
         animation.loopBegan = false;
         if (animation.direction === 'alternate') {
-          toggleInstanceDirection();
+          toggleAnimationDirection();
         }
       }
     }
@@ -260,16 +260,16 @@ export function animate(params = {}) {
   animation.tick = function(t) {
     now = t;
     if (!startTime) startTime = now;
-    setInstanceProgress((now + (lastTime - startTime)) * settings.speed);
+    setAnimationProgress((now + (lastTime - startTime)) * settings.speed);
   }
 
   animation.seek = function(time) {
-    setInstanceProgress(adjustTime(time));
+    setAnimationProgress(adjustTime(time));
   }
 
   animation.seekSilently = function(time) {
     // const insTime = adjustTime(time);
-    if (children) { syncInstanceChildren(time, true); }
+    if (children) { syncAnimationChildren(time, true); }
     setAnimationsProgress(time);
   }
 
@@ -282,13 +282,13 @@ export function animate(params = {}) {
     if (!animation.paused) return;
     if (animation.completed) animation.reset();
     animation.paused = false;
-    activeInstances.push(animation);
+    activeAnimations.push(animation);
     resetTime();
     startEngine();
   }
 
   animation.reverse = function() {
-    toggleInstanceDirection();
+    toggleAnimationDirection();
     animation.completed = animation.reversed ? false : true;
     resetTime();
   }
@@ -299,7 +299,7 @@ export function animate(params = {}) {
   }
 
   animation.remove = function(targets) {
-    removeAnimatablesFromInstance(targets, animation);
+    removeAnimatablesFromAnimation(targets, animation);
   }
 
   animation.reset();

@@ -22,7 +22,7 @@ import {
 } from './animate.js';
 
 import {
-  activeInstances,
+  activeAnimations,
 } from './engine.js';
 
 function parseTimelineOffset(timelineOffset, timelineDuration) {
@@ -40,9 +40,9 @@ export function createTimeline(params = {}) {
   let tl = animate(params);
   tl.duration = 0;
   tl.add = function(instanceParams, timelineOffset) {
-    const tlIndex = activeInstances.indexOf(tl);
+    const tlIndex = activeAnimations.indexOf(tl);
     const children = tl.children;
-    if (tlIndex > -1) activeInstances.splice(tlIndex, 1);
+    if (tlIndex > -1) activeAnimations.splice(tlIndex, 1);
     let insParams = mergeObjects(instanceParams, replaceObjectProps(defaultTweenSettings, params));
     insParams.targets = insParams.targets || params.targets;
     const tlDuration = tl.duration;

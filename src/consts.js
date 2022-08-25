@@ -16,7 +16,7 @@ export const hexValuePrefix = '0x';
 
 // Default animation parameters
 
-export const defaultInstanceSettings = {
+export const defaultAnimationSettings = {
   update: noop,
   begin: noop,
   loopBegin: noop,

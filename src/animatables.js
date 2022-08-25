@@ -7,16 +7,16 @@ import {
 } from './cache.js';
 
 import {
+  activeAnimations,
+} from './engine.js';
+
+import {
   is,
   flattenArray,
   filterArray,
   arrayContains,
   toArray,
 } from './utils.js';
-
-import {
-  activeInstances,
-} from './engine.js';
 
 function registerTarget(target) {
   if (!is.dom(target)) return target;
@@ -44,38 +44,38 @@ export function getAnimatables(targets) {
 
 // Remove targets from animation
 
-function removeTweensWithTargets(targetsArray, tweens) {
-  for (let i = tweens.length; i--;) {
-    if (arrayContains(targetsArray, tweens[i].target)) {
-      tweens.splice(i, 1);
+function removeTweensWithTargets(targetsArray, tweensArray) {
+  for (let i = tweensArray.length; i--;) {
+    if (arrayContains(targetsArray, tweensArray[i].target)) {
+      tweensArray.splice(i, 1);
     }
   }
 }
 
-function removeAnimationsWithTargetsFromIntance(targetsArray, instance) {
-  const tweens = instance.tweens;
-  const children = instance.children;
+function removeTweensWithTargetsFromAnimation(targetsArray, animation) {
+  const tweens = animation.tweens;
+  const children = animation.children;
   for (let i = children.length; i--;) {
     const child = children[i];
     const childTweens = child.tweens;
     removeTweensWithTargets(targetsArray, childTweens);
     if (!childTweens.length && !child.children.length) children.splice(i, 1);
   }
-  // Return early to prevent instances created without targets (and without tweens) to be paused
+  // Return early to prevent animations created without targets (and without tweens) to be paused
   if (!tweens.length) return;
   removeTweensWithTargets(targetsArray, tweens);
-  if (!tweens.length && !children.length) instance.pause();
+  if (!tweens.length && !children.length) animation.pause();
 }
 
-export function removeAnimatablesFromInstance(targets, instance) {
+export function removeAnimatablesFromAnimation(targets, animation) {
   const targetsArray = parseTargets(targets);
-  removeAnimationsWithTargetsFromIntance(targetsArray, instance);
+  removeTweensWithTargetsFromAnimation(targetsArray, animation);
 }
 
-export function removeAnimatablesFromActiveInstances(targets) {
+export function removeAnimatablesFromActiveAnimations(targets) {
   const targetsArray = parseTargets(targets);
-  for (let i = activeInstances.length; i--;) {
-    const instance = activeInstances[i];
-    removeAnimationsWithTargetsFromIntance(targetsArray, instance);
+  for (let i = activeAnimations.length; i--;) {
+    const animation = activeAnimations[i];
+    removeTweensWithTargetsFromAnimation(targetsArray, animation);
   }
 }

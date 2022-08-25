@@ -22,11 +22,11 @@ import {
 } from './svg.js';
 
 import {
-  removeAnimatablesFromActiveInstances,
+  removeAnimatablesFromActiveAnimations,
 } from './animatables.js';
 
 import {
-  activeInstances,
+  activeAnimations,
 } from './engine.js';
 
 import {
@@ -47,8 +47,8 @@ const anime = animate;
 anime.version = '__packageVersion__';
 anime.speed = 1;
 anime.suspendWhenDocumentHidden = true;
-anime.running = activeInstances;
-anime.remove = removeAnimatablesFromActiveInstances;
+anime.running = activeAnimations;
+anime.remove = removeAnimatablesFromActiveAnimations;
 anime.get = getTargetValue;
 anime.set = (targets, props = {}) => { props.targets = targets; props.duration = 0; return animate(props); };
 anime.convertPx = convertValueUnit;
