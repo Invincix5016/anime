@@ -113,8 +113,12 @@ export function isDocumentHidden() {
 // Linked list
 
 export function addNodeToLinkedList(node, list, listType) {
-  const lastNode = listType === 'timeline' ? node._tail : node;
-  const prevNode = list._tail;
+  let lastNode = listType === 'timeline' ? node._tail : node;
+  let prevNode = list._tail;
+  let nextNode;
+  if (!lastNode) {
+    lastNode = node;
+  }
   node[listType] = list;
   if (!prevNode) {
     lastNode._next = list._head;
@@ -124,7 +128,7 @@ export function addNodeToLinkedList(node, list, listType) {
     prevNode._next = node;
   }
   node._previous = prevNode || list;
-  const nextNode = lastNode._next;
+  nextNode = lastNode._next;
   if (!nextNode) {
     list._tail = lastNode;
   } else {

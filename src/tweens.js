@@ -145,6 +145,7 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
       tween.cachedTransforms = cache.DOM.get(target).transforms;
     }
 
+    tween.processType = 'tween';
     tween.id = tweenId++;
     tween.groupId = groupId;
     tween.type = animationType;
@@ -166,6 +167,8 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
 
   return tweens;
 }
+
+// TODO: REMOVE
 
 export function getTweenProgress(fromNumber, toNumber, progressValue, roundValue) {
   let value = fromNumber + (progressValue * (toNumber - fromNumber));

@@ -93,6 +93,7 @@ export function createAnimation(params) {
   animation.duration = targetsLength ? maxDuration : tweenSettings.duration;
   animation.changeStartTime = targetsLength ? changeStartTime : tweenSettings.delay;
   animation.changeEndTime = targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay;
+  animation.lastTime = 0;
 
   return animation;
 }

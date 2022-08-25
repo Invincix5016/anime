@@ -24,11 +24,13 @@ import {
   filterArray,
   replaceObjectProps,
   mergeObjects,
+  addNodeToLinkedList,
 } from './utils.js';
 
 import {
   startEngine,
   activeInstances,
+  rootTimeline,
 } from './engine.js';
 
 import {
@@ -283,6 +285,7 @@ export function animate(params = {}) {
     if (instance.completed) instance.reset();
     instance.paused = false;
     activeInstances.push(instance);
+    addNodeToLinkedList(instance, rootTimeline, 'timeline');
     resetTime();
     startEngine();
   }
