@@ -71,11 +71,7 @@ export function animate(params = {}) {
 
   function seekChild(time, child, muteCallbacks) {
     if (child) {
-      if (!muteCallbacks) {
-        child.seek(time - child.timelineOffset);
-      } else {
-        child.seekSilently(time - child.timelineOffset);
-      }
+      child.seek(time - child.timelineOffset, muteCallbacks);
     }
   }
 
@@ -87,16 +83,14 @@ export function animate(params = {}) {
     }
   }
 
-  function setAnimationsProgress(insTime) {
+  function setTweensProgress(insTime) {
     let i = 0;
     const tweens = animation.tweens;
     const tweensLength = tweens.length;
     while (i < tweensLength) {
-      // // Only check for keyframes if there is more than one tween
-      // if (tweensLength) tween = filterArray(tweens, t => (insTime < t.end))[0] || tween;
       const prevTween = tweens[i - 1];
       const tween = tweens[i++];
-      if (prevTween && prevTween.groupId === tween.groupId && insTime < prevTween.end) continue;
+      if (prevTween && prevTween.groupId == tween.groupId && insTime < prevTween.end) continue;
       const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       const tweenProperty = tween.property;
       const tweenRound = tween.round;
@@ -156,17 +150,13 @@ export function animate(params = {}) {
     }
   }
 
-  function countIteration() {
-    if (animation.remainingLoops && animation.remainingLoops !== true) {
-      animation.remainingLoops--;
-    }
-  }
-
   function setAnimationProgress(engineTime) {
     const insDuration = animation.duration;
     const insChangeStartTime = animation.changeStartTime;
     const insChangeEndTime = insDuration - animation.changeEndTime;
     const insTime = adjustTime(engineTime);
+    let renderTime = insTime;
+    let canRender = 0;
     animation.progress = clamp((insTime / insDuration), 0, 1);
     animation.reversePlayback = insTime < animation.currentTime;
     if (children) { syncAnimationChildren(insTime); }
@@ -179,10 +169,12 @@ export function animate(params = {}) {
       animation.loopBegin(animation);
     }
     if (insTime <= insChangeStartTime && animation.currentTime !== 0) {
-      setAnimationsProgress(0);
+      renderTime = 0;
+      canRender = 1;
     }
     if ((insTime >= insChangeEndTime && animation.currentTime !== insDuration) || !insDuration) {
-      setAnimationsProgress(insDuration);
+      renderTime = insDuration;
+      canRender = 1;
     }
     if (insTime > insChangeStartTime && insTime < insChangeEndTime) {
       if (!animation.changeBegan) {
@@ -191,7 +183,7 @@ export function animate(params = {}) {
         animation.changeBegin(animation);
       }
       animation.change(animation);
-      setAnimationsProgress(insTime);
+      canRender = 1;
     } else {
       if (animation.changeBegan) {
         animation.changeCompleted = true;
@@ -199,11 +191,14 @@ export function animate(params = {}) {
         animation.changeComplete(animation);
       }
     }
-    animation.currentTime = clamp(insTime, 0, insDuration);
+    animation.currentTime = clamp(renderTime, 0, insDuration);
+    if (canRender) setTweensProgress(animation.currentTime);
     if (animation.began) animation.update(animation);
     if (engineTime >= insDuration) {
       lastTime = 0;
-      countIteration();
+      if (animation.remainingLoops && animation.remainingLoops !== true) {
+        animation.remainingLoops--;
+      }
       if (!animation.remainingLoops) {
         animation.paused = true;
         if (!animation.completed) {
@@ -241,7 +236,7 @@ export function animate(params = {}) {
     childrenLength = children.length;
     for (let i = childrenLength; i--;) animation.children[i].reset();
     if (animation.reversed && animation.loop !== true || (direction === 'alternate' && animation.loop === 1)) animation.remainingLoops++;
-    setAnimationsProgress(animation.reversed ? animation.duration : 0);
+    setTweensProgress(animation.reversed ? animation.duration : 0);
   }
 
   // internal method (for engine) to adjust animation timings before restoring engine ticks (rAF)
@@ -253,14 +248,13 @@ export function animate(params = {}) {
     setAnimationProgress((now + (lastTime - startTime)) * settings.speed);
   }
 
-  animation.seek = function(time) {
-    setAnimationProgress(adjustTime(time));
-  }
-
-  animation.seekSilently = function(time) {
-    // const insTime = adjustTime(time);
-    if (children) { syncAnimationChildren(time, true); }
-    setAnimationsProgress(time);
+  animation.seek = function(time, muteCallbacks) {
+    if (muteCallbacks) {
+      if (children) { syncAnimationChildren(time, true); }
+      setTweensProgress(time);
+    } else {
+      setAnimationProgress(adjustTime(time));
+    }
   }
 
   animation.pause = function() {
