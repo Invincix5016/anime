@@ -4,9 +4,10 @@ import {
 } from './consts.js';
 
 import {
+  is,
   replaceObjectProps,
   mergeObjects,
-  is,
+  addNodeToLinkedList,
 } from './utils.js';
 
 import {
@@ -53,6 +54,7 @@ export function createTimeline(params = {}) {
     const ins = animate(insParams);
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
+    addNodeToLinkedList(ins, tl, 'timeline');
     const timings = getTimingsFromAnimationsOrInstances(children, params);
     tl.changeStartTime = timings.changeStartTime;
     tl.changeEndTime = timings.changeEndTime;

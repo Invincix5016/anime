@@ -152,6 +152,13 @@
 
     console.log(tl);
 
+    let next = tl._next;
+
+    while (next) {
+      console.log(next);
+      next = next._next;
+    }
+
     // test('stroke-dasharray on line 1 element', () => {
     //   return expect(line1.getAttribute('stroke-dasharray')).toBe('138.59292602539062');
     // });

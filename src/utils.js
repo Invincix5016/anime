@@ -109,3 +109,29 @@ export const isBrowser = !is.und(window) && !is.und(window.document);
 export function isDocumentHidden() {
   return isBrowser && document.hidden;
 }
+
+// Linked list
+
+export function addNodeToLinkedList(node, list, listType) {
+  const lastNode = listType === 'timeline' ? node._tail : node;
+  const prevNode = list._tail;
+  node[listType] = list;
+  if (!prevNode) {
+    lastNode._next = list._head;
+    list._head = node;
+  } else {
+    lastNode._next = prevNode._next;
+    prevNode._next = node;
+  }
+  node._previous = prevNode || list;
+  const nextNode = lastNode._next;
+  if (!nextNode) {
+    list._tail = lastNode;
+  } else {
+    nextNode._previous = node;
+  }
+  if (!list._next) {
+    list._next = list._head;
+  }
+  return node;
+}

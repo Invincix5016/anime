@@ -8,6 +8,7 @@ import {
   is,
   replaceObjectProps,
   mergeObjects,
+  addNodeToLinkedList,
 } from './utils.js';
 
 import {
@@ -80,7 +81,7 @@ export function createAnimation(params) {
     }
   }
 
-  return mergeObjects(instanceSettings, {
+  const animation = mergeObjects(instanceSettings, {
     id: animationsId++,
     targets: targets,
     tweens: tweens,
@@ -88,5 +89,12 @@ export function createAnimation(params) {
     changeStartTime: targetsLength ? changeStartTime : tweenSettings.delay,
     changeEndTime: targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay,
     children: [],
+    childrenList: {},
   });
+
+  for (let i = 0; i < tweens.length; i++) {
+    addNodeToLinkedList(tweens[i], animation, 'animation');
+  }
+
+  return animation;
 }

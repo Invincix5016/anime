@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timeline tests | anime.js</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="assets/css/styles.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: absolute;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    #test-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 2rem;
+      max-width: 32rem;
+    }
+    #timeline-test {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    #progress-bar {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="test-wrapper">
+    <div id="timeline-test">
+      <div id="square-1" class="square red"></div>
+      <div id="square-2" class="square red"></div>
+      <div id="square-3" class="square red"></div>
+    </div>
+    <input id="progress-bar" step=".001" type="range" min="0" max="1" value="0">
+  </div>
+  <script type="module">
+    import anime from '../../src/anime.js';
+    import {
+      addNodeToLinkedList,
+      // addLinkedListToLinkedList,
+      // addNodeToLinkedList2,
+    } from '../../src/utils.js';
+
+
+    const timeline1 = { id: 'timeline 1',}
+    const fakeAnimation1 = { id: 'animation 1',}
+    const fakeTween1 = { id: 'tween 1',}
+    const fakeTween2 = { id: 'tween 2',}
+    const fakeAnimation2 = { id: 'animation 2',}
+    const fakeTween3 = { id: 'tween 3',}
+    const fakeTween4 = { id: 'tween 4',}
+    const fakeAnimation3 = { id: 'animation 3',}
+    const fakeTween5 = { id: 'tween 5',}
+    const fakeTween6 = { id: 'tween 6',}
+    const fakeTween7 = { id: 'tween 7',}
+
+
+    addNodeToLinkedList(fakeTween1, fakeAnimation1, 'animation');
+    addNodeToLinkedList(fakeTween2, fakeAnimation1, 'animation');
+
+    addNodeToLinkedList(fakeTween3, fakeAnimation2, 'animation');
+    addNodeToLinkedList(fakeTween4, fakeAnimation2, 'animation');
+
+    addNodeToLinkedList(fakeTween5, fakeAnimation3, 'animation');
+    addNodeToLinkedList(fakeTween6, fakeAnimation3, 'animation');
+    addNodeToLinkedList(fakeTween7, fakeAnimation3, 'animation');
+
+    console.log(fakeAnimation1);
+    console.log(fakeAnimation2);
+    console.log(fakeAnimation3);
+
+    addNodeToLinkedList(fakeAnimation1, timeline1, 'timeline');
+    addNodeToLinkedList(fakeAnimation2, timeline1, 'timeline');
+    addNodeToLinkedList(fakeAnimation3, timeline1, 'timeline');
+
+    console.log(timeline1);
+
+    console.log('LOOP START');
+
+    let next = timeline1._next;
+
+    while (next) {
+      console.log(next);
+      next = next._next;
+    }
+
+
+  </script>
+</body>
+</html>
