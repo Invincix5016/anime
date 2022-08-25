@@ -145,7 +145,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
       tween.cachedTransforms = cache.DOM.get(target).transforms;
     }
 
-    tween.processType = 'tween';
     tween.id = tweenId++;
     tween.groupId = groupId;
     tween.type = animationType;
@@ -160,6 +159,7 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.progress = 0;
     tween.currentValue = 0;
+    tween._isTween = true;
     prevTween = tween;
     tweens.push(tween);
 

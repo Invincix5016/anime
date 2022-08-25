@@ -216,36 +216,6 @@ function isDocumentHidden() {
   return isBrowser && document.hidden;
 }
 
-// Linked list
-
-function addNodeToLinkedList(node, list, listType) {
-  let lastNode = listType === 'timeline' ? node._tail : node;
-  let prevNode = list._tail;
-  let nextNode;
-  if (!lastNode) {
-    lastNode = node;
-  }
-  node[listType] = list;
-  if (!prevNode) {
-    lastNode._next = list._head;
-    list._head = node;
-  } else {
-    lastNode._next = prevNode._next;
-    prevNode._next = node;
-  }
-  node._previous = prevNode || list;
-  nextNode = lastNode._next;
-  if (!nextNode) {
-    list._tail = lastNode;
-  } else {
-    nextNode._previous = node;
-  }
-  if (!list._next) {
-    list._next = list._head;
-  }
-  return node;
-}
-
 // Cache
 
 const cache = {
@@ -499,172 +469,34 @@ function getTransformValue(target, propName, clearCache) {
 }
 
 const activeInstances = [];
-const rootTimeline = {
-  currentTime: 0
-};
-
-function adjustTime(animation, time) {
-  return animation.reversed ? animation.duration - time : time;
-}
-
-function getTweenProgress$1(fromNumber, toNumber, progressValue, roundValue) {
-  let value = fromNumber + (progressValue * (toNumber - fromNumber));
-  return !roundValue ? value : round(value, roundValue);
-}
-
 
 let raf;
-let nextProcess;
 
 function tick(t) {
-  raf = requestAnimationFrame(tick);
-  rootTimeline.currentTime = t;
-  nextProcess = rootTimeline._next;
-  while (nextProcess) {
-    if (nextProcess._isTween) {
-      const animationTime = nextProcess.animation.currentTime;
-      const canRender = !(nextProcess._previous && nextProcess._previous.groupId === nextProcess.groupId && animationTime < nextProcess._previous.end);
-      if (canRender) {
-        const tweenProgress = nextProcess.easing(clamp(animationTime - nextProcess.start - nextProcess.delay, 0, nextProcess.duration) / nextProcess.duration);
-        const tweenProperty = nextProcess.property;
-        const tweenRound = nextProcess.round;
-        const tweenFrom = nextProcess.from;
-        const tweenTo = nextProcess.to;
-        const tweenType = nextProcess.type;
-        const tweenValueType = tweenTo.type;
-        const tweenTarget = nextProcess.target;
-
-        let value;
-
-        if (tweenValueType == valueTypes.NUMBER) {
-          value = getTweenProgress$1(tweenFrom.number, tweenTo.number, tweenProgress, tweenRound);
-        } else if (tweenValueType == valueTypes.UNIT) {
-          value = getTweenProgress$1(tweenFrom.number, tweenTo.number, tweenProgress, tweenRound) + tweenTo.unit;
-        } else if (tweenValueType == valueTypes.COLOR) {
-          const fn = tweenFrom.numbers;
-          const tn = tweenTo.numbers;
-          value = rgbaString;
-          value += getTweenProgress$1(fn[0], tn[0], tweenProgress, 1) + commaString;
-          value += getTweenProgress$1(fn[1], tn[1], tweenProgress, 1) + commaString;
-          value += getTweenProgress$1(fn[2], tn[2], tweenProgress, 1) + commaString;
-          value += getTweenProgress$1(fn[3], tn[3], tweenProgress) + closeParenthesisString;
-        } else if (tweenValueType == valueTypes.PATH) {
-          value = getPathProgress(tweenTo.path, tweenProgress * tweenTo.number, tweenRound) + tweenTo.unit;
-        } else if (tweenValueType == valueTypes.COMPLEX) {
-          value = tweenTo.strings[0];
-          for (let j = 0, l = tweenTo.numbers.length; j < l; j++) {
-            const number = getTweenProgress$1(tweenFrom.numbers[j], tweenTo.numbers[j], tweenProgress, tweenRound);
-            const nextString = tweenTo.strings[j + 1];
-            if (!nextString) {
-              value += number;
-            } else {
-              value += number + nextString;
-            }
-          }
-        }
-
-        if (tweenType == animationTypes.OBJECT) {
-          tweenTarget[tweenProperty] = value;
-        } else if (tweenType == animationTypes.TRANSFORM) {
-          nextProcess.cachedTransforms[tweenProperty] = value;
-          if (nextProcess.renderTransforms) {
-            let str = emptyString;
-            for (let key in nextProcess.cachedTransforms) {
-              str += transformsFragmentStrings[key]+nextProcess.cachedTransforms[key]+closeParenthesisWithSpaceString;
-            }
-            tweenTarget.style.transform = str;
-          }
-        } else if (tweenType == animationTypes.CSS) {
-          tweenTarget.style[tweenProperty] = value;
-        } else if (tweenType == animationTypes.ATTRIBUTE) {
-          tweenTarget.setAttribute(tweenProperty, value);
-        }
-        nextProcess.progress = tweenProgress;
-        nextProcess.currentValue = value;
-      }
+  // memo on algorithm issue:
+  // dangerous iteration over mutable `activeInstances`
+  // (that collection may be updated from within callbacks of `tick`-ed animation instances)
+  let activeInstancesLength = activeInstances.length;
+  let i = 0;
+  while (i < activeInstancesLength) {
+    const activeInstance = activeInstances[i];
+    if (!activeInstance.paused) {
+      activeInstance.tick(t);
+      i++;
     } else {
-      nextProcess.now = nextProcess.timeline.currentTime;
-      if (!nextProcess.startTime) nextProcess.startTime = nextProcess.now;
-      const engineTime = (nextProcess.now + (nextProcess.lastTime - nextProcess.startTime)) * settings.speed;
-      const insDuration = nextProcess.duration;
-      const insChangeStartTime = nextProcess.changeStartTime;
-      const insChangeEndTime = insDuration - nextProcess.changeEndTime;
-      const animTime = adjustTime(nextProcess, engineTime);
-      // console.log(animTime, engineTime);
-      nextProcess.progress = clamp((animTime / insDuration), 0, 1);
-      nextProcess.reversePlayback = animTime < animTime;
-      // if (children) { syncInstanceChildren(animTime); }
-      if (!nextProcess.began && animTime > 0) {
-        nextProcess.began = true;
-        nextProcess.begin(nextProcess);
-      }
-      if (!nextProcess.loopBegan && animTime > 0) {
-        nextProcess.loopBegan = true;
-        nextProcess.loopBegin(nextProcess);
-      }
-      // if (animTime <= insChangeStartTime && animTime !== 0) {
-      //   // setAnimationsProgress(0);
-      // }
-      // if ((animTime >= insChangeEndTime && animTime !== insDuration) || !insDuration) {
-      //   // setAnimationsProgress(insDuration);
-      // }
-      if (animTime > insChangeStartTime && animTime < insChangeEndTime) {
-        if (!nextProcess.changeBegan) {
-          nextProcess.changeBegan = true;
-          nextProcess.changeCompleted = false;
-          nextProcess.changeBegin(nextProcess);
-        }
-        nextProcess.change(nextProcess);
-        // setAnimationsProgress(animTime);
-      } else {
-        if (nextProcess.changeBegan) {
-          nextProcess.changeCompleted = true;
-          nextProcess.changeBegan = false;
-          nextProcess.changeComplete(nextProcess);
-        }
-      }
-      nextProcess.currentTime = clamp(animTime, 0, insDuration);
-      if (nextProcess.began) nextProcess.update(nextProcess);
-      if (engineTime >= insDuration) {
-        nextProcess.lastTime = 0;
-        if (nextProcess.remainingLoops && nextProcess.remainingLoops !== true) {
-          nextProcess.remainingLoops--;
-        }
-        if (!nextProcess.remainingLoops) {
-          nextProcess.paused = true;
-          if (!nextProcess.completed) {
-            nextProcess.completed = true;
-            nextProcess.loopComplete(nextProcess);
-            nextProcess.complete(nextProcess);
-            // nextProcess.resolve();
-            // nextProcess.promise = makePromise(nextProcess);
-          }
-        } else {
-          nextProcess.startTime = nextProcess.now;
-          nextProcess.loopComplete(nextProcess);
-          nextProcess.loopBegan = false;
-          // if (nextProcess.direction === 'alternate') {
-          //   toggleInstanceDirection();
-          // }
-        }
-      }
+      activeInstances.splice(i, 1);
+      activeInstancesLength--;
     }
-    nextProcess = nextProcess._next;
   }
+  raf = i > 0 ? requestAnimationFrame(tick) : undefined;
 }
 
-// export function startEngine() {
-//   if (!raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && activeInstances.length > 0) {
-//     raf = requestAnimationFrame(tick);
-//     console.log(rootTimeline);
-//   }
-// }
-
 function startEngine() {
-  if (!raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && rootTimeline._next) {
+  if (!raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && activeInstances.length > 0) {
     raf = requestAnimationFrame(tick);
   }
 }
+
 
 function handleVisibilityChange() {
 
@@ -866,7 +698,7 @@ function getPathPoint(pathEl, progress, offset = 0) {
   return pathEl.getPointAtLength(length);
 }
 
-function getPathProgress$1(pathObject, progress, roundValue) {
+function getPathProgress(pathObject, progress, roundValue) {
   const pathEl = pathObject.el;
   const pathProperty = pathObject.property;
   const isPathTargetInsideSVG = pathObject.isTargetInsideSVG;
@@ -1286,7 +1118,6 @@ function convertKeyframesToTweens(keyframes, target, propertyName, animationType
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.progress = 0;
     tween.currentValue = 0;
-    tween._isTween = true;
     prevTween = tween;
     tweens.push(tween);
 
@@ -1294,8 +1125,6 @@ function convertKeyframesToTweens(keyframes, target, propertyName, animationType
 
   return tweens;
 }
-
-// TODO: REMOVE
 
 function getTweenProgress(fromNumber, toNumber, progressValue, roundValue) {
   let value = fromNumber + (progressValue * (toNumber - fromNumber));
@@ -1311,13 +1140,7 @@ function createAnimation(params) {
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
   const targets = getAnimatables(params.targets);
   const targetsLength = targets.length;
-
-  const animation = mergeObjects(instanceSettings, {
-    id: animationsId++,
-    targets: targets,
-    children: [],
-    tweens: [],
-  });
+  const tweens = [];
 
   let maxDuration = 0;
   let changeStartTime;
@@ -1343,30 +1166,30 @@ function createAnimation(params) {
           if (lastTween.end > maxDuration) maxDuration = lastTween.end;
           if (lastTweenChangeEndTime > changeEndTime) changeEndTime = lastTweenChangeEndTime;
           if (type == animationTypes.TRANSFORM) {
-            lastTransformGroupIndex = animation.tweens.length;
+            lastTransformGroupIndex = tweens.length;
             lastTransformGroupLength = lastTransformGroupIndex + tweensGroupLength;
           }
-          animation.tweens.push(...tweensGroup);
-          tweensGroup.forEach(tween => {
-            addNodeToLinkedList(tween, animation, 'animation');
-          });
+          tweens.push(...tweensGroup);
           tweensGroupsId++;
         }
       }
       if (!is.und(lastTransformGroupIndex)) {
         for (let t = lastTransformGroupIndex; t < lastTransformGroupLength; t++) {
-          animation.tweens[t].renderTransforms = true;
+          tweens[t].renderTransforms = true;
         }
       }
     }
   }
 
-  animation.duration = targetsLength ? maxDuration : tweenSettings.duration;
-  animation.changeStartTime = targetsLength ? changeStartTime : tweenSettings.delay;
-  animation.changeEndTime = targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay;
-  animation.lastTime = 0;
-
-  return animation;
+  return mergeObjects(instanceSettings, {
+    id: animationsId++,
+    targets: targets,
+    tweens: tweens,
+    duration: targetsLength ? maxDuration : tweenSettings.duration,
+    changeStartTime: targetsLength ? changeStartTime : tweenSettings.delay,
+    changeEndTime: targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay,
+    children: [],
+  });
 }
 
 function animate(params = {}) {
@@ -1453,7 +1276,7 @@ function animate(params = {}) {
         value += getTweenProgress(fn[2], tn[2], tweenProgress, 1) + commaString;
         value += getTweenProgress(fn[3], tn[3], tweenProgress) + closeParenthesisString;
       } else if (tweenValueType == valueTypes.PATH) {
-        value = getPathProgress$1(tweenTo.path, tweenProgress * tweenTo.number, tweenRound) + tweenTo.unit;
+        value = getPathProgress(tweenTo.path, tweenProgress * tweenTo.number, tweenRound) + tweenTo.unit;
       } else if (tweenValueType == valueTypes.COMPLEX) {
         value = tweenTo.strings[0];
         for (let j = 0, l = tweenTo.numbers.length; j < l; j++) {
@@ -1605,7 +1428,6 @@ function animate(params = {}) {
     if (instance.completed) instance.reset();
     instance.paused = false;
     activeInstances.push(instance);
-    addNodeToLinkedList(instance, rootTimeline, 'timeline');
     resetTime();
     startEngine();
   };
@@ -1697,7 +1519,6 @@ function createTimeline(params = {}) {
     const ins = animate(insParams);
     ins.duration + insParams.timelineOffset;
     children.push(ins);
-    // addNodeToLinkedList(ins, tl, 'timeline');
     const timings = getTimingsFromAnimationsOrInstances(children, params);
     tl.changeStartTime = timings.changeStartTime;
     tl.changeEndTime = timings.changeEndTime;
