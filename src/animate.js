@@ -38,18 +38,18 @@ import {
 } from './animatables.js';
 
 export function animate(params = {}) {
-  // let _startTime = 0, _lastTime = 0, _now = 0;
+  let startTime = 0, lastTime = 0, now = 0;
   let children, childrenLength = 0;
-  // let resolve = null;
+  let resolve = null;
 
-  // function makePromise(animation) {
-  //   const promise = window.Promise && new Promise(_resolve => resolve = _resolve);
-  //   animation.finished = promise;
-  //   return promise;
-  // }
+  function makePromise(animation) {
+    const promise = window.Promise && new Promise(_resolve => resolve = _resolve);
+    animation.finished = promise;
+    return promise;
+  }
 
-  const animation = createAnimation(params);
-  // let promise = makePromise(animation);
+  let animation = createAnimation(params);
+  let promise = makePromise(animation);
 
   function toggleAnimationDirection() {
     const direction = animation.direction;
@@ -65,25 +65,29 @@ export function animate(params = {}) {
   }
 
   function resetTime() {
-    animation._startTime = 0;
-    animation._lastTime = adjustTime(animation.currentTime) * (1 / settings.speed);
+    startTime = 0;
+    lastTime = adjustTime(animation.currentTime) * (1 / settings.speed);
   }
 
-  function seekChild(time, child, ignoreCallbacks) {
+  function seekChild(time, child, muteCallbacks) {
     if (child) {
-      child.seek(time - child.timelineOffset, ignoreCallbacks);
+      if (!muteCallbacks) {
+        child.seek(time - child.timelineOffset);
+      } else {
+        child.seekSilently(time - child.timelineOffset);
+      }
     }
   }
 
-  function syncAnimationChildren(time, ignoreCallbacks) {
+  function syncAnimationChildren(time, muteCallbacks) {
     if (!animation.reversePlayback) {
-      for (let i = 0; i < childrenLength; i++) seekChild(time, children[i], ignoreCallbacks);
+      for (let i = 0; i < childrenLength; i++) seekChild(time, children[i], muteCallbacks);
     } else {
-      for (let j = childrenLength; j--;) seekChild(time, children[j], ignoreCallbacks);
+      for (let j = childrenLength; j--;) seekChild(time, children[j], muteCallbacks);
     }
   }
 
-  function setTweensProgress(insTime) {
+  function setAnimationsProgress(insTime) {
     let i = 0;
     const tweens = animation.tweens;
     const tweensLength = tweens.length;
@@ -152,71 +156,65 @@ export function animate(params = {}) {
     }
   }
 
-  function setAnimationProgress(engineTime, ignoreCallbacks) {
+  function countIteration() {
+    if (animation.remainingLoops && animation.remainingLoops !== true) {
+      animation.remainingLoops--;
+    }
+  }
+
+  function setAnimationProgress(engineTime) {
     const insDuration = animation.duration;
     const insChangeStartTime = animation.changeStartTime;
     const insChangeEndTime = insDuration - animation.changeEndTime;
     const insTime = adjustTime(engineTime);
-    let renderTime = insTime;
-    let needsRender = ignoreCallbacks;
     animation.progress = clamp((insTime / insDuration), 0, 1);
-    if (children) { syncAnimationChildren(insTime, ignoreCallbacks); }
+    animation.reversePlayback = insTime < animation.currentTime;
+    if (children) { syncAnimationChildren(insTime); }
+    if (!animation.began && animation.currentTime > 0) {
+      animation.began = true;
+      animation.begin(animation);
+    }
+    if (!animation.loopBegan && animation.currentTime > 0) {
+      animation.loopBegan = true;
+      animation.loopBegin(animation);
+    }
     if (insTime <= insChangeStartTime && animation.currentTime !== 0) {
-      renderTime = 0;
-      needsRender = 1;
+      setAnimationsProgress(0);
     }
-    if (!insDuration || (insTime >= insChangeEndTime && animation.currentTime !== insDuration)) {
-      renderTime = insDuration;
-      needsRender = 1;
+    if ((insTime >= insChangeEndTime && animation.currentTime !== insDuration) || !insDuration) {
+      setAnimationsProgress(insDuration);
     }
-    if (!ignoreCallbacks) {
-      animation.reversePlayback = insTime < animation.currentTime;
-      if (!animation.began && animation.currentTime > 0) {
-        animation.began = true;
-        animation.begin(animation);
+    if (insTime > insChangeStartTime && insTime < insChangeEndTime) {
+      if (!animation.changeBegan) {
+        animation.changeBegan = true;
+        animation.changeCompleted = false;
+        animation.changeBegin(animation);
       }
-      if (!animation.loopBegan && animation.currentTime > 0) {
-        animation.loopBegan = true;
-        animation.loopBegin(animation);
-      }
-      if (insTime > insChangeStartTime && insTime < insChangeEndTime) {
-        if (!animation.changeBegan) {
-          animation.changeBegan = true;
-          animation.changeCompleted = false;
-          animation.changeBegin(animation);
-        }
-        animation.change(animation);
-        needsRender = 1;
-      } else {
-        if (animation.changeBegan) {
-          animation.changeCompleted = true;
-          animation.changeBegan = false;
-          animation.changeComplete(animation);
-        }
+      animation.change(animation);
+      setAnimationsProgress(insTime);
+    } else {
+      if (animation.changeBegan) {
+        animation.changeCompleted = true;
+        animation.changeBegan = false;
+        animation.changeComplete(animation);
       }
     }
-    animation.currentTime = clamp(renderTime, 0, insDuration);
-    if (needsRender) {
-      setTweensProgress(animation.currentTime);
-    }
-    if (ignoreCallbacks) return;
+    animation.currentTime = clamp(insTime, 0, insDuration);
     if (animation.began) animation.update(animation);
     if (engineTime >= insDuration) {
-      animation._lastTime = 0;
-      if (animation.remainingLoops && animation.remainingLoops !== true) {
-        animation.remainingLoops--;
-      }
+      lastTime = 0;
+      countIteration();
       if (!animation.remainingLoops) {
         animation.paused = true;
         if (!animation.completed) {
           animation.completed = true;
           animation.loopComplete(animation);
           animation.complete(animation);
-          // resolve();
-          // promise = makePromise(animation);
+          resolve();
+          promise = makePromise(animation);
         }
       } else {
-        animation._startTime = animation._now;
+        startTime = now;
         animation.loopComplete(animation);
         animation.loopBegan = false;
         if (animation.direction === 'alternate') {
@@ -243,28 +241,26 @@ export function animate(params = {}) {
     childrenLength = children.length;
     for (let i = childrenLength; i--;) animation.children[i].reset();
     if (animation.reversed && animation.loop !== true || (direction === 'alternate' && animation.loop === 1)) animation.remainingLoops++;
-    // setTweensProgress(animation.reversed ? animation.duration : 0);
-    setAnimationProgress(animation.reversed ? animation.duration : 0, true);
+    setAnimationsProgress(animation.reversed ? animation.duration : 0);
   }
 
   // internal method (for engine) to adjust animation timings before restoring engine ticks (rAF)
   animation._onDocumentVisibility = resetTime;
 
-  animation.tick = function(animation, t) {
-    animation._now = t;
-    if (!animation._startTime) animation._startTime = animation._now;
-    setAnimationProgress((animation._now + (animation._lastTime - animation._startTime)) * settings.speed);
+  animation.tick = function(t) {
+    now = t;
+    if (!startTime) startTime = now;
+    setAnimationProgress((now + (lastTime - startTime)) * settings.speed);
   }
 
-  animation.seek = function(time, muteCallbacks) {
-    setAnimationProgress(adjustTime(time), muteCallbacks);
+  animation.seek = function(time) {
+    setAnimationProgress(adjustTime(time));
   }
 
   animation.seekSilently = function(time) {
-    // // const insTime = adjustTime(time);
-    // if (children) { syncAnimationChildren(time, true); }
-    // setTweensProgress(time);
-    setAnimationProgress(adjustTime(time), true);
+    // const insTime = adjustTime(time);
+    if (children) { syncAnimationChildren(time, true); }
+    setAnimationsProgress(time);
   }
 
   animation.pause = function() {

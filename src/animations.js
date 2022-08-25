@@ -87,9 +87,6 @@ export function createAnimation(params) {
     duration: targetsLength ? maxDuration : tweenSettings.duration,
     changeStartTime: targetsLength ? changeStartTime : tweenSettings.delay,
     changeEndTime: targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay,
-    _now: 0,
-    _startTime: 0,
-    _lastTime: 0,
     children: [],
   });
 }
