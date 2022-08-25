@@ -49,7 +49,7 @@ export function createTimeline(params = {}) {
     insParams.autoplay = false;
     insParams.direction = tl.direction;
     insParams.timelineOffset = parseTimelineOffset(timelineOffset, tlDuration);
-    tl.seekSilently(insParams.timelineOffset);
+    tl.seek(insParams.timelineOffset, true);
     const ins = animate(insParams);
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
@@ -57,7 +57,7 @@ export function createTimeline(params = {}) {
     tl.changeStartTime = timings.changeStartTime;
     tl.changeEndTime = timings.changeEndTime;
     tl.duration = timings.duration;
-    tl.seekSilently(0);
+    tl.seek(0, true);
     tl.reset();
     if (tl.autoplay) tl.play();
     return tl;

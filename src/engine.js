@@ -18,9 +18,9 @@ function tick(t) {
   let activeAnimationsLength = activeAnimations.length;
   let i = 0;
   while (i < activeAnimationsLength) {
-    const activeInstance = activeAnimations[i];
-    if (!activeInstance.paused) {
-      activeInstance.tick(t);
+    const activeAnimation = activeAnimations[i];
+    if (!activeAnimation.paused) {
+      activeAnimation.tick(activeAnimation, t);
       i++;
     } else {
       activeAnimations.splice(i, 1);
