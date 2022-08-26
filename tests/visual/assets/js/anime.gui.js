@@ -56,7 +56,7 @@ function createCssRules() {
       background-color: ${blackColor};
       background-repeat: repeat-x;
       background-position: left 0px bottom 0px;
-      background-size: 8em 16px, 4em 10px, .2em 4px;
+      background-size: 8em 10px, 4em 7px, .2em 4px;
       background-image: linear-gradient(to right, ${whiteColor} 1px, transparent 1px),
                         linear-gradient(to right, ${whiteColor} 1px, transparent 1px),
                         linear-gradient(to right, ${whiteColor} 1px, transparent 1px);

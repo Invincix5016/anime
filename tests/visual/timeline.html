@@ -30,9 +30,6 @@
       align-items: center;
       padding: 2rem;
     }
-    #progress-bar {
-      width: 100%;
-    }
     .square {
       position: relative;
     }
@@ -45,7 +42,6 @@
       <div id="square-2" class="square red"></div>
       <div id="square-3" class="square red"></div>
     </div>
-    <input id="progress-bar" step=".001" type="range" min="0" max="1" value="0">
   </div>
   <script type="module">
     import anime from '../../src/anime.js';
@@ -60,17 +56,11 @@
     const green = '#18FF74';
     const yellow = '#F6FF56';
 
-    const seekProgressEl = document.getElementById('progress-bar');
-
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
       duration: duration,
       direction: 'alternate',
       autoplay: true,
-      update: (a) => {
-        // console.log(a);
-        seekProgressEl.value = a.progress;
-      }
     })
     .add({
       targets: '#square-1',
@@ -156,31 +146,7 @@
       delay: anime.stagger(100),
     }, '-=' + duration)
 
-    // seekProgressEl.onmousedown = function() {
-    //   tl.pause();
-    // };
-
-    // document.body.onkeyup = function(e) {
-    //   if (e.code == 'Space') {
-    //     if (tl.paused) {
-    //       tl.play()
-    //     } else {
-    //       tl.pause();
-    //     }
-    //   }
-    // }
-
-    // seekProgressEl.oninput = function() {
-    //   tl.seek(tl.duration * (seekProgressEl.value));
-    // };
-
-    // console.log(tl);
-
     createGUI(tl);
-
-    // test('stroke-dasharray on line 1 element', () => {
-    //   return expect(line1.getAttribute('stroke-dasharray')).toBe('138.59292602539062');
-    // });
 
   </script>
 </body>
