@@ -86,6 +86,8 @@
       targets: '#square-3',
       translateY: -200,
       backgroundColor: green,
+      duration: 700,
+      endDelay: 300,
     })
     .add({
       targets: '.square',
@@ -154,25 +156,25 @@
       delay: anime.stagger(100),
     }, '-=' + duration)
 
-    seekProgressEl.onmousedown = function() {
-      tl.pause();
-    };
+    // seekProgressEl.onmousedown = function() {
+    //   tl.pause();
+    // };
 
-    document.body.onkeyup = function(e) {
-      if (e.code == 'Space') {
-        if (tl.paused) {
-          tl.play()
-        } else {
-          tl.pause();
-        }
-      }
-    }
+    // document.body.onkeyup = function(e) {
+    //   if (e.code == 'Space') {
+    //     if (tl.paused) {
+    //       tl.play()
+    //     } else {
+    //       tl.pause();
+    //     }
+    //   }
+    // }
 
-    seekProgressEl.oninput = function() {
-      tl.seek(tl.duration * (seekProgressEl.value));
-    };
+    // seekProgressEl.oninput = function() {
+    //   tl.seek(tl.duration * (seekProgressEl.value));
+    // };
 
-    console.log(tl);
+    // console.log(tl);
 
     createGUI(tl);
 
