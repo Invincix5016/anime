@@ -119,6 +119,7 @@ function getTargetColor(target) {
   if (!color) {
     color = getColor();
     targetColors.set(target, color);
+    target.style.boxShadow = `0 0 0 4px ${blackColor}, 0 0 0 8px ${color}`;
   }
   return color;
 }
@@ -207,13 +208,13 @@ function createAnimationBlock(animation) {
   animation.tweens.forEach((tween, i) => {
     const target = tween.target;
     const property = tween.property;
-    // if (currentTarget !== target) {
-    //   currentTarget = target;
-    //   currentTargetColor = getTargetColor(target);
-    //   const targetNameLabel = createSidebarLabel('Target ' + i, `color: ${currentTargetColor}`);
-    //   el.appendChild(targetNameLabel);
-    //   playHeadHeight++;
-    // }
+    if (currentTarget !== target) {
+      currentTarget = target;
+      currentTargetColor = getTargetColor(target);
+      // const targetNameLabel = createSidebarLabel('Target ' + i, `color: ${currentTargetColor}`);
+      // el.appendChild(targetNameLabel);
+      // playHeadHeight++;
+    }
     const tweenBLockEl = createTweenBlock(animation.timelineOffset, tween);
     tweenBLockEl.style.color = currentTargetColor;
     el.appendChild(tweenBLockEl);
