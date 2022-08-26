@@ -36,7 +36,7 @@ function parseTargets(targets) {
   return filterArray(targetsArray, (item, pos, self) => self.indexOf(item) === pos);
 }
 
-export function getAnimatables(targets) {
+export function getTargets(targets) {
   const parsed = parseTargets(targets);
   const total = parsed.length;
   return parsed.map(registerTarget);

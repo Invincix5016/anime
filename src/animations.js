@@ -15,7 +15,7 @@ import {
 } from './properties.js';
 
 import {
-  getAnimatables,
+  getTargets,
 } from './animatables.js';
 
 import {
@@ -37,7 +37,7 @@ export function createAnimation(params) {
   const instanceSettings = replaceObjectProps(defaultAnimationSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
-  const targets = getAnimatables(params.targets);
+  const targets = getTargets(params.targets);
   const targetsLength = targets.length;
   const tweens = [];
 

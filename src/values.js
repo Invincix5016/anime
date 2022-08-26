@@ -26,7 +26,7 @@ import {
 } from './transforms.js';
 
 import {
-  getAnimatables,
+  getTargets,
 } from './animatables.js';
 
 import {
@@ -120,7 +120,7 @@ export function decomposeValue(rawValue) {
 }
 
 export function getTargetValue(targetSelector, propName, unit) {
-  const targets = getAnimatables(targetSelector);
+  const targets = getTargets(targetSelector);
   if (targets) {
     const target = targets[0];
     let value = getOriginalAnimatableValue(target, propName);
