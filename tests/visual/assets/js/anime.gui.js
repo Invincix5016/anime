@@ -84,6 +84,11 @@ function createCssRules() {
     }
   `);
   styleSheet.insertRule(`
+    .${classPrefix}scrubber:focus {
+      outline: none;
+    }
+  `);
+  styleSheet.insertRule(`
     .${classPrefix}scrubber::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 64px;
@@ -307,7 +312,7 @@ export function createGUI(animation, parentEl = document.body) {
   }
 
   window.addEventListener('keydown', (e) => {  
-    if (e.code == 'Space' && e.target === document.body) {
+    if (e.code == 'Space') {
       e.preventDefault();
       if (animation.paused) {
         animation.play()
