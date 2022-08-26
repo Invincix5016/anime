@@ -33,6 +33,9 @@
     #progress-bar {
       width: 100%;
     }
+    .square {
+      position: relative;
+    }
   </style>
 </head>
 <body>
@@ -45,9 +48,10 @@
     <input id="progress-bar" step=".001" type="range" min="0" max="1" value="0">
   </div>
   <script type="module">
-    // import anime from '../../src/anime.js';
-    import anime from './assets/anime.3.2.1.js';
+    import anime from '../../src/anime.js';
+    // import anime from './assets/anime.3.2.1.js';
     import { test, expect } from './assets/js/tests.js';
+    import { createGUI } from './assets/js/anime.gui.js';
 
     const duration = 1000;
 
@@ -56,11 +60,17 @@
     const green = '#18FF74';
     const yellow = '#F6FF56';
 
+    const seekProgressEl = document.getElementById('progress-bar');
+
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
       duration: duration,
       direction: 'alternate',
       autoplay: true,
+      update: (a) => {
+        // console.log(a);
+        seekProgressEl.value = a.progress;
+      }
     })
     .add({
       targets: '#square-1',
@@ -113,22 +123,26 @@
       targets: '#square-1',
       translateY: -200,
       backgroundColor: blue,
+      left: -200,
     })
     .add({
       targets: '#square-2',
       translateY: -200,
       backgroundColor: blue,
+      left: -150,
     }, '-=' + duration)
     .add({
       targets: '#square-3',
       translateY: -200,
       backgroundColor: blue,
+      left: -100,
     }, '-=' + duration)
     .add({
       targets: '.square',
       rotate: '-=180',
       scale: 1,
       backgroundColor: yellow,
+      left: 100,
       opacity: .5,
       duration: duration * 2,
       delay: anime.stagger(100),
@@ -140,17 +154,27 @@
       delay: anime.stagger(100),
     }, '-=' + duration)
 
-    const seekProgressEl = document.getElementById('progress-bar');
-
-    seekProgressEl.onclick = function() {
+    seekProgressEl.onmousedown = function() {
       tl.pause();
     };
+
+    document.body.onkeyup = function(e) {
+      if (e.code == 'Space') {
+        if (tl.paused) {
+          tl.play()
+        } else {
+          tl.pause();
+        }
+      }
+    }
 
     seekProgressEl.oninput = function() {
       tl.seek(tl.duration * (seekProgressEl.value));
     };
 
     console.log(tl);
+
+    createGUI(tl);
 
     // test('stroke-dasharray on line 1 element', () => {
     //   return expect(line1.getAttribute('stroke-dasharray')).toBe('138.59292602539062');
