@@ -30,9 +30,14 @@ import {
 
 // Tweens
 
+export function getTweenProgress(fromNumber, toNumber, progressValue, roundValue) {
+  const value = fromNumber + (progressValue * (toNumber - fromNumber));
+  return !roundValue ? value : round(value, roundValue);
+}
+
 let tweenId = 0;
 
-export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId, timelineOffset, tweensGroup) {
   let prevTween;
   const tweens = [];
 
@@ -156,18 +161,30 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.delay = parseFloat(tween.delay);
     tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
+    tween.timelineStart = timelineOffset + tween.start;
+    tween.timelineEnd = timelineOffset + tween.end;
     tween.easing = parseEasings(tween.easing, tween.duration);
     tween.progress = 0;
+    tween.maxProgress = 1;
     tween.currentValue = 0;
+
+
+    for (let j = 0, jl = tweensGroup.length; j < jl; j++) {
+      const existingTween = tweensGroup[j];
+      if (tween.timelineStart < existingTween.timelineEnd) {
+        const overlapTime = existingTween.duration - (existingTween.timelineEnd - tween.timelineStart);
+        existingTween.maxProgress = overlapTime / existingTween.duration;
+        const newFromValue = getTweenProgress(existingTween.from.number, existingTween.to.number, existingTween.maxProgress);
+        existingTween.to.number = newFromValue;
+        existingTween.duration = overlapTime;
+        tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
+      }
+    }
+
+
     prevTween = tween;
     tweens.push(tween);
-
   }
 
   return tweens;
-}
-
-export function getTweenProgress(fromNumber, toNumber, progressValue, roundValue) {
-  let value = fromNumber + (progressValue * (toNumber - fromNumber));
-  return !roundValue ? value : round(value, roundValue);
 }

@@ -18,7 +18,7 @@ import {
   toArray,
 } from './utils.js';
 
-function registerTarget(target) {
+function cacheDomTarget(target) {
   if (!is.dom(target)) return target;
   let cachedTarget = cache.DOM.get(target);
   if (!cachedTarget) {
@@ -38,8 +38,18 @@ function parseTargets(targets) {
 
 export function getTargets(targets) {
   const parsed = parseTargets(targets);
-  const total = parsed.length;
-  return parsed.map(registerTarget);
+  return parsed.map(cacheDomTarget);
+}
+
+export function registerTargetsToTimeline(targetsParam, timeline) {
+  const parsedTargets = parseTargets(targetsParam);
+  parsedTargets.forEach(target => {
+    const storedTarget = timeline.targetsTest.get(target);
+    if (!storedTarget) {
+      timeline.targetsTest.set(target, {});
+    }
+  });
+  return timeline.targetsTest;
 }
 
 // Remove targets from animation

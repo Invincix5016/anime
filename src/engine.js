@@ -9,7 +9,11 @@ import {
 
 export const activeAnimations = [];
 
-let raf;
+export const engine = {
+  activeProcesses: [],
+  raf: 0,
+  currentTime: 0,
+}
 
 function tick(t) {
   // memo on algorithm issue:
@@ -27,12 +31,12 @@ function tick(t) {
       activeAnimationsLength--;
     }
   }
-  raf = i > 0 ? requestAnimationFrame(tick) : undefined;
+  engine.raf = i > 0 ? requestAnimationFrame(tick) : undefined;
 }
 
 export function startEngine() {
-  if (!raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && activeAnimations.length > 0) {
-    raf = requestAnimationFrame(tick);
+  if (!engine.raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && activeAnimations.length > 0) {
+    engine.raf = requestAnimationFrame(tick);
   }
 }
 
@@ -42,7 +46,7 @@ function handleVisibilityChange() {
 
   if (isDocumentHidden()) {
     // suspend ticks
-    raf = cancelAnimationFrame(raf);
+    engine.raf = cancelAnimationFrame(engine.raf);
   } else {
     // is back to active tab
     // first adjust animations to consider the time that ticks were suspended

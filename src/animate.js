@@ -37,7 +37,7 @@ import {
   removeAnimatablesFromAnimation,
 } from './animatables.js';
 
-export function animate(params = {}) {
+export function animate(params = {}, timeline) {
   let startTime = 0, lastTime = 0, now = 0;
   let children, childrenLength = 0;
   let resolve = null;
@@ -48,7 +48,7 @@ export function animate(params = {}) {
     return promise;
   }
 
-  let animation = createAnimation(params);
+  let animation = createAnimation(params, timeline);
   let promise = makePromise(animation);
 
   function toggleAnimationDirection() {
@@ -93,9 +93,12 @@ export function animate(params = {}) {
       const tween = tweens[i++];
       if (
         (prevTween && prevTween.groupId == tween.groupId && insTime < prevTween.end) || 
-        (animation.reversePlayback && nextTween && nextTween.groupId == tween.groupId && insTime > nextTween.start)
+        (animation.reversePlayback && ((nextTween && nextTween.groupId == tween.groupId && insTime > nextTween.start) || insTime > tween.end))
       ) continue;
       const tweenProgress = tween.easing(clamp(insTime - tween.start - tween.delay, 0, tween.duration) / tween.duration);
+      if (tween.property === 'left') {
+        console.log(tween.property, tweenProgress, tween.maxProgress);
+      }
       const tweenProperty = tween.property;
       const tweenRound = tween.round;
       const tweenFrom = tween.from;
@@ -246,8 +249,8 @@ export function animate(params = {}) {
   // internal method (for engine) to adjust animation timings before restoring engine ticks (rAF)
   animation._onDocumentVisibility = resetTime;
 
-  animation.tick = function(t) {
-    now = t;
+  animation.tick = function(engineTime) {
+    now = engineTime;
     if (!startTime) startTime = now;
     setAnimationProgress((now + (lastTime - startTime)) * settings.speed);
   }

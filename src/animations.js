@@ -16,6 +16,7 @@ import {
 
 import {
   getTargets,
+  registerTargetsToTimeline,
 } from './animatables.js';
 
 import {
@@ -33,13 +34,17 @@ import {
 let animationsId = 0;
 let tweensGroupsId = 0;
 
-export function createAnimation(params) {
+export function createAnimation(params, timeline) {
   const instanceSettings = replaceObjectProps(defaultAnimationSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
   const targets = getTargets(params.targets);
   const targetsLength = targets.length;
   const tweens = [];
+
+  instanceSettings.targetsTest = new Map();
+
+  const registeredTargets = registerTargetsToTimeline(params.targets, timeline ? timeline : instanceSettings);
 
   let maxDuration = 0;
   let changeStartTime;
@@ -50,13 +55,18 @@ export function createAnimation(params) {
     if (target) {
       let lastTransformGroupIndex;
       let lastTransformGroupLength;
+      const targetProperties = registeredTargets.get(target);
       for (let j = 0, keysLength = propertyKeyframes.length; j < keysLength; j++) {
         const keyframes = propertyKeyframes[j];
         const keyframesPropertyName = keyframes[0].property;
         const type = getAnimationType(target, keyframesPropertyName);
         const property = sanitizePropertyName(keyframesPropertyName, target, type);
+        let targetPropertyTweens = targetProperties[property];
+        if (!targetPropertyTweens) {
+          targetPropertyTweens = targetProperties[property] = [];
+        }
         if (is.num(type)) {
-          const tweensGroup = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, tweensGroupsId);
+          const tweensGroup = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, tweensGroupsId, instanceSettings.timelineOffset, targetPropertyTweens);
           const tweensGroupLength = tweensGroup.length;
           const firstTween = tweensGroup[0];
           const lastTween = tweensGroup[tweensGroupLength - 1];
@@ -69,6 +79,7 @@ export function createAnimation(params) {
             lastTransformGroupLength = lastTransformGroupIndex + tweensGroupLength;
           }
           tweens.push(...tweensGroup);
+          targetPropertyTweens.push(...tweensGroup);
           tweensGroupsId++;
         }
       }
