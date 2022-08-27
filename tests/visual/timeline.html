@@ -154,24 +154,6 @@
       delay: anime.stagger(100),
     }, '-=' + duration)
 
-    seekProgressEl.onmousedown = function() {
-      tl.pause();
-    };
-
-    document.body.onkeyup = function(e) {
-      if (e.code == 'Space') {
-        if (tl.paused) {
-          tl.play()
-        } else {
-          tl.pause();
-        }
-      }
-    }
-
-    seekProgressEl.oninput = function() {
-      tl.seek(tl.duration * (seekProgressEl.value));
-    };
-
     console.log(tl);
 
     createGUI(tl);
