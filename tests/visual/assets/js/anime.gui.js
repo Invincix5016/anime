@@ -1,11 +1,108 @@
 const classPrefix = 'anime-gui-';
 const sideBarWidth = 80;
-const black = '#2E2C2C';
+const blackColor = '#2E2C2C';
+const whiteColor = '#F6F4F2';
 const blackAlpha = 'rgba(46, 44, 44, .75)';
 
 const colors = ['#FF4B4B','#FF8F42','#FFC730','#F6FF56','#A4FF4F','#18FF74','#00D672','#3CFFEC','#61C3FF','#5A87FF','#8453E3','#C26EFF','#FB89FB'];
 const colorLength = colors.length;
 let colorIndex = 0;
+
+function createCssRules() {
+  const styleEl = document.createElement('style');
+  document.head.appendChild(styleEl);
+  const styleSheet = styleEl.sheet;
+  styleSheet.insertRule(`
+    .${classPrefix}wrapper,.${classPrefix}wrapper *,.${classPrefix}wrapper *:before,.${classPrefix}wrapper *:after {
+      box-sizing: border-box;
+      display: flex;
+      flex-shrink: 0;
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}wrapper {
+      overflow: auto;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding-left: ${sideBarWidth}px;
+      padding-bottom: 8px;
+      background-color: ${blackColor};
+      font-family: sans-serif;
+      font-size: 10px;
+      color: ${whiteColor};
+      backface-visibility: hidden;
+      background-repeat: repeat-x repeat-y;
+      background-position: left 0px bottom 0px;
+      background-size: 8em 16px, 4em 10px;
+      background-attachment: local;
+      background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+                        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px);
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}timeline {
+      position: sticky;
+      z-index: 3;
+      top: 0;
+      align-items: flex-start;
+      min-width: calc(100% + ${sideBarWidth}px);
+      height: 32px;
+      margin-left: -${sideBarWidth}px;
+      margin-bottom: 2px;
+      padding-left: ${sideBarWidth}px;
+      background-color: ${blackColor};
+      background-repeat: repeat-x;
+      background-position: left 0px bottom 0px;
+      background-size: 8em 10px, 4em 7px, .2em 4px;
+      background-image: linear-gradient(to right, ${whiteColor} 1px, transparent 1px),
+                        linear-gradient(to right, ${whiteColor} 1px, transparent 1px),
+                        linear-gradient(to right, ${whiteColor} 1px, transparent 1px);
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}label-block {
+      z-index: 1;
+      align-items: center;
+      height: 100%;
+      margin-top: -.75px;
+      padding-left: 4px;
+      padding-right: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      white-space: pre;
+      color: ${blackColor};
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}scrubber {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}scrubber:focus {
+      outline: none;
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}scrubber::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 64px;
+      height: 20px;
+      border-radius: 10px;
+      background-color: ${whiteColor};
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}scrubber::-webkit-slider-thumb {
+      -webkit-appearance: none;
+    }
+  `);
+}
 
 function getColor() {
   const color = colors[colorIndex++];
@@ -22,6 +119,7 @@ function getTargetColor(target) {
   if (!color) {
     color = getColor();
     targetColors.set(target, color);
+    target.style.boxShadow = `0 0 0 4px ${blackColor}, 0 0 0 8px ${color}`;
   }
   return color;
 }
@@ -32,57 +130,26 @@ function msToEm(ms) {
 
 function createBlock(className, css) {
   var el = document.createElement('div');
+  el.classList.add(classPrefix + 'block');
   el.classList.add(classPrefix + className);
-  el.style.cssText = `
-    box-sizing: border-box;
-    display: flex;
-    flex-shrink: 0;
-    color: 'currentColor';
-    ${css}
-  `;
+  el.style.cssText = css;
   return el;
 }
 
 function createLabel(text, css) {
-  const el = createBlock('label-block', `
-    position: relative;
-    z-index: 1;
-    align-items: center;
-    height: 100%;
-    padding-left: 4px;
-    padding-right: 4px;
-    font-size: 10px;
-    font-weight: bold;
-    margin-top: -.75px;
-    white-space: pre;
-    color: ${black};
-    ${css}
-  `);
+  const el = createBlock('label-block', css);
   el.innerHTML = text;
   return el;
 }
 
 function createSidebarLabel(text, css) {
-  const el = createBlock('sidebar-label-block', `
-    position: sticky;
-    z-index: 2;
-    left: 0;
-    justify-content: flex-end;
-    width: ${sideBarWidth}px;
-    align-items: center;
-    height: 100%;
-    padding-left: 8px;
-    padding-right: 8px;
-    font-size: 12px;
-    background-color: ${black};
-    ${css}
-  `);
+  const el = createBlock('sidebar-label-block', css);
   el.innerHTML = text;
   return el;
 }
 
 function createTweenBlock(offset, tween) {
-  const el = createBlock('tween-line-block', `align-items: center; height: 16px;`);
+  const el = createBlock('tween-line-block', `position: relative; align-items: center; height: 16px;`);
   const tweenEl = createBlock('tween-block', `position: relative; height: 14px; background-color: currentColor; border-radius: 7px;`);
   const backgroundEl = createBlock('tween-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
   const delayEl = createBlock('tween-delay-block', `position: relative; height: 14px;`);
@@ -141,13 +208,13 @@ function createAnimationBlock(animation) {
   animation.tweens.forEach((tween, i) => {
     const target = tween.target;
     const property = tween.property;
-    // if (currentTarget !== target) {
-    //   currentTarget = target;
-    //   currentTargetColor = getTargetColor(target);
-    //   const targetNameLabel = createSidebarLabel('Target ' + i, `color: ${currentTargetColor}`);
-    //   el.appendChild(targetNameLabel);
-    //   playHeadHeight++;
-    // }
+    if (currentTarget !== target) {
+      currentTarget = target;
+      currentTargetColor = getTargetColor(target);
+      // const targetNameLabel = createSidebarLabel('Target ' + i, `color: ${currentTargetColor}`);
+      // el.appendChild(targetNameLabel);
+      // playHeadHeight++;
+    }
     const tweenBLockEl = createTweenBlock(animation.timelineOffset, tween);
     tweenBLockEl.style.color = currentTargetColor;
     el.appendChild(tweenBLockEl);
@@ -161,39 +228,62 @@ function getAnimationTime(animation) {
 }
 
 function createTimelineBlock(animation, parentHeight) {
-  const el = createBlock('timeline', `
-    position: sticky;
-    z-index: 3;
-    top: 0;
+  const el = createBlock('timeline', `width: calc(${msToEm(animation.duration)} + ${sideBarWidth}px);`);
+  const clockTimeEl = createBlock('clock-time', `
+    pointer-events: none;
+    position: relative;
+    left: 0;
+    z-index: 2;
+    justify-content: center;
     align-items: center;
-    height: 32px;
-    min-width: calc(100% + ${sideBarWidth}px);
-    width: calc(${msToEm(animation.duration)} + ${sideBarWidth}px);
-    margin-left: -${sideBarWidth}px;
-    margin-bottom: 2px;
-    background-color: ${black};
-    background-repeat: repeat-x;
-    background-position: left 0px bottom 0px;
-    background-size: 8em 16px, 4em 10px, .2em 4px;
-    background-image: linear-gradient(to right, #FFF 1px, transparent 1px),
-                      linear-gradient(to right, #FFF 1px, transparent 1px),
-                      linear-gradient(to right, #FFF 1px, transparent 1px);
+    width: 64px;
+    height: 20px;
+    margin-left: -32px;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
+    color: ${blackColor};
+    background-color: transparent;
   `);
-  const clockTimeEl = createSidebarLabel(getAnimationTime(animation), 'justify-content: flex-start; height: 16px; background-color: transparent;');
-  // const animationTimeEl = createSidebarLabel(getAnimationTime(animation), `align-items: flex-end; transform: translateX(${-sideBarWidth}px);`);
   const playHead = createBlock('timeline-playhead', `
-    position: absolute; top: 0; width: 1px; height: ${parentHeight}; background: currentColor;
+    pointer-events: none;
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 1px; 
+    height: ${parentHeight}; 
+    background: currentColor;
   `);
+  const scrubberEl = document.createElement('input');
+  scrubberEl.classList.add(`${classPrefix}scrubber`)
+  scrubberEl.setAttribute('type', 'range');
+  scrubberEl.setAttribute('step', '.0001');
+  scrubberEl.setAttribute('min', '0');
+  scrubberEl.setAttribute('max', '1');
+  scrubberEl.setAttribute('value', '0');
+  scrubberEl.style.width = `calc(${msToEm(animation.duration)} + 64px)`;
+  scrubberEl.style.marginLeft = '-32px';
+
+  scrubberEl.onmousedown = function() {
+    animation.pause();
+  };
+
+  scrubberEl.oninput = function() {
+    animation.seek(animation.duration * (scrubberEl.value));
+  };
+
   // el.style.width = `calc(${sideBarWidth}px + ${msToEm(animation.duration)})`;
   playHead.appendChild(clockTimeEl);
   // el.appendChild(animationTimeEl);
   el.appendChild(playHead);
+  el.appendChild(scrubberEl);
   function updatePlayHeadPosition() {
+    requestAnimationFrame(updatePlayHeadPosition);
     const time = getAnimationTime(animation);
     playHead.style.transform = `translateX(calc(${sideBarWidth}px + ${msToEm(animation.currentTime)}))`;
     clockTimeEl.innerHTML = time;
     // animationTimeEl.innerHTML = time + 'ms';
-    requestAnimationFrame(updatePlayHeadPosition);
+    scrubberEl.value = animation.progress;
   }
   requestAnimationFrame(updatePlayHeadPosition);
   return el;
@@ -202,29 +292,9 @@ function createTimelineBlock(animation, parentHeight) {
 export function createGUI(animation, parentEl = document.body) {
   let width = '100%';
   let height = '50vh';
-  const guiWrapperEl = createBlock('app', `
-    overflow: auto;
-    flex-direction: column;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  const guiWrapperEl = createBlock('wrapper', `
     width: ${width};
     height: ${height};
-    padding-left: ${sideBarWidth}px;
-    padding-bottom: 8px;
-    background-color: ${black};
-    backface-visibility: hidden;
-    transform: translateZ(0px);
-    font-family: sans-serif;
-    font-size: 10px;
-    color: #FFF;
-    background-repeat: repeat-x repeat-y;
-    background-position: left 0px bottom 0px;
-    background-size: 8em 16px, 4em 10px;
-    background-attachment: local;
-    background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
-                      linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px);
   `);
 
   parentEl.style.paddingBottom = height;
@@ -242,11 +312,18 @@ export function createGUI(animation, parentEl = document.body) {
     guiWrapperEl.appendChild(animationBlockEl);
   }
 
-  
-  // const animationBlockEl = createAnimationBlock(animation);
-  // guiWrapperEl.appendChild(timelineBlock.el);
-  // guiWrapperEl.appendChild(animationBlockEl);
-  // timelineBlock.playHeadEl.style.height = 72 + (animationBlock.playHeadHeight * 16) + 'px';
+  window.addEventListener('keydown', (e) => {  
+    if (e.code == 'Space') {
+      e.preventDefault();
+      if (animation.paused) {
+        animation.play()
+      } else {
+        animation.pause();
+      }
+    }
+  });
+
+  createCssRules();
   
   parentEl.appendChild(guiWrapperEl);
 }
