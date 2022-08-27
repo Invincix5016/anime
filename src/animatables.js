@@ -7,7 +7,7 @@ import {
 } from './cache.js';
 
 import {
-  activeAnimations,
+  engine,
 } from './engine.js';
 
 import {
@@ -74,8 +74,8 @@ export function removeAnimatablesFromAnimation(targets, animation) {
 
 export function removeAnimatablesFromActiveAnimations(targets) {
   const targetsArray = parseTargets(targets);
-  for (let i = activeAnimations.length; i--;) {
-    const animation = activeAnimations[i];
+  for (let i = engine.activeProcesses.length; i--;) {
+    const animation = engine.activeProcesses[i];
     removeTweensWithTargetsFromAnimation(targetsArray, animation);
   }
 }

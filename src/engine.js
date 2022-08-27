@@ -7,32 +7,33 @@ import {
   isDocumentHidden,
 } from './utils.js';
 
-export const activeAnimations = [];
+export const engine = {
+  activeProcesses: [],
+  elapsedTime: 0,
+}
 
-let raf;
+let engineRaf = 0;
 
-function tick(t) {
-  // memo on algorithm issue:
-  // dangerous iteration over mutable `activeAnimations`
-  // (that collection may be updated from within callbacks of `tick`-ed animation instances)
-  let activeAnimationsLength = activeAnimations.length;
+function tickEngine(t) {
+  engine.elapsedTime = t;
+  let activeProcessesLength = engine.activeProcesses.length;
   let i = 0;
-  while (i < activeAnimationsLength) {
-    const activeInstance = activeAnimations[i];
+  while (i < activeProcessesLength) {
+    const activeInstance = engine.activeProcesses[i];
     if (!activeInstance.paused) {
       activeInstance.tick(t);
       i++;
     } else {
-      activeAnimations.splice(i, 1);
-      activeAnimationsLength--;
+      engine.activeProcesses.splice(i, 1);
+      activeProcessesLength--;
     }
   }
-  raf = i > 0 ? requestAnimationFrame(tick) : undefined;
+  engineRaf = activeProcessesLength ? requestAnimationFrame(tickEngine) : 0;
 }
 
-export function startEngine() {
-  if (!raf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && activeAnimations.length > 0) {
-    raf = requestAnimationFrame(tick);
+export function startEngine(engine) {
+  if (!engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.activeProcesses.length > 0) {
+    engineRaf = requestAnimationFrame(tickEngine);
   }
 }
 
@@ -42,14 +43,14 @@ function handleVisibilityChange() {
 
   if (isDocumentHidden()) {
     // suspend ticks
-    raf = cancelAnimationFrame(raf);
+    engineRaf = cancelAnimationFrame(engineRaf);
   } else {
     // is back to active tab
     // first adjust animations to consider the time that ticks were suspended
-    activeAnimations.forEach(
+    engine.activeProcesses.forEach(
       instance => instance ._onDocumentVisibility()
     );
-    startEngine();
+    startEngine(engine);
   }
 }
 

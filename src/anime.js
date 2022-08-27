@@ -26,7 +26,7 @@ import {
 } from './animatables.js';
 
 import {
-  activeAnimations,
+  engine,
 } from './engine.js';
 
 import {
@@ -47,7 +47,7 @@ const anime = animate;
 anime.version = '__packageVersion__';
 anime.speed = 1;
 anime.suspendWhenDocumentHidden = true;
-anime.running = activeAnimations;
+anime.running = engine.activeProcesses;
 anime.remove = removeAnimatablesFromActiveAnimations;
 anime.get = getTargetValue;
 anime.set = (targets, props = {}) => { props.targets = targets; props.duration = 0; return animate(props); };

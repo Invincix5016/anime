@@ -17,8 +17,8 @@ import {
 } from './utils.js';
 
 import {
+  engine,
   startEngine,
-  activeAnimations,
 } from './engine.js';
 
 import {
@@ -270,9 +270,9 @@ export function animate(params = {}) {
     if (!animation.paused) return;
     if (animation.completed) animation.reset();
     animation.paused = false;
-    activeAnimations.push(animation);
+    engine.activeProcesses.push(animation);
     resetTime();
-    startEngine();
+    startEngine(engine);
   }
 
   animation.reverse = function() {
