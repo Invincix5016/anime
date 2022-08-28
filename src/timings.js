@@ -15,7 +15,7 @@ export function getTimingsFromAnimationsOrInstances(animationsOrInstances, tween
     for (let i = 0; i < animationsLength; i++) {
       const anim = animationsOrInstances[i];
       const timelineOffset = anim.timelineOffset ? anim.timelineOffset : 0;
-      const changeStartTime = timelineOffset + anim.changeStartTime;
+      const changeStartTime = timelineOffset + anim._changeStartTime;
       if (is.und(timings.changeStartTime) || changeStartTime < timings.changeStartTime) {
         timings.changeStartTime = changeStartTime;
       }
@@ -23,7 +23,7 @@ export function getTimingsFromAnimationsOrInstances(animationsOrInstances, tween
       if (is.und(timings.duration) || duration > timings.duration) {
         timings.duration = duration;
       }
-      const changeEndTime = timelineOffset + anim.duration - anim.changeEndTime;
+      const changeEndTime = timelineOffset + anim.duration - anim._changeEndTime;
       if (is.und(timings.changeEndTime) || changeEndTime > timings.changeEndTime) {
         timings.changeEndTime = changeEndTime;
       }

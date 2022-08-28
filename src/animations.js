@@ -84,15 +84,15 @@ export function createAnimation(params) {
     id: animationsId++,
     targets: targets,
     tweens: tweens,
+    children: [],
     duration: targetsLength ? maxDuration : tweenSettings.duration, // Total duration of the animation
     progress: 0, // [0 to 1] range, represent the % of completion of an animation total duration
     currentTime: 0, // The curent time relative to the animation [0 to animation duration]
-    parentCurrentTime: 0, // Root animation current time for simple animations or timeline current time for timeline children
-    startTime: 0, // Store at what parentCurrentTime the animation started to calculate the relative currentTime
-    lastCurrentTime: 0, // Store the animation current time when the animation playback is paused to adjust the new time when played again
-    changeStartTime: targetsLength ? changeStartTime : tweenSettings.delay,
-    changeEndTime: targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay,
-    children: [],
+    _parentCurrentTime: 0, // Root animation current time for simple animations or timeline current time for timeline children
+    _startTime: 0, // Store at what parentCurrentTime the animation started to calculate the relative currentTime
+    _lastCurrentTime: 0, // Store the animation current time when the animation playback is paused to adjust the new time when played again
+    _changeStartTime: targetsLength ? changeStartTime : tweenSettings.delay,
+    _changeEndTime: targetsLength ? maxDuration - changeEndTime : tweenSettings.endDelay,
     _childrenLength: 0,
   });
 }

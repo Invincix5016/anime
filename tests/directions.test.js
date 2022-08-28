@@ -32,7 +32,7 @@ describe('Directions', () => {
       direction: 'alternate',
       duration: 10,
       loopComplete: (a) => {
-        expect(a.progress).toEqual(a.remainingLoops ? 1 : 0);
+        expect(a.progress).toEqual(a.remainingIterations ? 1 : 0);
       },
       complete: (a) => {
         expect(a.progress).toEqual(0);

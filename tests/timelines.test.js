@@ -36,12 +36,12 @@ describe('Timelines', () => {
 
   test('Root timeline changeStartTime should inherit the main parameters delay', () => {
     const parameterInheritanceTL = createTimeline();
-    expect(parameterInheritanceTL.changeStartTime).toBe(0);
+    expect(parameterInheritanceTL._changeStartTime).toBe(0);
   });
 
   test('Root timeline changeEndTime should inherit the main parameters endDelay', () => {
     const parameterInheritanceTL = createTimeline();
-    expect(parameterInheritanceTL.changeEndTime).toBe(40);
+    expect(parameterInheritanceTL._changeEndTime).toBe(40);
   });
 
   test('Basic timeline time offsets', () => {

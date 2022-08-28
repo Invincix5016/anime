@@ -40,32 +40,32 @@ import {
 export function animate(params = {}) {
   const animation = createAnimation(params);
 
+  function getAdjustedAnimationTime(animation, time) {
+    return animation._isReversed ? animation.duration - time : time;
+  }
+
+  function resetAnimationTime(animation) {
+    animation._startTime = 0;
+    animation._lastCurrentTime = getAdjustedAnimationTime(animation, animation.currentTime) * (1 / settings.speed);
+  }
+
   function toggleAnimationDirection(animation) {
     const direction = animation.direction;
     if (direction !== 'alternate') {
       animation.direction = direction !== 'normal' ? 'normal' : 'reverse';
     }
-    animation.reversed = !animation.reversed;
-    animation.children.forEach(child => child.reversed = animation.reversed);
-  }
-
-  function getAdjustedAnimationTime(animation, time) {
-    return animation.reversed ? animation.duration - time : time;
-  }
-
-  function resetAnimationTime(animation) {
-    animation.startTime = 0;
-    animation.lastCurrentTime = getAdjustedAnimationTime(animation, animation.currentTime) * (1 / settings.speed);
+    animation._isReversed = !animation._isReversed;
+    animation.children.forEach(child => child._isReversed = animation._isReversed);
   }
 
   function syncAnimationChildren(animation, time, muteCallbacks, manual) {
-    if (!manual || !animation.reversePlayback) {
-      for (let i = 0; i < animation.childrenLength; i++) {
+    if (!manual || !animation._isRunningBackwards) {
+      for (let i = 0; i < animation._childrenLength; i++) {
         const child = animation.children[i];
         child.seek(time - child.timelineOffset, muteCallbacks);
       }
     } else {
-      for (let j = animation.childrenLength; j--;) {
+      for (let j = animation._childrenLength; j--;) {
         const child = animation.children[j];
         child.seek(time - child.timelineOffset, muteCallbacks);
       }
@@ -81,7 +81,7 @@ export function animate(params = {}) {
       const tween = tweens[i++];
       if (
         (prevTween && prevTween.groupId == tween.groupId && time < prevTween.end) || 
-        (animation.reversePlayback && nextTween && nextTween.groupId == tween.groupId && time > nextTween.start)
+        (animation._isRunningBackwards && nextTween && nextTween.groupId == tween.groupId && time > nextTween.start)
       ) continue;
       const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.duration) / tween.duration);
       const tweenProperty = tween.property;
@@ -144,13 +144,13 @@ export function animate(params = {}) {
 
   function setAnimationProgress(animation, parentTime, manual) {
     const animationDuration = animation.duration;
-    const animationChangeStartTime = animation.changeStartTime;
-    const animationChangeEndTime = animationDuration - animation.changeEndTime;
+    const animationChangeStartTime = animation._changeStartTime;
+    const animationChangeEndTime = animationDuration - animation._changeEndTime;
     const animationTime = getAdjustedAnimationTime(animation, parentTime);
     let renderTime = animationTime;
     let canRender = 0;
     animation.progress = clamp((animationTime / animationDuration), 0, 1);
-    animation.reversePlayback = animationTime < animation.currentTime;
+    animation._isRunningBackwards = animationTime < animation.currentTime;
     if (animation.children) { syncAnimationChildren(animation, animationTime, false, manual); }
     if (!animation.began && animation.currentTime > 0) {
       animation.began = true;
@@ -187,20 +187,20 @@ export function animate(params = {}) {
     if (canRender) renderAnimationTweens(animation.tweens, animation.currentTime);
     if (animation.began) animation.update(animation);
     if (parentTime >= animationDuration) {
-      animation.lastCurrentTime = 0;
-      if (animation.remainingLoops && animation.remainingLoops !== true) {
-        animation.remainingLoops--;
+      animation._lastCurrentTime = 0;
+      if (animation.remainingIterations && animation.remainingIterations !== true) {
+        animation.remainingIterations--;
       }
-      if (!animation.remainingLoops) {
+      if (!animation.remainingIterations) {
         animation.paused = true;
         if (!animation.completed) {
           animation.completed = true;
           animation.loopComplete(animation);
           animation.complete(animation);
-          animation.resolve(animation);
+          animation._resolve(animation);
         }
       } else {
-        animation.startTime = animation.parentCurrentTime;
+        animation._startTime = animation._parentCurrentTime;
         animation.loopComplete(animation);
         animation.loopBegan = false;
         if (animation.direction === 'alternate') {
@@ -219,23 +219,23 @@ export function animate(params = {}) {
     animation.changeBegan = false;
     animation.completed = false;
     animation.changeCompleted = false;
-    animation.reversePlayback = false;
-    animation.reversed = animation.direction === 'reverse';
-    animation.remainingLoops = animation.loop;
-    animation.childrenLength = animation.children.length;
-    animation.finished = window.Promise && new Promise(resolve => animation.resolve = resolve);
-    for (let i = animation.childrenLength; i--;) animation.children[i].reset();
-    if (animation.reversed && animation.loop !== true || (animation.direction === 'alternate' && animation.loop === 1)) animation.remainingLoops++;
-    renderAnimationTweens(animation.tweens, animation.reversed ? animation.duration : 0);
+    animation.remainingIterations = animation.loop;
+    animation.finished = window.Promise && new Promise(resolve => animation._resolve = resolve);
+    animation._childrenLength = animation.children.length;
+    animation._isRunningBackwards = false;
+    animation._isReversed = animation.direction === 'reverse';
+    for (let i = animation._childrenLength; i--;) animation.children[i].reset();
+    if (animation._isReversed && animation.loop !== true || (animation.direction === 'alternate' && animation.loop === 1)) animation.remainingIterations++;
+    renderAnimationTweens(animation.tweens, animation._isReversed ? animation.duration : 0);
   }
 
   // internal method (for engine) to adjust animation timings before restoring engine ticks (rAF)
   animation._onDocumentVisibility = () => resetAnimationTime(animation);
 
   animation.tick = function(t) {
-    animation.parentCurrentTime = t;
-    if (!animation.startTime) animation.startTime = animation.parentCurrentTime;
-    setAnimationProgress(animation, (animation.parentCurrentTime + (animation.lastCurrentTime - animation.startTime)) * settings.speed);
+    animation._parentCurrentTime = t;
+    if (!animation._startTime) animation._startTime = animation._parentCurrentTime;
+    setAnimationProgress(animation, (animation._parentCurrentTime + (animation._lastCurrentTime - animation._startTime)) * settings.speed);
   }
 
   animation.seek = function(time, muteCallbacks) {
@@ -263,7 +263,7 @@ export function animate(params = {}) {
 
   animation.reverse = function() {
     toggleAnimationDirection(animation);
-    animation.completed = animation.reversed ? false : true;
+    animation.completed = animation._isReversed ? false : true;
     resetAnimationTime(animation);
   }
 

@@ -48,7 +48,7 @@ function handleVisibilityChange() {
     // is back to active tab
     // first adjust animations to consider the time that ticks were suspended
     engine.activeProcesses.forEach(
-      instance => instance ._onDocumentVisibility()
+      instance => instance._onDocumentVisibility()
     );
     startEngine(engine);
   }

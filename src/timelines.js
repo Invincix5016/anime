@@ -54,8 +54,8 @@ export function createTimeline(params = {}) {
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
     const timings = getTimingsFromAnimationsOrInstances(children, params);
-    tl.changeStartTime = timings.changeStartTime;
-    tl.changeEndTime = timings.changeEndTime;
+    tl._changeStartTime = timings.changeStartTime;
+    tl._changeEndTime = timings.changeEndTime;
     tl.duration = timings.duration;
     tl.seek(0, true);
     tl.reset();
