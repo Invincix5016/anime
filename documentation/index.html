@@ -1239,7 +1239,7 @@ var animation = anime({
       <i>anime.js</i> accepts and converts Hexadecimal, RGB, RGBA, HSL, and HSLA color values.
     </p>
     <p class="bubble warning">
-      CSS color codes ( e.g. : <code>'red', 'yellow', 'aqua'</code> ) are not supported.
+      CSS color codes ( e.g.: <code>'red', 'yellow', 'aqua'</code> ) are not supported.
     </p>
     <table>
       <thead>
@@ -2658,8 +2658,8 @@ anime({
   easing: 'easeInOutCirc',
   update: function(anim) {
     updates++;
-    progressLogEl.value = 'progress : '+Math.round(anim.progress * 100)+'%';
-    updateLogEl.value = 'updates : '+updates;
+    progressLogEl.value = 'progress: '+Math.round(anim.progress * 100)+'%';
+    updateLogEl.value = 'updates: '+updates;
   }
 });
 /*DEMO*/
@@ -2712,15 +2712,15 @@ anime({
   endDelay: 300,
   easing: 'easeInOutCirc',
   update: function(anim) {
-    progressLogEl.value = 'progress : ' + Math.round(anim.progress * 100) + '%';
-    beginLogEl.value = 'began : ' + anim.began;
-    completeLogEl.value = 'completed : ' + anim.completed;
+    progressLogEl.value = 'progress: ' + Math.round(anim.progress * 100) + '%';
+    beginLogEl.value = 'began: ' + anim.began;
+    completeLogEl.value = 'completed: ' + anim.completed;
   },
   begin: function(anim) {
-    beginLogEl.value = 'began : ' + anim.began;
+    beginLogEl.value = 'began: ' + anim.began;
   },
   complete: function(anim) {
-    completeLogEl.value = 'completed : ' + anim.completed;
+    completeLogEl.value = 'completed: ' + anim.completed;
   }
 });
 /*DEMO*/
@@ -2774,11 +2774,11 @@ anime({
   easing: 'easeInOutCirc',
   loopBegin: function(anim) {
     loopBegan++;
-    beginLogEl.value = 'loop began : ' + loopBegan;
+    beginLogEl.value = 'loop began: ' + loopBegan;
   },
   loopComplete: function(anim) {
     loopCompleted++;
-    completeLogEl.value = 'loop completed : ' + loopCompleted;
+    completeLogEl.value = 'loop completed: ' + loopCompleted;
   }
 });
 /*DEMO*/
@@ -2817,7 +2817,7 @@ anime({
 
 var progressLogEl = document.querySelector('.change-demo .progress-log');
 var changeLogEl = document.querySelector('.change-demo .change-log');
-changeLogEl.value = 'changes : 0';
+changeLogEl.value = 'changes: 0';
 
 /*DEMO*/
 var changes = 0;
@@ -2831,11 +2831,11 @@ anime({
   loop: true,
   easing: 'easeInOutCirc',
   update: function(anim) {
-    progressLogEl.value = 'progress : '+Math.round(anim.progress * 100)+'%';
+    progressLogEl.value = 'progress: '+Math.round(anim.progress * 100)+'%';
   },
   change: function() {
     changes++;
-    changeLogEl.value = 'changes : ' + changes;
+    changeLogEl.value = 'changes: ' + changes;
   }
 });
 /*DEMO*/
@@ -2877,8 +2877,8 @@ var progressLogEl = document.querySelector('.changeBegin-chnageComplete-demo .pr
 var beginLogEl = document.querySelector('.changeBegin-log');
 var completeLogEl = document.querySelector('.changeComplete-log');
 
-beginLogEl.value = 'change began : 0';
-completeLogEl.value = 'change completed : 0';
+beginLogEl.value = 'change began: 0';
+completeLogEl.value = 'change completed: 0';
 
 /*DEMO*/
 var changeBegan = 0;
@@ -2893,15 +2893,15 @@ anime({
   direction: 'alternate',
   easing: 'easeInOutCirc',
   update: function(anim) {
-    progressLogEl.value = 'progress : '+Math.round(anim.progress * 100)+'%';
+    progressLogEl.value = 'progress: '+Math.round(anim.progress * 100)+'%';
   },
   changeBegin: function(anim) {
     changeBegan++;
-    beginLogEl.value = 'change began : ' + changeBegan;
+    beginLogEl.value = 'change began: ' + changeBegan;
   },
   changeComplete: function(anim) {
     changeCompleted++;
-    completeLogEl.value = 'change completed : ' + changeCompleted;
+    completeLogEl.value = 'change completed: ' + changeCompleted;
   }
 });
 /*DEMO*/
@@ -2913,10 +2913,10 @@ anime({
   <h3 class="demo-title">Finished promise</h3>
   <div class="demo-description">
     <p>
-      Every animation instances return a <code>finished</code> promise when the animation finised.
+      AN animation returns a <code>finished</code> promise when the animation is completed.
     </p>
-<pre><code>animation.finished.then(function() {
-  // Do things...
+<pre><code>animation.finished.then(() => {
+  // Code executed when promise has been resolved
 });</code></pre>
     <p class="bubble warning">
       Promises are not suported in IE < 11.
@@ -2925,43 +2925,43 @@ anime({
   <div class="demo-content promise-demo">
     <div class="logs">
       <input class="log progress-log"></input>
-      <input class="log finished-log"></input>
+      <input class="log promise-log"></input>
     </div>
     <div class="circle shadow"></div>
     <div class="circle el"></div>
   </div>
   <script>var finishedPromise = function() {
-anime.set('.promise-demo .el', {backgroundColor: ''});
-anime.set('.promise-demo .finished-log', {value: ''});
+anime.set('.promise-demo .el', {backgroundColor: 'auto'});
+anime.set('.promise-demo .promise-log', {value: 'Promise pending'});
 /*DEMO*/
 var progressLogEl = document.querySelector('.promise-demo .progress-log');
 var promiseEl = document.querySelector('.promise-demo .el');
-var finishedLogEl = document.querySelector('.promise-demo .finished-log');
-var demoPromiseResetTimeout;
+var promiseLogEl = document.querySelector('.promise-demo .promise-log');
 
 function logFinished() {
-  anime.set(finishedLogEl, {value: 'Promise resolved'});
+  anime.set(promiseLogEl, {value: 'Promise resolved'});
   anime.set(promiseEl, {backgroundColor: '#18FF92'});
 }
 
 var animation = anime.timeline({
   targets: promiseEl,
-  delay: 400,
-  duration: 500,
-  endDelay: 400,
+  delay: 150,
+  duration: 300,
+  endDelay: 150,
   easing: 'easeInOutSine',
   update: function(anim) {
-    progressLogEl.value = 'progress : '+Math.round(anim.progress * 100)+'%';
+    progressLogEl.value = 'progress: '+Math.round(anim.progress * 100)+'%';
   }
 }).add({
   translateX: 250
 }).add({
   scale: 2
-}).add({
-  translateX: 0
-});
+})
 
-animation.finished.then(logFinished);
+animation.finished.then(() => {
+  anime.set(promiseLogEl, {value: 'Promise resolved'});
+  anime.set(promiseEl, {backgroundColor: '#18FF92'});
+});
 
 /*DEMO*/
 }
@@ -3695,7 +3695,7 @@ document.querySelector('.remove-el-button').addEventListener('click', function()
       </tr>
     </table>
     <p class="bubble warning">
-      CSS transforms : Only inlined values can be accessed.
+      CSS transforms: Only inlined values can be accessed.
     </p>
   </div>
   <div class="demo-content get-value-demo">

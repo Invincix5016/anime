@@ -156,6 +156,10 @@
 
     console.log(tl);
 
+    tl.finished.then(() => {
+      console.log('finished');
+    })
+
     createGUI(tl);
 
     // test('stroke-dasharray on line 1 element', () => {
