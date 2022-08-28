@@ -112,7 +112,7 @@ export function decomposeValue(rawValue) {
       const stringifiedVal = val + emptyString;
       const matchedNumbers = stringifiedVal.match(digitWithExponentRgx);
       value.type = valueTypes.COMPLEX;
-      value.numbers = matchedNumbers ? matchedNumbers.map(Number) : [0];
+      value.numbers = matchedNumbers ? matchedNumbers.map(Number) : [];
       value.strings = stringifiedVal.split(digitWithExponentRgx) || [];
       return value;
     }
