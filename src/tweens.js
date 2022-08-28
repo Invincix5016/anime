@@ -161,7 +161,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.currentValue = 0;
     prevTween = tween;
     tweens.push(tween);
-
   }
 
   return tweens;
