@@ -149,13 +149,13 @@ function setAnimationProgress(animation, parentTime, manual) {
   let canRender = 0;
   animation.progress = clamp((animationTime / animationDuration), 0, 1);
   animation._isRunningBackwards = animationTime < animation.currentTime;
-  if (animation.children) { syncAnimationChildren(animation, animationTime, false, manual); }
+  if (animation.children) { syncAnimationChildren(animation, animationTime, 0, manual); }
   if (!animation.began && animation.currentTime > 0) {
-    animation.began = true;
+    animation.began = 1;
     animation.begin(animation);
   }
   if (!animation.loopBegan && animation.currentTime > 0) {
-    animation.loopBegan = true;
+    animation.loopBegan = 1;
     animation.loopBegin(animation);
   }
   if (animationTime <= animationChangeStartTime && animation.currentTime !== 0) {
@@ -168,16 +168,16 @@ function setAnimationProgress(animation, parentTime, manual) {
   }
   if (animationTime > animationChangeStartTime && animationTime < animationChangeEndTime) {
     if (!animation.changeBegan) {
-      animation.changeBegan = true;
-      animation.changeCompleted = false;
+      animation.changeBegan = 1;
+      animation.changeCompleted = 0;
       animation.changeBegin(animation);
     }
     animation.change(animation);
     canRender = 1;
   } else {
     if (animation.changeBegan) {
-      animation.changeCompleted = true;
-      animation.changeBegan = false;
+      animation.changeCompleted = 1;
+      animation.changeBegan = 0;
       animation.changeComplete(animation);
     }
   }
@@ -190,9 +190,9 @@ function setAnimationProgress(animation, parentTime, manual) {
       animation.remainingIterations--;
     }
     if (!animation.remainingIterations) {
-      animation.paused = true;
+      animation.paused = 1;
       if (!animation.completed) {
-        animation.completed = true;
+        animation.completed = 1;
         animation.loopComplete(animation);
         animation.complete(animation);
         animation._resolve(animation);
@@ -200,7 +200,7 @@ function setAnimationProgress(animation, parentTime, manual) {
     } else {
       animation._startTime = animation._parentCurrentTime;
       animation.loopComplete(animation);
-      animation.loopBegan = false;
+      animation.loopBegan = 0;
       if (animation.direction === 'alternate') {
         toggleAnimationDirection(animation);
       }
@@ -214,16 +214,16 @@ export function animate(params = {}) {
   animation.reset = function() {
     animation.currentTime = 0;
     animation.progress = 0;
-    animation.paused = true;
-    animation.began = false;
-    animation.loopBegan = false;
-    animation.changeBegan = false;
-    animation.completed = false;
-    animation.changeCompleted = false;
+    animation.paused = 1;
+    animation.began = 0;
+    animation.loopBegan = 0;
+    animation.changeBegan = 0;
+    animation.completed = 0;
+    animation.changeCompleted = 0;
     animation.remainingIterations = animation.loop;
     animation.finished = window.Promise && new Promise(resolve => animation._resolve = resolve);
     animation._childrenLength = animation.children.length;
-    animation._isRunningBackwards = false;
+    animation._isRunningBackwards = 0;
     animation._isReversed = animation.direction === 'reverse';
     for (let i = animation._childrenLength; i--;) animation.children[i].reset();
     if (animation._isReversed && animation.loop !== true || (animation.direction === 'alternate' && animation.loop === 1)) animation.remainingIterations++;
@@ -241,22 +241,22 @@ export function animate(params = {}) {
 
   animation.seek = function(time, muteCallbacks) {
     if (muteCallbacks) {
-      if (animation.children) { syncAnimationChildren(animation, time, true); }
+      if (animation.children) { syncAnimationChildren(animation, time, 1); }
       renderAnimationTweens(animation, time);
     } else {
-      setAnimationProgress(animation, getAdjustedAnimationTime(animation, time), true);
+      setAnimationProgress(animation, getAdjustedAnimationTime(animation, time), 1);
     }
   }
 
   animation.pause = function() {
-    animation.paused = true;
+    animation.paused = 1;
     resetAnimationTime(animation);
   }
 
   animation.play = function() {
     if (!animation.paused) return;
     if (animation.completed) animation.reset();
-    animation.paused = false;
+    animation.paused = 0;
     engine.activeProcesses.push(animation);
     resetAnimationTime(animation);
     startEngine(engine);
@@ -264,7 +264,7 @@ export function animate(params = {}) {
 
   animation.reverse = function() {
     toggleAnimationDirection(animation);
-    animation.completed = animation._isReversed ? false : true;
+    animation.completed = animation._isReversed ? 0 : 1;
     resetAnimationTime(animation);
   }
 
