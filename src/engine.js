@@ -12,6 +12,7 @@ export const engine = {
   elapsedTime: 0,
 }
 
+const raf = requestAnimationFrame;
 let engineRaf = 0;
 
 function tickEngine(t) {
@@ -28,12 +29,12 @@ function tickEngine(t) {
       activeProcessesLength--;
     }
   }
-  engineRaf = activeProcessesLength ? requestAnimationFrame(tickEngine) : 0;
+  engineRaf = activeProcessesLength ? raf(tickEngine) : 0;
 }
 
 export function startEngine(engine) {
   if (!engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.activeProcesses.length > 0) {
-    engineRaf = requestAnimationFrame(tickEngine);
+    engineRaf = raf(tickEngine);
   }
 }
 
