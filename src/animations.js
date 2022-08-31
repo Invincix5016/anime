@@ -303,9 +303,5 @@ export function createAnimation(params) {
     _childrenLength: 0,
   });
 
-  // internal method (for engine) to adjust animation timings before restoring engine ticks (rAF)
-  // TODO: no need to create a new function for that, simply use resetAnimation time ?
-  animation._onDocumentVisibility = () => resetAnimationTime(animation);
-
   return resetAnimation(animation);
 }

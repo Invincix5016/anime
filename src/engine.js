@@ -7,6 +7,10 @@ import {
   isDocumentHidden,
 } from './utils.js';
 
+import {
+  resetAnimationTime,
+} from './animations.js';
+
 export const engine = {
   activeProcesses: [],
   elapsedTime: 0,
@@ -38,7 +42,6 @@ export function startEngine(engine) {
   }
 }
 
-
 function handleVisibilityChange() {
   if (!settings.suspendWhenDocumentHidden) return;
 
@@ -48,9 +51,7 @@ function handleVisibilityChange() {
   } else {
     // is back to active tab
     // first adjust animations to consider the time that ticks were suspended
-    engine.activeProcesses.forEach(
-      instance => instance._onDocumentVisibility()
-    );
+    engine.activeProcesses.forEach(resetAnimationTime);
     startEngine(engine);
   }
 }
