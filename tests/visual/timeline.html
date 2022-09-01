@@ -162,6 +162,17 @@
 
     createGUI(tl);
 
+    const obj = {
+      test1: 1,
+      test2: 2,
+    }
+
+    anime({
+      targets: obj,
+      test1: 10,
+      test2: 20
+    })
+
     // test('stroke-dasharray on line 1 element', () => {
     //   return expect(line1.getAttribute('stroke-dasharray')).toBe('138.59292602539062');
     // });

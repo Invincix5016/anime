@@ -7,7 +7,8 @@ describe('Animatables', () => {
 
     const targetEl = document.querySelector('#target-id');
     expect(animation.tweens.length).toBe(1);
-    expect(animation.targets[0]).toBe(targetEl);
+    expect(animation.targets.has(targetEl)).toBe(true);
+    expect(animation.targets.size).toBe(1);
   });
 
   test('Multiple elements from CSS selector', () => {
@@ -18,8 +19,9 @@ describe('Animatables', () => {
 
     const targetEls = document.querySelectorAll('.target-class');
     expect(animation.tweens.length).toBe(4);
-    targetEls.forEach((el, i) => {
-      expect(animation.targets[i]).toBe(el);
+    let i = 0;
+    animation.targets.forEach(el => {
+      expect(targetEls[i++]).toBe(el);
     });
   });
 
@@ -31,7 +33,8 @@ describe('Animatables', () => {
     });
 
     expect(animation.tweens.length).toBe(1);
-    expect(animation.targets[0]).toBe(targetEl);
+    expect(animation.targets.has(targetEl)).toBe(true);
+    expect(animation.targets.size).toBe(1);
   });
 
   test('Multiple elements from nodeList', () => {
@@ -42,8 +45,9 @@ describe('Animatables', () => {
     });
 
     expect(animation.tweens.length).toBe(4);
-    targetEls.forEach((el, i) => {
-      expect(animation.targets[i]).toBe(el);
+    let i = 0;
+    animation.targets.forEach(el => {
+      expect(targetEls[i++]).toBe(el);
     });
   });
 
@@ -54,7 +58,8 @@ describe('Animatables', () => {
     });
 
     expect(animation.tweens.length).toBe(1);
-    expect(animation.targets[0]).toBe(testObject);
+    expect(animation.targets.has(testObject)).toBe(true);
+    expect(animation.targets.size).toBe(1);
   });
 
   test('Multiple elements from an Array of mixed CSS selectors', () => {
@@ -67,10 +72,11 @@ describe('Animatables', () => {
     const targetClassEls = document.querySelectorAll('.target-class');
     const targetDataEl = document.querySelector('div[data-index="0"]');
     expect(animation.tweens.length).toBe(4);
-    expect(animation.targets[0]).toBe(targetIdEl);
-    expect(animation.targets[0]).toBe(targetDataEl);
-    targetClassEls.forEach((el, i) => {
-      expect(animation.targets[i]).toBe(el);
+    expect(animation.targets.has(targetIdEl)).toBe(true);
+    expect(animation.targets.has(targetDataEl)).toBe(true);
+    let i = 0;
+    animation.targets.forEach(el => {
+      expect(targetClassEls[i++]).toBe(el);
     });
   });
 
@@ -84,10 +90,14 @@ describe('Animatables', () => {
     const targetIdEl = document.querySelector('#target-id');
     const targetDataEl = document.querySelector('div[data-index="0"]');
     expect(animation.tweens.length).toBe(5);
-    expect(animation.targets[0]).toBe(testObject);
-    expect(animation.targets[1]).toBe(targetIdEl);
-    expect(animation.targets[1]).toBe(targetDataEl);
-    expect(animation.targets.length).toBe(5);
+    // expect(animation.targets[0]).toBe(testObject);
+    // expect(animation.targets[1]).toBe(targetIdEl);
+    // expect(animation.targets[1]).toBe(targetDataEl);
+    expect(animation.targets.has(testObject)).toBe(true);
+    expect(animation.targets.has(targetIdEl)).toBe(true);
+    expect(animation.targets.has(targetDataEl)).toBe(true);
+    // expect(animation.targets.length).toBe(5);
+    expect(animation.targets.size).toBe(5);
   });
 
   test('Animations without targets', () => {
@@ -97,8 +107,8 @@ describe('Animatables', () => {
       endDelay: 20,
     });
     animation.seek(animation.duration);
-    expect(animation.targets.length).toBe(0);
     expect(animation.tweens.length).toBe(0);
+    expect(animation.targets.size).toBe(0);
     expect(animation.duration).toBe(100);
     expect(animation._changeStartTime).toBe(10);
     expect(animation._changeEndTime).toBe(20);

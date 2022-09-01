@@ -26,6 +26,7 @@ import {
 } from './transforms.js';
 
 import {
+  parseTargets,
   getAnimatables,
 } from './animatables.js';
 
@@ -58,6 +59,7 @@ export function getAnimationType(target, prop) {
 
 export function getOriginalAnimatableValue(target, propName, animationType) {
   const animType = is.num(animationType) ? animationType : getAnimationType(target, propName);
+  // if (animType === animationTypes.CSS) console.log(target);
   switch (animType) {
     case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
     case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
@@ -120,9 +122,8 @@ export function decomposeValue(rawValue) {
 }
 
 export function getTargetValue(targetSelector, propName, unit) {
-  const targets = getAnimatables(targetSelector);
-  if (targets) {
-    const target = targets[0];
+  const [target] = getAnimatables(targetSelector);
+  if (target) {
     let value = getOriginalAnimatableValue(target, propName);
     if (unit) {
       const decomposedValue = decomposeValue(value);

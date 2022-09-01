@@ -12,13 +12,10 @@ import {
 
 import {
   is,
-  flattenArray,
-  filterArray,
-  arrayContains,
   toArray,
 } from './utils.js';
 
-function registerTarget(target) {
+function registerDomTarget(target) {
   if (!is.dom(target)) return target;
   let cachedTarget = cache.DOM.get(target);
   if (!cachedTarget) {
@@ -31,51 +28,78 @@ function registerTarget(target) {
   return target;
 }
 
-function parseTargets(targets) {
-  const targetsArray = targets ? (flattenArray(is.arr(targets) ? targets.map(toArray) : toArray(targets))) : [];
-  return filterArray(targetsArray, (item, pos, self) => self.indexOf(item) === pos);
+export function parseTargets(targets) {
+  return new Set(!targets ? [] : [].concat(...(is.arr(targets) ? targets.map(toArray) : toArray(targets))));
 }
 
 export function getAnimatables(targets) {
-  const parsed = parseTargets(targets);
-  const total = parsed.length;
-  return parsed.map(registerTarget);
+  const parsedTargetsSet = parseTargets(targets);
+  parsedTargetsSet.forEach(registerDomTarget);
+  return parsedTargetsSet;
 }
+
+// export function registerTargetsToMap(targets, parentMap) {
+//   const targetsArray = is.arr(targets) ? targets.map(toArray) : toArray(targets);
+//   const targetsMap = new Map();
+//   let cachedTargetProperties;
+//   for (let i = 0, l = targetsArray.length; i < l; i++) {
+//     const target = targetsArray[i];
+//     if (is.arr(target)) {
+//       for (let j = 0, jl = target.length; j < jl; j++) {
+//         const subTarget = target[j];
+//         cachedTargetProperties = parentMap.get(subTarget);
+//         if (!cachedTargetProperties) {
+//           cachedTargetProperties = {};
+//           parentMap.set(subTarget, cachedTargetProperties);
+//         }
+//         targetsMap.set(subTarget, cachedTargetProperties);
+//       }
+//     } else {
+//       cachedTargetProperties = parentMap.get(target);
+//       if (!cachedTargetProperties) {
+//         cachedTargetProperties = {};
+//         parentMap.set(target, cachedTargetProperties);
+//       }
+//       targetsMap.set(target, cachedTargetProperties);
+//     }
+//   }
+//   return targetsMap;
+// }
 
 // Remove targets from animation
 
-function removeTweensWithTargets(targetsArray, tweensArray) {
+function removeTweensWithTargets(targetsSet, tweensArray) {
   for (let i = tweensArray.length; i--;) {
-    if (arrayContains(targetsArray, tweensArray[i].target)) {
+    if (targetsSet.has(tweensArray[i].target)) {
       tweensArray.splice(i, 1);
     }
   }
 }
 
-function removeTweensWithTargetsFromAnimation(targetsArray, animation) {
+function removeTweensWithTargetsFromAnimation(targetsSet, animation) {
   const tweens = animation.tweens;
   const children = animation.children;
   for (let i = children.length; i--;) {
     const child = children[i];
     const childTweens = child.tweens;
-    removeTweensWithTargets(targetsArray, childTweens);
+    removeTweensWithTargets(targetsSet, childTweens);
     if (!childTweens.length && !child.children.length) children.splice(i, 1);
   }
   // Return early to prevent animations created without targets (and without tweens) to be paused
   if (!tweens.length) return;
-  removeTweensWithTargets(targetsArray, tweens);
+  removeTweensWithTargets(targetsSet, tweens);
   if (!tweens.length && !children.length) animation.pause();
 }
 
 export function removeAnimatablesFromAnimation(targets, animation) {
-  const targetsArray = parseTargets(targets);
-  removeTweensWithTargetsFromAnimation(targetsArray, animation);
+  const targetsSet = parseTargets(targets);
+  removeTweensWithTargetsFromAnimation(targetsSet, animation);
 }
 
 export function removeAnimatablesFromActiveAnimations(targets) {
-  const targetsArray = parseTargets(targets);
+  const targetsSet = parseTargets(targets);
   for (let i = engine.activeProcesses.length; i--;) {
     const animation = engine.activeProcesses[i];
-    removeTweensWithTargetsFromAnimation(targetsArray, animation);
+    removeTweensWithTargetsFromAnimation(targetsSet, animation);
   }
 }
