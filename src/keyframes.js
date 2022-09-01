@@ -1,7 +1,6 @@
 import {
   is,
   mergeObjects,
-  filterArray,
 } from './utils.js';
 
 import {
@@ -51,15 +50,11 @@ function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings
 
 function flattenParamsKeyframes(keyframes) {
   const properties = {};
-  const keyframesArray = keyframes.map(key => Object.keys(key));
-  const propertyNames = filterArray(keyframesArray, p => is.key(p))
-  .reduce((a,b) => {
-    if (a.indexOf(b) < 0) {
-      a.push(b);
-    }
+  const propertyNames = keyframes.map(key => Object.keys(key)).filter(is.key).reduce((a,b) => {
+    if (a.indexOf(b) < 0) { a.push(b); };
     return a;
   }, []);
-  for (let i = 0; i < propertyNames.length; i++) {
+  for (let i = 0, l = propertyNames.length; i < l; i++) {
     const propName = propertyNames[i];
     properties[propName] = keyframes.map(key => {
       const newKey = {};
