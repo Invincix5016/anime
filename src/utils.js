@@ -67,10 +67,6 @@ export function filterArray(arr, callback) {
   return result;
 }
 
-export function flattenArray(arr) {
-  return arr.reduce((a, b) => a.concat(is.arr(b) ? flattenArray(b) : b), []);
-}
-
 export function toArray(o) {
   if (is.arr(o)) return o;
   if (is.str(o)) o = selectString(o) || o;
