@@ -20,7 +20,7 @@ describe('Animatables', () => {
     const targetEls = document.querySelectorAll('.target-class');
     expect(animation.tweens.length).toBe(4);
     let i = 0;
-    animation.targets.forEach(el => {
+    animation.targets.forEach((value, el) => {
       expect(targetEls[i++]).toBe(el);
     });
   });
@@ -46,7 +46,7 @@ describe('Animatables', () => {
 
     expect(animation.tweens.length).toBe(4);
     let i = 0;
-    animation.targets.forEach(el => {
+    animation.targets.forEach((value, el) => {
       expect(targetEls[i++]).toBe(el);
     });
   });
@@ -75,7 +75,7 @@ describe('Animatables', () => {
     expect(animation.targets.has(targetIdEl)).toBe(true);
     expect(animation.targets.has(targetDataEl)).toBe(true);
     let i = 0;
-    animation.targets.forEach(el => {
+    animation.targets.forEach((value, el) => {
       expect(targetClassEls[i++]).toBe(el);
     });
   });

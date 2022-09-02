@@ -18,7 +18,7 @@ describe('Instances', () => {
   test('Must have an array of animatables', () => {
     const instance01 = anime();
 
-    expect(instance01.targets).toEqual(expect.any(Set));
+    expect(instance01.targets).toEqual(expect.any(Map));
   });
 
   test('Must have an array of tweens', () => {

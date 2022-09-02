@@ -21,8 +21,8 @@ import {
   removeAnimatablesFromAnimation,
 } from './animatables.js';
 
-export function animate(params = {}) {
-  const animation = createAnimation(params);
+export function animate(params = {}, parent) {
+  const animation = createAnimation(params, parent);
 
   animation.reset = () => resetAnimation(animation);
   animation.seek = (time, muteCallbacks) => seek(animation, time, muteCallbacks);

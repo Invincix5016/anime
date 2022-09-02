@@ -32,7 +32,7 @@ import {
 
 let tweenId = 0;
 
-export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId, targetPropertyTweens, animationOffsetTime) {
   let prevTween;
   const tweens = [];
 
@@ -153,14 +153,29 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.from = from;
     tween.to = to;
     tween.duration = parseFloat(tween.duration) || minValue;
+    tween.maxDuration = tween.duration;
     tween.delay = parseFloat(tween.delay);
     tween.start = prevTween ? prevTween.end : 0;
     tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
+    tween.absoluteStart = animationOffsetTime + tween.start + tween.delay;
+    tween.absoluteEnd = animationOffsetTime + tween.end;
     tween.easing = parseEasings(tween.easing, tween.duration);
-    tween.progress = 0;
     tween.currentValue = 0;
     prevTween = tween;
     tweens.push(tween);
+    let sortedIndex = 0;
+    for (sortedIndex = 0; sortedIndex < targetPropertyTweens.length && (targetPropertyTweens[sortedIndex].absoluteStart - tween.absoluteStart) < 0; sortedIndex++) {};
+    targetPropertyTweens.splice(sortedIndex, 0, tween);
+    const previousTargetTween = targetPropertyTweens[sortedIndex - 1];
+    if (previousTargetTween && previousTargetTween.absoluteEnd > tween.absoluteStart) {
+      previousTargetTween.endDelay -= (previousTargetTween.absoluteEnd - tween.absoluteStart);
+      if (previousTargetTween.endDelay < 0) {
+        previousTargetTween.maxDuration += previousTargetTween.endDelay;
+        previousTargetTween.endDelay = 0;
+      }
+      previousTargetTween.end = previousTargetTween.start + previousTargetTween.delay + previousTargetTween.maxDuration + previousTargetTween.endDelay;
+      previousTargetTween.absoluteEnd = animationOffsetTime + previousTargetTween.end;
+    }
   }
 
   return tweens;

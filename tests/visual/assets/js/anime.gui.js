@@ -67,7 +67,7 @@ function createCssRules() {
       z-index: 1;
       align-items: center;
       height: 100%;
-      margin-top: -.75px;
+      margin-top: 0px;
       padding-left: 4px;
       padding-right: 4px;
       font-size: 10px;
@@ -148,16 +148,17 @@ function createSidebarLabel(text, css) {
   return el;
 }
 
-function createTweenBlock(offset, tween) {
+function createTweenBlock(offset, tween, color) {
   const el = createBlock('tween-line-block', `position: relative; align-items: center; height: 16px;`);
   const tweenEl = createBlock('tween-block', `position: relative; height: 14px; background-color: currentColor; border-radius: 7px;`);
   const backgroundEl = createBlock('tween-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
   const delayEl = createBlock('tween-delay-block', `position: relative; height: 14px;`);
   const durationEl = createBlock('tween-duration-block', `position: relative; justify-content: space-between; height: 14px; background-color: currentColor; border-radius: 7px;`);
+  const skippedDurationEl = createBlock('tween-skipped-duration-block', `position: absolute; top: 0; right: 0; height: 14px; background: repeating-linear-gradient(45deg,transparent,transparent .25em,${blackColor} .25em,${blackColor} .5em); border-radius: 0px 7px 7px 0px;`);
   const endDelayEl = createBlock('tween-endDelay-block', `position: relative; height: 14px;`);
   const propertyLabelEl = createLabel(tween.property, `position: absolute; left: 0; top: 0; color: currentColor; transform: translateX(-100%)`);
-  const fromValueLabelEl = createLabel(tween.from.numbers ? tween.from.numbers[0] : tween.from.number, 'text-align: left;');
-  const fromToLabelEl = createLabel(tween.to.numbers ? tween.to.numbers[0] : tween.to.number, 'text-align: left;');
+  const fromValueLabelEl = createLabel(tween.from.numbers ? tween.from.numbers[0] : tween.from.number);
+  const fromToLabelEl = createLabel(tween.to.numbers ? tween.to.numbers[0] : tween.to.number, `background: ${color}; padding: 0 2px; margin: 2px; border-radius: 5px; height: 10px;`);
   durationEl.appendChild(fromValueLabelEl);
   durationEl.appendChild(fromToLabelEl);
   tweenEl.appendChild(backgroundEl);
@@ -165,8 +166,10 @@ function createTweenBlock(offset, tween) {
     delayEl.style.width = msToEm(tween.delay);
     tweenEl.appendChild(delayEl);
   }
-  if (tween.duration) {
+  if (tween.maxDuration) {
     durationEl.style.width = msToEm(tween.duration);
+    skippedDurationEl.style.width = msToEm(tween.duration - tween.maxDuration);
+    durationEl.appendChild(skippedDurationEl);
     tweenEl.appendChild(durationEl);
   }
   if (tween.endDelay) {
@@ -215,7 +218,7 @@ function createAnimationBlock(animation) {
       // el.appendChild(targetNameLabel);
       // playHeadHeight++;
     }
-    const tweenBLockEl = createTweenBlock(animation.timelineOffset, tween);
+    const tweenBLockEl = createTweenBlock(animation.timelineOffset, tween, currentTargetColor);
     tweenBLockEl.style.color = currentTargetColor;
     el.appendChild(tweenBLockEl);
     playHeadHeight++;
@@ -247,11 +250,11 @@ function createTimelineBlock(animation, parentHeight) {
   `);
   const playHead = createBlock('timeline-playhead', `
     pointer-events: none;
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 1px; 
-    height: ${parentHeight}; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: ${parentHeight};
     background: currentColor;
   `);
   const scrubberEl = document.createElement('input');
@@ -312,7 +315,7 @@ export function createGUI(animation, parentEl = document.body) {
     guiWrapperEl.appendChild(animationBlockEl);
   }
 
-  window.addEventListener('keydown', (e) => {  
+  window.addEventListener('keydown', (e) => {
     if (e.code == 'Space') {
       e.preventDefault();
       if (animation.paused) {
@@ -324,6 +327,6 @@ export function createGUI(animation, parentEl = document.body) {
   });
 
   createCssRules();
-  
+
   parentEl.appendChild(guiWrapperEl);
 }

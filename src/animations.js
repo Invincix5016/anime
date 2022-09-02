@@ -25,6 +25,7 @@ import {
 
 import {
   getAnimatables,
+  registerTargetsToMap,
 } from './animatables.js';
 
 import {
@@ -46,6 +47,7 @@ import {
 
 let animationsId = 0;
 let tweensGroupsId = 0;
+const rootTargets = new Map();
 
 export function getAdjustedAnimationTime(animation, time) {
   return animation._isReversed ? animation.duration - time : time;
@@ -91,9 +93,13 @@ export function renderAnimationTweens(animation, time) {
     const tween = tweens[i++];
     if (
       (prevTween && prevTween.groupId == tween.groupId && time < prevTween.end) ||
-      (animation._isRunningBackwards && nextTween && nextTween.groupId == tween.groupId && time > nextTween.start)
+      (
+        animation._isRunningBackwards &&
+        nextTween && nextTween.groupId == tween.groupId &&
+        time > nextTween.start
+      )
     ) continue;
-    const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.duration) / tween.duration);
+    const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.maxDuration) / tween.duration);
     const tweenProperty = tween.property;
     const tweenRound = tween.round;
     const tweenFrom = tween.from;
@@ -147,8 +153,7 @@ export function renderAnimationTweens(animation, time) {
     } else if (tweenType == animationTypes.ATTRIBUTE) {
       tweenTarget.setAttribute(tweenProperty, value);
     }
-    tween.progress = tweenProgress;
-    tween.currentValue = value;
+    tween.currentValue = value; // TODO: Check if storing currentValue is really needed.
   }
 }
 
@@ -240,11 +245,12 @@ export function resetAnimation(animation) {
   return animation;
 }
 
-export function createAnimation(params) {
+export function createAnimation(params, parentAnimation) {
+  const parentTargets = parentAnimation ? parentAnimation.targets : rootTargets;
   const instanceSettings = replaceObjectProps(defaultAnimationSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
-  const targets = getAnimatables(params.targets);
+  const targets = registerTargetsToMap(params.targets, parentTargets);
   const targetsLength = targets.size;
   const tweens = [];
 
@@ -254,7 +260,7 @@ export function createAnimation(params) {
 
   let i = 0;
 
-  targets.forEach(target => {
+  targets.forEach((targetTweens, target) => {
     let lastTransformGroupIndex;
     let lastTransformGroupLength;
     for (let j = 0, keysLength = propertyKeyframes.length; j < keysLength; j++) {
@@ -262,8 +268,12 @@ export function createAnimation(params) {
       const keyframesPropertyName = keyframes[0].property;
       const type = getAnimationType(target, keyframesPropertyName);
       const property = sanitizePropertyName(keyframesPropertyName, target, type);
+      let targetPropertyTweens = targetTweens[property];
+      if (!targetPropertyTweens) {
+        targetPropertyTweens = targetTweens[property] = [];
+      }
       if (is.num(type)) {
-        const tweensGroup = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, tweensGroupsId);
+        const tweensGroup = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, tweensGroupsId, targetPropertyTweens, instanceSettings.timelineOffset);
         const tweensGroupLength = tweensGroup.length;
         const firstTween = tweensGroup[0];
         const lastTween = tweensGroup[tweensGroupLength - 1];
@@ -285,7 +295,7 @@ export function createAnimation(params) {
       }
     }
     i++;
-  })
+  });
 
   const animation = mergeObjects(instanceSettings, {
     id: animationsId++,

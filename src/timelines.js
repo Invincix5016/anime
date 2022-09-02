@@ -50,7 +50,7 @@ export function createTimeline(params = {}) {
     insParams.direction = tl.direction;
     insParams.timelineOffset = parseTimelineOffset(timelineOffset, tlDuration);
     tl.seek(insParams.timelineOffset, true);
-    const ins = animate(insParams);
+    const ins = animate(insParams, tl);
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
     const timings = getTimingsFromAnimationsOrInstances(children, params);

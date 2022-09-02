@@ -38,33 +38,20 @@ export function getAnimatables(targets) {
   return parsedTargetsSet;
 }
 
-// export function registerTargetsToMap(targets, parentMap) {
-//   const targetsArray = is.arr(targets) ? targets.map(toArray) : toArray(targets);
-//   const targetsMap = new Map();
-//   let cachedTargetProperties;
-//   for (let i = 0, l = targetsArray.length; i < l; i++) {
-//     const target = targetsArray[i];
-//     if (is.arr(target)) {
-//       for (let j = 0, jl = target.length; j < jl; j++) {
-//         const subTarget = target[j];
-//         cachedTargetProperties = parentMap.get(subTarget);
-//         if (!cachedTargetProperties) {
-//           cachedTargetProperties = {};
-//           parentMap.set(subTarget, cachedTargetProperties);
-//         }
-//         targetsMap.set(subTarget, cachedTargetProperties);
-//       }
-//     } else {
-//       cachedTargetProperties = parentMap.get(target);
-//       if (!cachedTargetProperties) {
-//         cachedTargetProperties = {};
-//         parentMap.set(target, cachedTargetProperties);
-//       }
-//       targetsMap.set(target, cachedTargetProperties);
-//     }
-//   }
-//   return targetsMap;
-// }
+export function registerTargetsToMap(targets, parentMap) {
+  const parsedTargetsSet = parseTargets(targets);
+  const targetsMap = new Map();
+  parsedTargetsSet.forEach(target => {
+    registerDomTarget(target);
+    let cachedTargetProperties = parentMap.get(target);
+    if (!cachedTargetProperties) {
+      cachedTargetProperties = {};
+      parentMap.set(target, cachedTargetProperties);
+    }
+    targetsMap.set(target, cachedTargetProperties);
+  })
+  return targetsMap;
+}
 
 // Remove targets from animation
 
