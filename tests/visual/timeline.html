@@ -45,7 +45,6 @@
       <div id="square-2" class="square red"></div>
       <div id="square-3" class="square red"></div>
     </div>
-    <input id="progress-bar" step=".001" type="range" min="0" max="1" value="0">
   </div>
   <script type="module">
     import anime from '../../src/anime.js';
@@ -60,17 +59,11 @@
     const green = '#18FF74';
     const yellow = '#F6FF56';
 
-    const seekProgressEl = document.getElementById('progress-bar');
-
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
       duration: duration,
       direction: 'alternate',
-      autoplay: true,
-      update: (a) => {
-        // console.log(a);
-        seekProgressEl.value = a.progress;
-      }
+      autoplay: true
     })
     .add({
       targets: '#square-1',
@@ -155,30 +148,11 @@
       delay: anime.stagger(100),
     }, '-=' + duration)
 
-    console.log(tl);
-
     tl.finished.then(() => {
       console.log('finished');
     })
 
     createGUI(tl);
-
-    const obj = {
-      test1: 1,
-      test2: 2,
-    }
-
-    const objectAnimation = anime({
-      targets: obj,
-      test1: 10,
-      test2: 20
-    });
-
-    console.log(objectAnimation);
-
-    // test('stroke-dasharray on line 1 element', () => {
-    //   return expect(line1.getAttribute('stroke-dasharray')).toBe('138.59292602539062');
-    // });
 
   </script>
 </body>

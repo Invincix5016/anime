@@ -412,14 +412,18 @@ describe('Values', () => {
 
   test('Complex CSS values', () => {
     const targetEl = document.querySelector('#target-id');
+    targetEl.style.zIndex = 'auto'; // jsdom doesnt set auto to zIndex
     const animation = anime({
       targets: targetEl,
       filter: 'blur(10px) constrast(200)',
       translateX: 'calc( calc(15px * 2) -42rem)',
+      zIndex: {value: 10, round: 1},
       duration: 10
     });
 
+    expect(targetEl.style.zIndex).toBe('0');
     animation.seek(animation.duration);
+    expect(targetEl.style.zIndex).toBe('10');
     expect(animation.tweens[0].to.numbers).toStrictEqual([10, 200]);
     expect(targetEl.style.filter).toBe('blur(10px) constrast(200)');
     expect(animation.tweens[1].to.numbers).toStrictEqual([15, 2, -42]);

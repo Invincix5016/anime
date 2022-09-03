@@ -161,12 +161,12 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.easing = parseEasings(tween.easing, tween.duration);
     prevTween = tween;
     tweens.push(tween);
-    let sortedIndex = 0;
-    for (sortedIndex = 0; sortedIndex < targetPropertyTweens.length && (targetPropertyTweens[sortedIndex].absoluteStart - tween.absoluteStart) < 0; sortedIndex++) {};
-    targetPropertyTweens.splice(sortedIndex, 0, tween);
-    const previousTargetTween = targetPropertyTweens[sortedIndex - 1];
+    let tweenIndex = 0;
+    while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) tweenIndex++;
+    targetPropertyTweens.splice(tweenIndex, 0, tween);
+    const previousTargetTween = targetPropertyTweens[tweenIndex - 1];
     if (previousTargetTween) {
-      if (previousTargetTween.absoluteEnd > tween.absoluteStart) {
+      if (previousTargetTween.absoluteEnd >= tween.absoluteStart) {
         previousTargetTween.endDelay -= (previousTargetTween.absoluteEnd - tween.absoluteStart);
         if (previousTargetTween.endDelay < 0) {
           previousTargetTween.changeDuration += previousTargetTween.endDelay;

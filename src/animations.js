@@ -130,6 +130,8 @@ export function renderAnimationTweens(animation, time) {
       }
     }
 
+    // console.log(value);
+
     if (tweenType == animationTypes.OBJECT) {
       tweenTarget[tweenProperty] = value;
     } else if (tweenType == animationTypes.TRANSFORM) {
@@ -228,12 +230,16 @@ export function resetAnimation(animation) {
 
 export function createAnimation(params, parentAnimation) {
   const parentTargets = parentAnimation ? parentAnimation.targets : rootTargets;
-  const instanceSettings = replaceObjectProps(defaultAnimationSettings, params);
+  const animationSettings = replaceObjectProps(defaultAnimationSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
   const targets = registerTargetsToMap(params.targets, parentTargets);
   const targetsLength = targets.size;
   const tweens = [];
+
+  if (!parentAnimation) {
+    animationSettings.timelineOffset = Date.now();
+  }
 
   let maxDuration = 0;
   let changeStartTime;
@@ -254,7 +260,7 @@ export function createAnimation(params, parentAnimation) {
         targetPropertyTweens = targetTweens[property] = [];
       }
       if (is.num(type)) {
-        const animationPropertyTweens = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, targetPropertyTweens, instanceSettings.timelineOffset);
+        const animationPropertyTweens = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, targetPropertyTweens, animationSettings.timelineOffset);
         const animationPropertyTweensLength = animationPropertyTweens.length;
         const firstTween = animationPropertyTweens[0];
         const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];
@@ -277,7 +283,7 @@ export function createAnimation(params, parentAnimation) {
     i++;
   });
 
-  const animation = mergeObjects(instanceSettings, {
+  const animation = mergeObjects(animationSettings, {
     id: animationsId++,
     targets: targets,
     tweens: tweens,

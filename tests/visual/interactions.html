@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactions tests | anime.js</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="assets/css/styles.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: absolute;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    #test-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 2rem;
+      max-width: 32rem;
+    }
+    #timeline-test {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    #progress-bar {
+      width: 100%;
+    }
+    .square {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div id="test-wrapper">
+    <div id="timeline-test">
+      <div id="square-1" class="hover square red"></div>
+      <div id="square-2" class="hover square red"></div>
+      <div id="square-3" class="hover square red"></div>
+    </div>
+  </div>
+  <script type="module">
+    import anime from '../../src/anime.js';
+    // import anime from './assets/anime.3.2.1.js';
+    import { createGUI } from './assets/js/anime.gui.js';
+
+    const red = '#F64E4D';
+    const blue = '#61C3FF';
+    const green = '#18FF74';
+    const yellow = '#F6FF56';
+
+    const hoverElements = document.querySelectorAll('.hover');
+
+    for (let i = 0, l = hoverElements.length; i < l; i++) {
+      const el = hoverElements[i];
+      el.onmouseenter = () => {
+        anime({
+          targets: el,
+          scale: 1.2,
+          zIndex: {value: 999, round: 1, easing: 'linear', duration: 25},
+          color: {value: green, easing: 'easeOutQuad', duration: 300},
+          duration: 900,
+          begin: () => el.dataset.hover = true,
+        })
+      }
+      el.onmousedown = () => {
+        anime({
+          targets: el,
+          scale: .8,
+          zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
+          color: {value: blue, easing: 'easeOutQuad', duration: 300},
+          duration: 500
+        })
+      }
+      el.onmouseleave = () => {
+        anime({
+          targets: el,
+          scale: 1,
+          zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
+          color: {value: red, easing: 'easeOutQuad', duration: 300},
+          duration: 500,
+          begin: () => el.removeAttribute('data-hover'),
+        })
+      }
+      el.onmouseup = () => {
+        anime({
+          targets: el,
+          scale: el.dataset.hover ? 1.2 : 1,
+          zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
+          color: {value: el.dataset.hover ? green : red, easing: 'easeOutQuad', duration: 300},
+          duration: 500
+        })
+      }
+    }
+
+    // createGUI(tl);
+
+  </script>
+</body>
+</html>

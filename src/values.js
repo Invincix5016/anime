@@ -64,7 +64,10 @@ export function getOriginalAnimatableValue(target, propName, animationType) {
     case animationTypes.OBJECT: return target[propName] || 0; // Fallaback to 0 if the property doesn't exist on the object.
     case animationTypes.ATTRIBUTE: return target.getAttribute(propName);
     case animationTypes.TRANSFORM: return getTransformValue(target, propName, true);
-    case animationTypes.CSS: return target.style[propName] || getComputedStyle(target).getPropertyValue(propName);
+    case animationTypes.CSS:
+      let cssValue = target.style[propName] || getComputedStyle(target).getPropertyValue(propName);
+      if (cssValue === 'auto') cssValue = 0;
+      return cssValue;
   }
 }
 
