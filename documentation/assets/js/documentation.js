@@ -13,13 +13,12 @@ function getScrollTop() {
 function scrollTo(selector, offset, cb) {
   var offset = offset || 0;
   var el = document.querySelector(selector);
-  var scrollAnim = anime({
-    targets: {scroll: demosEl.scrollTop},
-    scroll: el.offsetTop - offset,
+  anime({
+    targets: demosEl,
+    scrollTop: el.offsetTop - offset,
     duration: 500,
     easing: 'easeInOutQuart',
-    update: function(a) { demosEl.scrollTop = a.tweens[0].currentValue; },
-    complete: function() { if (cb) cb(); }
+    complete: cb
   });
 }
 
