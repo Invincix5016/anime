@@ -53,6 +53,7 @@ export function createTimeline(params = {}) {
     const ins = animate(insParams, tl);
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
+    tl._childrenLength = tl.children.length;
     const timings = getTimingsFromAnimationsOrInstances(children, params);
     tl._changeStartTime = timings.changeStartTime;
     tl._changeEndTime = timings.changeEndTime;

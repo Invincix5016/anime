@@ -42,7 +42,7 @@ export function play(animation) {
 
 export function reverse(animation) {
   toggleAnimationDirection(animation);
-  animation.completed = animation._isReversed ? 0 : 1;
+  animation.completed = animation.isReversed ? 0 : 1;
   return resetAnimationTime(animation);
 }
 

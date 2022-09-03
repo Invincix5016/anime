@@ -140,7 +140,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     }
 
     // Reference the cached transforms here to avoid unnecessary call to .get() during render
-
     if (animationType === animationTypes.TRANSFORM) {
       tween.cachedTransforms = cache.DOM.get(target).transforms;
     }
