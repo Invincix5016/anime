@@ -65,7 +65,7 @@
           targets: el,
           scale: 1.2,
           zIndex: {value: 999, round: 1, easing: 'linear', duration: 25},
-          color: {value: green, easing: 'easeOutQuad', duration: 300},
+          color: {value: blue, easing: 'easeOutQuad', duration: 150},
           duration: 900,
           begin: () => el.dataset.hover = true,
         })
@@ -75,7 +75,7 @@
           targets: el,
           scale: .8,
           zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
-          color: {value: blue, easing: 'easeOutQuad', duration: 300},
+          color: {value: green, easing: 'easeOutQuad', duration: 100},
           duration: 500
         })
       }
@@ -94,7 +94,7 @@
           targets: el,
           scale: el.dataset.hover ? 1.2 : 1,
           zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
-          color: {value: el.dataset.hover ? green : red, easing: 'easeOutQuad', duration: 300},
+          color: {value: el.dataset.hover ? blue : red, easing: 'easeOutQuad', duration: 300},
           duration: 500
         })
       }
