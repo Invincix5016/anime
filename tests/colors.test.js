@@ -45,16 +45,25 @@ const colors = {
   },
 }
 
-function createColorTest(testName, inFrom, inTo, outFrom, outTo) {
+function createColorTest(testName, inFrom, inTo, outFrom, outTo, fromType, toType) {
   return test(testName, () => {
-    const animation = anime({ targets: '#target-id', color: [inFrom, inTo] });
+    const targetEl = document.querySelector('#target-id');
+    const animation = anime({ targets: targetEl, color: [inFrom, inTo] });
     expect(animation.tweens[0].from.type).toStrictEqual(valueTypes.COLOR);
     expect(animation.tweens[0].from.numbers).toStrictEqual(outFrom);
     expect(animation.tweens[0].to.type).toStrictEqual(valueTypes.COLOR);
     expect(animation.tweens[0].to.numbers).toStrictEqual(outTo);
-    expect(animation.tweens[0].currentValue).toBe(`rgba(${outFrom[0]},${outFrom[1]},${outFrom[2]},${outFrom[3]})`);
+    if (fromType === 'rgba') {
+      expect(targetEl.style.color).toBe(`rgba(${outFrom[0]}, ${outFrom[1]}, ${outFrom[2]}, ${outFrom[3]})`);
+    } else {
+      expect(targetEl.style.color).toBe(`rgb(${outFrom[0]}, ${outFrom[1]}, ${outFrom[2]})`);
+    }
     animation.seek(animation.duration);
-    expect(animation.tweens[0].currentValue).toBe(`rgba(${outTo[0]},${outTo[1]},${outTo[2]},${outTo[3]})`);
+    if (toType === 'rgba') {
+      expect(targetEl.style.color).toBe(`rgba(${outTo[0]}, ${outTo[1]}, ${outTo[2]}, ${outTo[3]})`);
+    } else {
+      expect(targetEl.style.color).toBe(`rgb(${outTo[0]}, ${outTo[1]}, ${outTo[2]})`);
+    }
   });
 }
 
@@ -66,7 +75,7 @@ function createColorTestsByType(fromType, toType) {
       const inputToValue = colors.to[toType].input[inputToName];
       const outputToValue = colors.to[toType].output;
       const testName = 'Convert ' + inputFromName + ' to ' + inputToName;
-      createColorTest(testName, inputFromValue, inputToValue, outputFromValue, outputToValue);
+      createColorTest(testName, inputFromValue, inputToValue, outputFromValue, outputToValue, fromType, toType);
     }
   }
 }

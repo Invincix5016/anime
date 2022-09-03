@@ -46,7 +46,6 @@ import {
 } from './values.js';
 
 let animationsId = 0;
-let tweensGroupsId = 0;
 const rootTargets = new Map();
 
 export function getAdjustedAnimationTime(animation, time) {
@@ -86,15 +85,12 @@ export function syncAnimationChildren(animation, time, muteCallbacks, manual) {
 export function renderAnimationTweens(animation, time) {
   let i = 0;
   const tweens = animation.tweens;
-  const tweensLength = tweens.length;
   const absTime = animation.timelineOffset + time;
-  while (i < tweensLength) {
+  while (i < animation.tweensLength) {
     const tween = tweens[i++];
-    const prevTween = tween.previous;
-    const nextTween = tween.next;
     if (
-      (prevTween && (absTime < prevTween.absoluteEnd)) ||
-      (nextTween && (absTime > nextTween.absoluteStart))
+      (tween.previous && (absTime < tween.previous.absoluteEnd)) ||
+      (tween.next && (absTime > tween.next.absoluteStart))
     ) continue;
     const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.changeDuration) / tween.duration);
     const tweenProperty = tween.property;
@@ -150,7 +146,6 @@ export function renderAnimationTweens(animation, time) {
     } else if (tweenType == animationTypes.ATTRIBUTE) {
       tweenTarget.setAttribute(tweenProperty, value);
     }
-    tween.currentValue = value; // TODO: Check if storing currentValue is really needed.
   }
 }
 
@@ -267,20 +262,19 @@ export function createAnimation(params, parentAnimation) {
         targetPropertyTweens = targetTweens[property] = [];
       }
       if (is.num(type)) {
-        const tweensGroup = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, tweensGroupsId, targetPropertyTweens, instanceSettings.timelineOffset);
-        const tweensGroupLength = tweensGroup.length;
-        const firstTween = tweensGroup[0];
-        const lastTween = tweensGroup[tweensGroupLength - 1];
+        const animationPropertyTweens = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, targetPropertyTweens, instanceSettings.timelineOffset);
+        const animationPropertyTweensLength = animationPropertyTweens.length;
+        const firstTween = animationPropertyTweens[0];
+        const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];
         const lastTweenChangeEndTime = lastTween.end - lastTween.endDelay;
         if (is.und(changeStartTime) || firstTween.delay < changeStartTime) changeStartTime = firstTween.delay;
         if (lastTween.end > maxDuration) maxDuration = lastTween.end;
         if (lastTweenChangeEndTime > changeEndTime) changeEndTime = lastTweenChangeEndTime;
         if (type == animationTypes.TRANSFORM) {
           lastTransformGroupIndex = tweens.length;
-          lastTransformGroupLength = lastTransformGroupIndex + tweensGroupLength;
+          lastTransformGroupLength = lastTransformGroupIndex + animationPropertyTweensLength;
         }
-        tweens.push(...tweensGroup);
-        tweensGroupsId++;
+        tweens.push(...animationPropertyTweens);
       }
     }
     if (!is.und(lastTransformGroupIndex)) {
@@ -295,6 +289,7 @@ export function createAnimation(params, parentAnimation) {
     id: animationsId++,
     targets: targets,
     tweens: tweens,
+    tweensLength: tweens.length,
     children: [],
     duration: targetsLength ? maxDuration : tweenSettings.duration, // Total duration of the animation
     progress: 0, // [0 to 1] range, represent the % of completion of an animation total duration

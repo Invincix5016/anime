@@ -32,7 +32,7 @@ import {
 
 let tweenId = 0;
 
-export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, groupId, targetPropertyTweens, animationOffsetTime) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, targetPropertyTweens, animationOffsetTime) {
   let prevTween;
   const tweens = [];
 
@@ -145,7 +145,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     }
 
     tween.id = tweenId++;
-    tween.groupId = groupId;
     tween.type = animationType;
     tween.property = propertyName;
     tween.target = target;
@@ -160,7 +159,6 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     tween.absoluteStart = animationOffsetTime + tween.start;
     tween.absoluteEnd = animationOffsetTime + tween.end;
     tween.easing = parseEasings(tween.easing, tween.duration);
-    tween.currentValue = 0;
     prevTween = tween;
     tweens.push(tween);
     let sortedIndex = 0;

@@ -25,44 +25,44 @@ describe('Stagger', () => {
     expect(animation.tweens[3].delay).toBe(35);
   });
 
-  test('Distributes evenly values between two numbers', resolve => {
+  test('Distributes evenly values between two numbers', () => {
+    const staggerEls = document.querySelectorAll('#stagger div');
     const animation = anime({
-      targets: '#stagger div',
+      targets: staggerEls,
       translateX: anime.stagger([-10, 10]),
-      duration: 10,
-      complete: () => {
-        expect(animation.tweens[0].to.number).toBe(-10);
-        expect(animation.tweens[1].to.number).toBe(-5);
-        expect(animation.tweens[2].to.number).toBe(0);
-        expect(animation.tweens[3].to.number).toBe(5);
-        expect(animation.tweens[4].to.number).toBe(10);
-
-        expect(animation.tweens[0].currentValue).toBe('-10px');
-        expect(animation.tweens[1].currentValue).toBe('-5px');
-        expect(animation.tweens[2].currentValue).toBe('0px');
-        expect(animation.tweens[3].currentValue).toBe('5px');
-        expect(animation.tweens[4].currentValue).toBe('10px');
-
-        resolve();
-      }
+      duration: 10
     });
+
+    animation.seek(animation.duration);
+
+    expect(animation.tweens[0].to.number).toBe(-10);
+    expect(animation.tweens[1].to.number).toBe(-5);
+    expect(animation.tweens[2].to.number).toBe(0);
+    expect(animation.tweens[3].to.number).toBe(5);
+    expect(animation.tweens[4].to.number).toBe(10);
+
+    expect(staggerEls[0].style.transform).toBe('translateX(-10px) ');
+    expect(staggerEls[1].style.transform).toBe('translateX(-5px) ');
+    expect(staggerEls[2].style.transform).toBe('translateX(0px) ');
+    expect(staggerEls[3].style.transform).toBe('translateX(5px) ');
+    expect(staggerEls[4].style.transform).toBe('translateX(10px) ');
   });
 
-  test('Specific staggered ranged value unit', resolve => {
+  test('Specific staggered ranged value unit', () => {
+    const staggerEls = document.querySelectorAll('#stagger div');
     const animation = anime({
-      targets: '#stagger div',
+      targets: staggerEls,
       translateX: anime.stagger(['-10rem', '10rem']),
       duration: 10,
-      complete: () => {
-        expect(animation.tweens[0].currentValue).toBe('-10rem');
-        expect(animation.tweens[1].currentValue).toBe('-5rem');
-        expect(animation.tweens[2].currentValue).toBe('0rem');
-        expect(animation.tweens[3].currentValue).toBe('5rem');
-        expect(animation.tweens[4].currentValue).toBe('10rem');
-
-        resolve();
-      }
     });
+
+    animation.seek(animation.duration);
+
+    expect(staggerEls[0].style.transform).toBe('translateX(-10rem) ');
+    expect(staggerEls[1].style.transform).toBe('translateX(-5rem) ');
+    expect(staggerEls[2].style.transform).toBe('translateX(0rem) ');
+    expect(staggerEls[3].style.transform).toBe('translateX(5rem) ');
+    expect(staggerEls[4].style.transform).toBe('translateX(10rem) ');
   });
 
   test('Starts the stagger effect from the center', () => {

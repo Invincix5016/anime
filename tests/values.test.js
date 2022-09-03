@@ -192,8 +192,9 @@ describe('Values', () => {
   });
 
   test('Function based values', () => {
+    const targetEls = document.querySelectorAll('.target-class');
     const animation = anime({
-      targets: '.target-class',
+      targets: targetEls,
       autoplay: false,
       translateX: (el, i, total) => {
         return el.getAttribute('data-index');
@@ -243,17 +244,17 @@ describe('Values', () => {
     expect(animation.tweens[2].to.unit).toBe('px');
     expect(animation.tweens[3].to.unit).toBe('px');
 
-    expect(animation.tweens[0].currentValue).toBe('0px');
-    expect(animation.tweens[1].currentValue).toBe('0px');
-    expect(animation.tweens[2].currentValue).toBe('0px');
-    expect(animation.tweens[3].currentValue).toBe('0px');
+    expect(targetEls[0].style.transform).toBe('translateX(0px) ');
+    expect(targetEls[1].style.transform).toBe('translateX(0px) ');
+    expect(targetEls[2].style.transform).toBe('translateX(0px) ');
+    expect(targetEls[3].style.transform).toBe('translateX(0px) ');
 
     animation.seek(animation.duration);
 
-    expect(animation.tweens[0].currentValue).toBe('0px');
-    expect(animation.tweens[1].currentValue).toBe('1px');
-    expect(animation.tweens[2].currentValue).toBe('2px');
-    expect(animation.tweens[3].currentValue).toBe('3px');
+    expect(targetEls[0].style.transform).toBe('translateX(0px) ');
+    expect(targetEls[1].style.transform).toBe('translateX(1px) ');
+    expect(targetEls[2].style.transform).toBe('translateX(2px) ');
+    expect(targetEls[3].style.transform).toBe('translateX(3px) ');
 
     // Duration
     expect(animation.tweens[0].duration).toBe(4);
@@ -275,8 +276,9 @@ describe('Values', () => {
   });
 
   test('Get CSS computed values', () => {
+    const targetEls = document.querySelectorAll('.css-properties');
     const animation = anime({
-      targets: '.css-properties',
+      targets: targetEls,
       width: 100,
       fontSize: 10,
     });
@@ -297,13 +299,14 @@ describe('Values', () => {
     expect(animation.tweens[0].to.unit).toBe('px');
     expect(animation.tweens[1].to.unit).toBe('px');
 
-    expect(animation.tweens[0].currentValue).toBe('100px');
-    expect(animation.tweens[1].currentValue).toBe('10px');
+    expect(targetEls[0].style.width).toBe('100px');
+    expect(targetEls[0].style.fontSize).toBe('10px');
   });
 
   test('Get CSS inline values', () => {
+    const targetEls = document.querySelectorAll('.with-inline-styles');
     const animation = anime({
-      targets: '.with-inline-styles',
+      targets: targetEls,
       width: 100,
     });
 
@@ -316,8 +319,8 @@ describe('Values', () => {
     expect(animation.tweens[0].to.type).toBe(valueTypes.UNIT);
     expect(animation.tweens[0].to.number).toBe(100);
     expect(animation.tweens[0].to.unit).toBe('px');
-    
-    expect(animation.tweens[0].currentValue).toBe('100px');
+
+    expect(targetEls[0].style.width).toBe('100px');
   });
 
   test('Get default transforms values', () => {
@@ -349,9 +352,6 @@ describe('Values', () => {
     expect(animation.tweens[0].from.number).toBe(0);
     expect(animation.tweens[1].from.number).toBe(0);
     expect(animation.tweens[2].from.number).toBe(0);
-    expect(animation.tweens[0].currentValue).toBe('100px');
-    expect(animation.tweens[1].currentValue).toBe('100px');
-    expect(animation.tweens[2].currentValue).toBe('100px');
     // Rotate
     expect(animation.tweens[3].from.unit).toBe('deg');
     expect(animation.tweens[4].from.unit).toBe('deg');
@@ -361,10 +361,6 @@ describe('Values', () => {
     expect(animation.tweens[4].from.number).toBe(0);
     expect(animation.tweens[5].from.number).toBe(0);
     expect(animation.tweens[6].from.number).toBe(0);
-    expect(animation.tweens[3].currentValue).toBe('360deg');
-    expect(animation.tweens[4].currentValue).toBe('360deg');
-    expect(animation.tweens[5].currentValue).toBe('360deg');
-    expect(animation.tweens[6].currentValue).toBe('360deg');
     // Skew
     expect(animation.tweens[7].from.unit).toBe('deg');
     expect(animation.tweens[8].from.unit).toBe('deg');
@@ -372,9 +368,6 @@ describe('Values', () => {
     expect(animation.tweens[7].from.number).toBe(0);
     expect(animation.tweens[8].from.number).toBe(0);
     expect(animation.tweens[9].from.number).toBe(0);
-    expect(animation.tweens[7].currentValue).toBe('45deg');
-    expect(animation.tweens[8].currentValue).toBe('45deg');
-    expect(animation.tweens[9].currentValue).toBe('45deg');
     // Scale
     expect(animation.tweens[10].from.unit).toBe(undefined);
     expect(animation.tweens[11].from.unit).toBe(undefined);
@@ -384,10 +377,6 @@ describe('Values', () => {
     expect(animation.tweens[11].from.number).toBe(1);
     expect(animation.tweens[12].from.number).toBe(1);
     expect(animation.tweens[13].from.number).toBe(1);
-    expect(animation.tweens[10].currentValue).toBe(10);
-    expect(animation.tweens[11].currentValue).toBe(10);
-    expect(animation.tweens[12].currentValue).toBe(10);
-    expect(animation.tweens[13].currentValue).toBe(10);
     // Perspective
     expect(animation.tweens[14].from.unit).toBe('px');
     expect(animation.tweens[14].from.number).toBe(0);
@@ -397,8 +386,9 @@ describe('Values', () => {
   });
 
   test('Values with white space', () => {
+    const targetEl = document.querySelector('#target-id');
     const animation = anime({
-      targets: '#target-id',
+      targets: targetEl,
       backgroundSize: ['auto 100%', 'auto 200%'],
       duration: 10
     });
@@ -413,26 +403,27 @@ describe('Values', () => {
     expect(animation.tweens[0].to.strings[0]).toBe('auto ');
     expect(animation.tweens[0].to.strings[1]).toBe('%');
 
-    expect(animation.tweens[0].currentValue).toBe('auto 100%');
+    expect(targetEl.style.backgroundSize).toBe('auto 100%');
 
     animation.seek(animation.duration);
 
-    expect(animation.tweens[0].currentValue).toBe('auto 200%');
+    expect(targetEl.style.backgroundSize).toBe('auto 200%');
   });
 
   test('Complex CSS values', () => {
+    const targetEl = document.querySelector('#target-id');
     const animation = anime({
-      targets: '#target-id',
+      targets: targetEl,
       filter: 'blur(10px) constrast(200)',
       translateX: 'calc( calc(15px * 2) -42rem)',
       duration: 10
     });
 
     animation.seek(animation.duration);
-    expect(animation.tweens[0].currentValue).toBe('blur(10px) constrast(200)');
     expect(animation.tweens[0].to.numbers).toStrictEqual([10, 200]);
-    expect(animation.tweens[1].currentValue).toBe('calc( calc(15px * 2) -42rem)');
+    expect(targetEl.style.filter).toBe('blur(10px) constrast(200)');
     expect(animation.tweens[1].to.numbers).toStrictEqual([15, 2, -42]);
+    expect(targetEl.style.transform).toBe('translateX(calc( calc(15px * 2) -42rem)) ');
   });
 
   test('Relative values with operators +=, -=, *=', () => {
@@ -440,22 +431,20 @@ describe('Values', () => {
     relativeEl.style.transform = 'translateX(100px)';
     relativeEl.style.width = '28px';
     const animation = anime({
-      targets: '#target-id',
+      targets: relativeEl,
       translateX: '*=2.5', // 100px * 2.5 = '250px',
       width: '-=20px', // 28 - 20 = '8px',
       rotate: '+=2turn', // 0 + 2 = '2turn',
       duration: 10
     });
 
-    expect(animation.tweens[0].currentValue).toBe('100px');
-    expect(animation.tweens[1].currentValue).toBe('28px');
-    expect(animation.tweens[2].currentValue).toBe('0turn');
+    expect(relativeEl.style.transform).toBe('translateX(100px) rotate(0turn) ');
+    expect(relativeEl.style.width).toBe('28px');
 
     animation.seek(animation.duration);
 
-    expect(animation.tweens[0].currentValue).toBe('250px');
-    expect(animation.tweens[1].currentValue).toBe('8px');
-    expect(animation.tweens[2].currentValue).toBe('2turn');
+    expect(relativeEl.style.transform).toBe('translateX(250px) rotate(2turn) ');
+    expect(relativeEl.style.width).toBe('8px');
   });
 
   test('Relative values inside from to values', () => {
@@ -463,22 +452,20 @@ describe('Values', () => {
     relativeEl.style.transform = 'translateX(100px)';
     relativeEl.style.width = '28px';
     const animation = anime({
-      targets: '#target-id',
+      targets: relativeEl,
       translateX: ['*=2.5', 10], // Relative from value
       width: [100, '-=20px'], // Relative to value
       rotate: ['+=2turn', '-=1turn'], // Relative from and to values
       duration: 10,
     });
 
-    expect(animation.tweens[0].currentValue).toBe('250px');
-    expect(animation.tweens[1].currentValue).toBe('100px');
-    expect(animation.tweens[2].currentValue).toBe('2turn');
+    expect(relativeEl.style.transform).toBe('translateX(250px) rotate(2turn) ');
+    expect(relativeEl.style.width).toBe('100px');
 
     animation.seek(animation.duration);
 
-    expect(animation.tweens[0].currentValue).toBe('10px');
-    expect(animation.tweens[1].currentValue).toBe('80px');
-    expect(animation.tweens[2].currentValue).toBe('1turn');
+    expect(relativeEl.style.transform).toBe('translateX(10px) rotate(1turn) ');
+    expect(relativeEl.style.width).toBe('80px');
 
   });
 });
