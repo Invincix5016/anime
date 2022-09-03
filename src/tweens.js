@@ -32,7 +32,7 @@ import {
 
 let tweenId = 0;
 
-export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, targetPropertyTweens, animationOffsetTime) {
+export function convertKeyframesToTweens(keyframes, target, propertyName, animationType, index, total, targetPropertyTweens, animationOffsetTime, isOrphan) {
   let prevTween;
   const tweens = [];
 
@@ -164,7 +164,8 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
     let tweenIndex = 0;
     while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) tweenIndex++;
     targetPropertyTweens.splice(tweenIndex, 0, tween);
-    const previousTargetTween = targetPropertyTweens[tweenIndex - 1];
+    const previousTargetTweenIndex = tweenIndex - 1;
+    const previousTargetTween = targetPropertyTweens[previousTargetTweenIndex];
     if (previousTargetTween) {
       if (previousTargetTween.absoluteEnd >= tween.absoluteStart) {
         previousTargetTween.endDelay -= (previousTargetTween.absoluteEnd - tween.absoluteStart);
@@ -176,7 +177,11 @@ export function convertKeyframesToTweens(keyframes, target, propertyName, animat
         previousTargetTween.absoluteEnd = previousTargetTween.animationOffsetTime + previousTargetTween.end;
       }
       previousTargetTween.next = tween;
-      tween.previous = previousTargetTween;
+      if (isOrphan) {
+        targetPropertyTweens.splice(previousTargetTweenIndex, 1);
+      } else {
+        tween.previous = previousTargetTween;
+      }
     }
   }
 

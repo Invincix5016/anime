@@ -16,6 +16,8 @@ export const engine = {
   elapsedTime: 0,
 }
 
+export const rootTargets = new Map();
+
 const raf = requestAnimationFrame;
 let engineRaf = 0;
 

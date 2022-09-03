@@ -55,27 +55,26 @@ export function registerTargetsToMap(targets, parentMap) {
 
 // Remove targets from animation
 
-function removeTweensWithTargets(targetsSet, tweensArray) {
-  for (let i = tweensArray.length; i--;) {
-    if (targetsSet.has(tweensArray[i].target)) {
-      tweensArray.splice(i, 1);
+function removeTweensWithTargets(targetsSet, animation) {
+  for (let i = animation.tweens.length; i--;) {
+    if (targetsSet.has(animation.tweens[i].target)) {
+      animation.tweens.splice(i, 1);
+      animation._tweensLength--;
     }
   }
 }
 
 function removeTweensWithTargetsFromAnimation(targetsSet, animation) {
-  const tweens = animation.tweens;
   const children = animation.children;
   for (let i = children.length; i--;) {
     const child = children[i];
-    const childTweens = child.tweens;
-    removeTweensWithTargets(targetsSet, childTweens);
-    if (!childTweens.length && !child.children.length) children.splice(i, 1);
+    removeTweensWithTargets(targetsSet, child);
+    if (!child._tweensLength && !child.children.length) children.splice(i, 1);
   }
   // Return early to prevent animations created without targets (and without tweens) to be paused
-  if (!tweens.length) return;
-  removeTweensWithTargets(targetsSet, tweens);
-  if (!tweens.length && !children.length) animation.pause();
+  if (!animation._tweensLength) return;
+  removeTweensWithTargets(targetsSet, animation);
+  if (!animation._tweensLength && !children.length) animation.pause();
 }
 
 export function removeAnimatablesFromAnimation(targets, animation) {

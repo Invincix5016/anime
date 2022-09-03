@@ -45,8 +45,11 @@ import {
   getAnimationType,
 } from './values.js';
 
+import {
+  rootTargets,
+} from './engine.js';
+
 let animationsId = 0;
-const rootTargets = new Map();
 
 export function getAdjustedAnimationTime(animation, time) {
   return animation.isReversed ? animation.duration - time : time;
@@ -258,7 +261,7 @@ export function createAnimation(params, parentAnimation) {
         targetPropertyTweens = targetTweens[property] = [];
       }
       if (is.num(type)) {
-        const animationPropertyTweens = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, targetPropertyTweens, animationSettings.timelineOffset);
+        const animationPropertyTweens = convertKeyframesToTweens(keyframes, target, property, type, i, targetsLength, targetPropertyTweens, animationSettings.timelineOffset, !parentAnimation);
         const animationPropertyTweensLength = animationPropertyTweens.length;
         const firstTween = animationPropertyTweens[0];
         const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];

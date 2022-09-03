@@ -48,6 +48,7 @@
   let halfW = window.innerWidth * .5;
   let halfH = window.innerHeight * .5;
   let radius = Math.sqrt(halfW * halfW + halfH * halfH);
+  const particles = [];
 
   function createParticule() {
     const el = document.createElement('div');
@@ -74,25 +75,29 @@
     // const angle = anime.random(-360, 360);
     // const angle = (i / total) * 360;
     const angle = Math.random() * Math.PI * 2;
-    const duration = 1000;
+    const duration = 500;
     const delay = (duration / total) * i;
     anime({
       targets: particleEl,
       // rotate: [angle, angle],
       // opacity: [1, 0],
-      translateX: Math.cos(angle) * radius,
-      translateY: Math.sin(angle) * radius,
+      translateX: [0, Math.cos(angle) * radius],
+      translateY: [0, Math.sin(angle) * radius],
       scale: [0.05, 2],
       easing: 'easeInCubic',
       delay: delay,
       duration: duration,
       loop: true,
+      // complete: () => {
+      //   animateParticle(particleEl, i, total);
+      // }
     });
   }
 
   for (let i = 0, l = 1000; i < l; i++) {
     const particleEl = createParticule();
     particlesEl.appendChild(particleEl);
+    particles.push(particleEl);
     // anime.set(particleEl, {rotate: anime.random(-360, 360)});
     animateParticle(particleEl, i, l);
   }
