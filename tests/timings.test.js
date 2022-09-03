@@ -60,6 +60,14 @@ describe('Timings', () => {
   test('changeStartTime must be equal to the smallest delay of the all the animations', () => {
     const animation = anime(complexTimingsParams);
     expect(animation._changeStartTime).toBe(10);
+    expect(animation.currentTime).toBe(0);
+    animation.seek(5)
+    expect(animation.currentTime).toBe(5);
+    animation.seek(animation.duration - 5)
+    expect(animation.currentTime).toBe(animation.duration - 5);
+    animation.seek(animation.duration)
+    expect(animation.currentTime).toBe(animation.duration);
+
   });
 
   test('Duration must be the longest delay + duration of the all the animations', () => {

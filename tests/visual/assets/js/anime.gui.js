@@ -260,7 +260,7 @@ function createTimelineBlock(animation, parentHeight) {
   const scrubberEl = document.createElement('input');
   scrubberEl.classList.add(`${classPrefix}scrubber`)
   scrubberEl.setAttribute('type', 'range');
-  scrubberEl.setAttribute('step', '.0001');
+  scrubberEl.setAttribute('step', 10/animation.duration);
   scrubberEl.setAttribute('min', '0');
   scrubberEl.setAttribute('max', '1');
   scrubberEl.setAttribute('value', '0');
