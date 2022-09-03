@@ -154,7 +154,7 @@ function createTweenBlock(offset, tween, color) {
   const backgroundEl = createBlock('tween-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
   const delayEl = createBlock('tween-delay-block', `position: relative; height: 14px;`);
   const durationEl = createBlock('tween-duration-block', `position: relative; justify-content: space-between; height: 14px; background-color: currentColor; border-radius: 7px;`);
-  const skippedDurationEl = createBlock('tween-skipped-duration-block', `position: absolute; top: 0; right: 0; height: 14px; background: repeating-linear-gradient(45deg,transparent,transparent .25em,${blackColor} .25em,${blackColor} .5em); border-radius: 0px 7px 7px 0px;`);
+  const skippedDurationEl = createBlock('tween-skipped-duration-block', `position: absolute; top: 0; right: 0; height: 14px; background: repeating-linear-gradient(45deg,transparent,transparent 1.5px,${blackColor} 1.5px,${blackColor} 3px); border-radius: 0px 7px 7px 0px;`);
   const endDelayEl = createBlock('tween-endDelay-block', `position: relative; height: 14px;`);
   const propertyLabelEl = createLabel(tween.property, `position: absolute; left: 0; top: 0; color: currentColor; transform: translateX(-100%)`);
   const fromValueLabelEl = createLabel(tween.from.numbers ? tween.from.numbers[0] : tween.from.number);
@@ -166,9 +166,9 @@ function createTweenBlock(offset, tween, color) {
     delayEl.style.width = msToEm(tween.delay);
     tweenEl.appendChild(delayEl);
   }
-  if (tween.maxDuration) {
+  if (tween.changeDuration) {
     durationEl.style.width = msToEm(tween.duration);
-    skippedDurationEl.style.width = msToEm(tween.duration - tween.maxDuration);
+    skippedDurationEl.style.width = msToEm(tween.duration - tween.changeDuration);
     durationEl.appendChild(skippedDurationEl);
     tweenEl.appendChild(durationEl);
   }

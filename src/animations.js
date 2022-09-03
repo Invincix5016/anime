@@ -87,19 +87,13 @@ export function renderAnimationTweens(animation, time) {
   let i = 0;
   const tweens = animation.tweens;
   const tweensLength = tweens.length;
+  const absTime = animation.timelineOffset + time;
   while (i < tweensLength) {
-    const prevTween = tweens[i - 1];
-    const nextTween = tweens[i + 1];
     const tween = tweens[i++];
-    if (
-      (prevTween && prevTween.groupId == tween.groupId && time < prevTween.end) ||
-      (
-        animation._isRunningBackwards &&
-        nextTween && nextTween.groupId == tween.groupId &&
-        time > nextTween.start
-      )
-    ) continue;
-    const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.maxDuration) / tween.duration);
+    const prevTween = tween.previous;
+    const nextTween = tween.next;
+    if ((prevTween && (absTime < prevTween.absoluteEnd)) || (nextTween && (absTime > nextTween.absoluteStart))) continue;
+    const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.changeDuration) / tween.duration);
     const tweenProperty = tween.property;
     const tweenRound = tween.round;
     const tweenFrom = tween.from;

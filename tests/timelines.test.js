@@ -127,13 +127,13 @@ describe('Timelines', () => {
     expect(tl.children[2].tweens[0].currentValue).toBe('125px');
     expect(targetEl.style.transform).toBe('translateX(0px) ');
     tl.seek(10);
-    expect(tl.children[0].tweens[0].currentValue).toBe('100px');
+    expect(tl.children[0].tweens[0].currentValue).toBe('50px');
     expect(tl.children[1].tweens[0].currentValue).toBe('125px');
     expect(tl.children[2].tweens[0].currentValue).toBe('125px');
     expect(targetEl.style.transform).toBe('translateX(125px) ');
     tl.seek(15);
-    expect(tl.children[0].tweens[0].currentValue).toBe('100px');
-    expect(tl.children[1].tweens[0].currentValue).toBe('200px');
+    expect(tl.children[0].tweens[0].currentValue).toBe('50px');
+    expect(tl.children[1].tweens[0].currentValue).toBe('125px');
     expect(tl.children[2].tweens[0].currentValue).toBe('212.5px');
     expect(targetEl.style.transform).toBe('translateX(212.5px) ');
 
