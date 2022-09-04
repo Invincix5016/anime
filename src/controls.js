@@ -34,7 +34,7 @@ export function play(animation) {
   if (!animation.paused) return animation;
   if (animation.completed) resetAnimation(animation);
   animation.paused = 0;
-  engine.activeProcesses.push(animation);
+  engine.children.push(animation);
   resetAnimationTime(animation);
   startEngine(engine);
   return animation;

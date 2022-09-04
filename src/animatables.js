@@ -84,8 +84,8 @@ export function removeAnimatablesFromAnimation(targets, animation) {
 
 export function removeAnimatablesFromActiveAnimations(targets) {
   const targetsSet = parseTargets(targets);
-  for (let i = engine.activeProcesses.length; i--;) {
-    const animation = engine.activeProcesses[i];
+  for (let i = engine.children.length; i--;) {
+    const animation = engine.children[i];
     removeTweensWithTargetsFromAnimation(targetsSet, animation);
   }
 }

@@ -13,25 +13,26 @@ import {
 
 export const engine = {
   activeProcesses: [],
+  children: [],
   elapsedTime: 0,
 }
 
-export const rootTargets = new Map();
+// export const rootTargets = new Map();
 
 const raf = requestAnimationFrame;
 let engineRaf = 0;
 
 function tickEngine(t) {
   engine.elapsedTime = t;
-  let activeProcessesLength = engine.activeProcesses.length;
+  let activeProcessesLength = engine.children.length;
   let i = 0;
   while (i < activeProcessesLength) {
-    const activeInstance = engine.activeProcesses[i];
-    if (!activeInstance.paused) {
-      activeInstance.tick(t);
+    const activeAnimation = engine.children[i];
+    if (!activeAnimation.paused) {
+      activeAnimation.tick(t);
       i++;
     } else {
-      engine.activeProcesses.splice(i, 1);
+      engine.children.splice(i, 1);
       activeProcessesLength--;
     }
   }
@@ -39,7 +40,7 @@ function tickEngine(t) {
 }
 
 export function startEngine(engine) {
-  if (!engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.activeProcesses.length > 0) {
+  if (!engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.children.length > 0) {
     engineRaf = raf(tickEngine);
   }
 }
@@ -53,7 +54,7 @@ function handleVisibilityChange() {
   } else {
     // is back to active tab
     // first adjust animations to consider the time that ticks were suspended
-    engine.activeProcesses.forEach(resetAnimationTime);
+    engine.children.forEach(resetAnimationTime);
     startEngine(engine);
   }
 }
