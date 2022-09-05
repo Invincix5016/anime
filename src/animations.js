@@ -238,7 +238,7 @@ export function createAnimation(params, parentAnimation) {
   const targetsLength = targets.size;
 
   if (!parentAnimation) {
-    animationSettings.timelineOffset = Date.now();
+    animationSettings.timelineOffset = performance.now();
   }
 
   const animation = mergeObjects(animationSettings, {

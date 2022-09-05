@@ -233,8 +233,9 @@ describe('Keyframes', () => {
   });
 
   test('Keyframes units inheritance', () => {
+    const el = document.querySelector('#target-id');
     const animation = anime({
-      targets: '#target-id',
+      targets: el,
       translateX: [
         { value: [-20, -40] },
         { value: '5rem' },
@@ -260,6 +261,8 @@ describe('Keyframes', () => {
     expect(animation.tweens[5].to.unit).toBe('%');
     expect(animation.tweens[6].from.unit).toBe('px'); // switch to px
     expect(animation.tweens[6].to.unit).toBe('px'); // switch to px
+
+    expect(el.style.transform).toBe('translateX(-20px) ');
 
   });
 

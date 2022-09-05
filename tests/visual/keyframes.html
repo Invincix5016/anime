@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Keyframes tests | anime.js</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="assets/css/styles.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: absolute;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    #test-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 2rem;
+      max-width: 32rem;
+    }
+    #keyframes-test {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    #progress-bar {
+      width: 100%;
+    }
+    .square {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div id="test-wrapper">
+    <div id="keyframes-test">
+      <div id="square-1" class="square red"></div>
+<!--       <div id="square-2" class="square red"></div>
+      <div id="square-3" class="square red"></div> -->
+    </div>
+  </div>
+  <script type="module">
+    import anime from '../../src/anime.js';
+    // import anime from './assets/anime.3.2.1.js';
+    import { test, expect } from './assets/js/tests.js';
+    import { createGUI } from './assets/js/anime.gui.js';
+
+    const duration = 1000;
+
+    const red = '#F64E4D';
+    const blue = '#61C3FF';
+    const green = '#18FF74';
+    const yellow = '#F6FF56';
+
+    const tl = anime.timeline({
+      easing: 'easeInOutQuad',
+      duration: duration,
+      direction: 'alternate',
+      autoplay: true
+    })
+    .add({
+      targets: '.square',
+      translateX: [
+        { value: 50, duration: 1000, delay: 500 },
+        { value: 100, duration: 1000, delay: 500 },
+        // { value: anime.stagger([-200, 200]), duration: 1000, delay: 500 },
+        // { value: 0, duration: 1000, delay: 500 }
+      ],
+      // translateY: [
+      //   { value: -50, duration: 500, delay: anime.stagger(250, {start: 0}) },
+      //   { value: -100, duration: 500, delay: 1000 },
+      //   { value: -150, duration: 500, delay: 1000 }
+      // ],
+      // scaleX: [
+      //   { value: .25, duration: 500, delay: anime.stagger(250, {start: 0}), easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 1000 },
+      //   { value: .5, duration: 500, easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 500 }
+      // ],
+      // scaleY: [
+      //   { value: 1, duration: 500, delay: anime.stagger(250, {start: 0}) },
+      //   { value: 1.5, duration: 500, delay: 500, easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 500 },
+      //   { value: 2, duration: 500, delay: 500, easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 500 }
+      // ],
+    })
+    .add({
+      targets: '.square',
+      translateX: [
+        { value: 150, duration: 1000, delay: 500 },
+        { value: 200, duration: 1000, delay: 500 },
+        // { value: anime.stagger([-200, 200]), duration: 1000, delay: 500 },
+        // { value: 0, duration: 1000, delay: 500 }
+      ],
+      // translateY: [
+      //   { value: -50, duration: 500, delay: anime.stagger(250, {start: 0}) },
+      //   { value: -100, duration: 500, delay: 1000 },
+      //   { value: -150, duration: 500, delay: 1000 }
+      // ],
+      // scaleX: [
+      //   { value: .25, duration: 500, delay: anime.stagger(250, {start: 0}), easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 1000 },
+      //   { value: .5, duration: 500, easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 500 }
+      // ],
+      // scaleY: [
+      //   { value: 1, duration: 500, delay: anime.stagger(250, {start: 0}) },
+      //   { value: 1.5, duration: 500, delay: 500, easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 500 },
+      //   { value: 2, duration: 500, delay: 500, easing: 'easeInOutExpo' },
+      //   { value: 1, duration: 500 }
+      // ],
+    }, '-=2250')
+
+    createGUI(tl);
+
+  </script>
+</body>
+</html>
