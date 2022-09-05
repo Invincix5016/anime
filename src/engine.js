@@ -34,6 +34,7 @@ function tickEngine(t) {
     } else {
       engine.children.splice(i, 1);
       activeProcessesLength--;
+      // console.log(engine.children.length);
     }
   }
   engineRaf = activeProcessesLength ? raf(tickEngine) : 0;

@@ -175,14 +175,16 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
       animation.parent.children.forEach(children => {
         const siblingsTarget = children.targets.get(target);
         if (siblingsTarget) {
-           const siblingsTweens = siblingsTarget[propertyName];
-           let siblingTweenIndex = 0;
-           while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
-            const curentSibling = siblingsTweens[siblingTweenIndex++];
-            const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
-            if (curentSiblingAbsoluteEnd > previousSiblingTweenAbsoluteEnd) {
-              previousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
-              previousSiblingTween = curentSibling;
+          const siblingsTweens = siblingsTarget[propertyName];
+          if (siblingsTweens) {
+            let siblingTweenIndex = 0;
+            while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
+              const curentSibling = siblingsTweens[siblingTweenIndex++];
+              const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
+              if (curentSiblingAbsoluteEnd > previousSiblingTweenAbsoluteEnd) {
+                previousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
+                previousSiblingTween = curentSibling;
+              }
             }
           }
         }
@@ -193,6 +195,10 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
         previousSiblingTween.endDelay -= (previousSiblingTween.absoluteEnd - tween.absoluteStart);
         if (previousSiblingTween.endDelay < 0) {
           previousSiblingTween.changeDuration += previousSiblingTween.endDelay;
+          if (previousSiblingTween.changeDuration < 0) {
+            previousSiblingTween.changeDuration = minValue;
+            // console.log(previousSiblingTween.changeDuration, previousSiblingTween.duration);
+          }
           previousSiblingTween.endDelay = 0;
         }
         previousSiblingTween.end = previousSiblingTween.start + previousSiblingTween.delay + previousSiblingTween.changeDuration + previousSiblingTween.endDelay;

@@ -20,71 +20,107 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      padding: 2rem;
-      max-width: 32rem;
-    }
-    #timeline-test {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-    }
-    #progress-bar {
-      width: 100%;
+      flex-wrap: wrap;
+      width: 25rem;
     }
     .square {
       position: relative;
+      width: 4.75rem;
+      height: 4.75rem;
+      margin: .125rem;
     }
   </style>
 </head>
 <body>
   <div id="test-wrapper">
-    <div id="timeline-test">
-      <div id="square-1" class="hover square red"></div>
-      <div id="square-2" class="hover square red"></div>
-      <div id="square-3" class="hover square red"></div>
-    </div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
+    <div class="hover loop square red"></div>
   </div>
   <script type="module">
     import anime from '../../src/anime.js';
     // import anime from './assets/anime.3.2.1.js';
     import { createGUI } from './assets/js/anime.gui.js';
 
-    const red = '#F64E4D';
-    const blue = '#61C3FF';
-    const green = '#18FF74';
+    const black = '#252423';
+    const white = '#F6F4F2';
+    const red = '#FF4B4B';
+    const orange = '#FF8F42';
+    const lightorange = '#FFC730';
     const yellow = '#F6FF56';
+    const citrus = '#A4FF4F';
+    const green = '#18FF74';
+    const darkgreen = '#00D672';
+    const turquoise = '#3CFFEC';
+    const skyblue = '#61C3FF';
+    const kingblue = '#5A87FF';
+    const lavender = '#8453E3';
+    const purple = '#C26EFF';
+    const pink = '#FB89FB';
 
     const hoverElements = document.querySelectorAll('.hover');
+    const loopElements = document.querySelectorAll('.loop');
+
+    anime({
+      targets: loopElements,
+      scale: [0, 1],
+      easing: 'easeInOutQuad',
+      duration: 2000,
+      delay: anime.stagger(250, {grid: [5, 5], from: 'last'}),
+    })
 
     for (let i = 0, l = hoverElements.length; i < l; i++) {
       const el = hoverElements[i];
       el.onmouseenter = () => {
         anime({
           targets: el,
-          scale: 1.2,
+          scale: el.dataset.clicked ? .8 : 1.2,
           zIndex: {value: 999, round: 1, easing: 'linear', duration: 25},
-          color: {value: blue, easing: 'easeOutQuad', duration: 150},
+          color: {value: el.dataset.clicked ? skyblue : orange, easing: 'easeOutQuad', duration: 150},
+          boxShadow: '0 0 10px 0 rgba(0, 0, 0, .3)',
           duration: 900,
           begin: () => el.dataset.hover = true,
         })
       }
-      el.onmousedown = () => {
+      el.onclick = () => {
         anime({
           targets: el,
-          scale: .8,
+          scale: 1,
           zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
-          color: {value: green, easing: 'easeOutQuad', duration: 100},
-          duration: 500
+          color: {value: el.dataset.clicked ? red : kingblue, easing: 'easeOutQuad', duration: 100},
+          duration: 500,
+          begin: () => el.dataset.clicked ? el.removeAttribute('data-clicked') : el.dataset.clicked = true,
         })
       }
       el.onmouseleave = () => {
         anime({
           targets: el,
           scale: 1,
-          zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
-          color: {value: red, easing: 'easeOutQuad', duration: 300},
+          zIndex: {value: 1, round: 1, easing: 'linear'},
+          color: {value: el.dataset.clicked ? kingblue : red, easing: 'easeOutQuad'},
+          boxShadow: {value: '0 0 0 0 rgba(0, 0, 0, 0)', easing: 'linear'},
           duration: 500,
           begin: () => el.removeAttribute('data-hover'),
         })
@@ -92,12 +128,23 @@
       el.onmouseup = () => {
         anime({
           targets: el,
-          scale: el.dataset.hover ? 1.2 : 1,
+          scale: el.dataset.clicked ? 1 : (el.dataset.hover ? 1.2 : 1),
           zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
-          color: {value: el.dataset.hover ? blue : red, easing: 'easeOutQuad', duration: 300},
+          color: {value: el.dataset.clicked ? kingblue : (el.dataset.hover ? orange : red), easing: 'easeOutQuad', duration: 300},
           duration: 500
         })
       }
+    }
+
+    for (let i = 0, l = loopElements.length; i < l; i++) {
+      // anime({
+      //   targets: loopElements[i],
+      //   scale: 1.1,
+      //   easing: 'easeInOutQuad',
+      //   delay: i * 125,
+      //   loop: true,
+      //   direction: 'alternate',
+      // })
     }
 
     // createGUI(tl);
