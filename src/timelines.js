@@ -54,10 +54,11 @@ export function createTimeline(params = {}) {
     const totalDuration = ins.duration + insParams.timelineOffset;
     children.push(ins);
     tl._childrenLength = tl.children.length;
-    const timings = getTimingsFromAnimationsOrInstances(children, params);
-    tl._changeStartTime = timings.changeStartTime;
-    tl._changeEndTime = timings.changeEndTime;
-    tl.duration = timings.duration;
+    getTimingsFromAnimationsOrInstances(tl, params);
+    // const timings = getTimingsFromAnimationsOrInstances(tl, params);
+    // tl._changeStartTime = timings.changeStartTime;
+    // tl._changeEndTime = timings.changeEndTime;
+    // tl.duration = timings.duration;
     tl.seek(0, true);
     tl.reset();
     if (tl.autoplay) tl.play();

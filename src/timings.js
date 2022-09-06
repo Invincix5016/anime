@@ -2,33 +2,25 @@ import {
   is
 } from './utils.js';
 
-export function getTimingsFromAnimationsOrInstances(animationsOrInstances, tweenSettings) {
-  const animationsLength = animationsOrInstances.length;
-  if (!animationsLength) {
-    return {
-      duration: tweenSettings.duration,
-      changeStartTime: tweenSettings.delay,
-      changeEndTime: tweenSettings.endDelay,
-    };
-  } else {
-    const timings = {};
-    for (let i = 0; i < animationsLength; i++) {
-      const anim = animationsOrInstances[i];
-      const timelineOffset = anim.timelineOffset ? anim.timelineOffset : 0;
-      const changeStartTime = timelineOffset + anim._changeStartTime;
-      if (is.und(timings.changeStartTime) || changeStartTime < timings.changeStartTime) {
-        timings.changeStartTime = changeStartTime;
-      }
-      const duration = timelineOffset + anim.duration;
-      if (is.und(timings.duration) || duration > timings.duration) {
-        timings.duration = duration;
-      }
-      const changeEndTime = timelineOffset + anim.duration - anim._changeEndTime;
-      if (is.und(timings.changeEndTime) || changeEndTime > timings.changeEndTime) {
-        timings.changeEndTime = changeEndTime;
-      }
+export function getTimingsFromAnimationsOrInstances(animation) {
+  const children = animation.children.length ? animation.children : animation.tweens;
+  for (let i = 0, l = children.length; i < l; i++) {
+    const child = children[i];
+    const timelineOffset = child.timelineOffset ? child.timelineOffset : 0;
+    const changeStartTime = timelineOffset + child._changeStartTime;
+    if (is.und(animation._changeStartTime) || changeStartTime < animation._changeStartTime) {
+      animation._changeStartTime = changeStartTime;
     }
-    timings.changeEndTime = timings.duration - timings.changeEndTime;
-    return timings;
+    const duration = timelineOffset + child.duration;
+    if (is.und(animation.duration) || duration > animation.duration) {
+      animation.duration = duration;
+    }
+    const changeEndTime = timelineOffset + child._changeEndTime;
+
+    if (is.und(animation._changeEndTime) || changeEndTime > animation._changeEndTime) {
+      animation._changeEndTime = changeEndTime;
+    }
   }
+
+  animation._changeEndTime = animation.duration - (animation.duration - animation._changeEndTime);
 }

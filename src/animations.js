@@ -49,6 +49,10 @@ import {
   engine,
 } from './engine.js';
 
+import {
+  getTimingsFromAnimationsOrInstances,
+} from './timings.js';
+
 let animationsId = 0;
 
 export function getAdjustedAnimationTime(animation, time) {
@@ -95,7 +99,7 @@ export function renderAnimationTweens(animation, time) {
       (tween.previous && (absTime < tween.previous.absoluteEnd)) ||
       (tween.next && (absTime > tween.next.absoluteStart))
     ) continue;
-    const tweenProgress = tween.easing(clamp(time - tween.start - tween.delay, 0, tween.changeDuration) / tween.duration);
+    const tweenProgress = tween.easing(clamp(time - tween._changeStartTime, 0, tween.changeDuration) / tween.updateDuration);
     const tweenProperty = tween.property;
     const tweenRound = tween.round;
     const tweenFrom = tween.from;
@@ -282,15 +286,14 @@ export function createAnimation(params, parentAnimation) {
           const animationPropertyTweensLength = animationPropertyTweens.length;
           const firstTween = animationPropertyTweens[0];
           const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];
-          const lastTweenChangeEndTime = lastTween.end - lastTween.endDelay;
-          if (is.und(changeStartTime) || firstTween.delay < changeStartTime) changeStartTime = firstTween.delay;
+          const lastTweenChangeEndTime = lastTween._changeEndTime;
+          if (is.und(changeStartTime) || firstTween._changeStartTime < changeStartTime) changeStartTime = firstTween._changeStartTime;
           if (lastTween.end > maxDuration) maxDuration = lastTween.end;
           if (lastTweenChangeEndTime > changeEndTime) changeEndTime = lastTweenChangeEndTime;
           if (type == animationTypes.TRANSFORM) {
             lastTransformGroupIndex = animation.tweens.length;
             lastTransformGroupLength = lastTransformGroupIndex + animationPropertyTweensLength;
           }
-          lastTween._isLast = true;
           animation.tweens.push(...animationPropertyTweens);
         }
       }
@@ -301,10 +304,11 @@ export function createAnimation(params, parentAnimation) {
       }
       i++;
     });
+
     animation.duration = maxDuration;
     animation._changeStartTime = changeStartTime;
     animation._changeEndTime = maxDuration - (maxDuration - changeEndTime);
-    animation._changeDurationTime = animation._changeEndTime - animation._changeStartTime;
+
     animation._tweensLength = animation.tweens.length;
   }
 

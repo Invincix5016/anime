@@ -257,10 +257,10 @@ describe('Values', () => {
     expect(targetEls[3].style.transform).toBe('translateX(3px) ');
 
     // Duration
-    expect(animation.tweens[0].duration).toBe(4);
-    expect(animation.tweens[1].duration).toBe(204);
-    expect(animation.tweens[2].duration).toBe(404);
-    expect(animation.tweens[3].duration).toBe(604);
+    expect(animation.tweens[0].changeDuration).toBe(4);
+    expect(animation.tweens[1].changeDuration).toBe(204);
+    expect(animation.tweens[2].changeDuration).toBe(404);
+    expect(animation.tweens[3].changeDuration).toBe(604);
 
     // Delay
     expect(animation.tweens[0].delay).toBe(4);

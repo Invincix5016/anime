@@ -95,10 +95,10 @@ describe('Keyframes', () => {
       duration: 2000
     });
 
-    expect(animation.tweens[0].duration).toBe(800); // Specified duration
-    expect(animation.tweens[1].duration).toBe(500); // 2000 / 4
-    expect(animation.tweens[2].duration).toBe(500); // 2000 / 4
-    expect(animation.tweens[3].duration).toBe(1200); // Specified duration
+    expect(animation.tweens[0].changeDuration).toBe(800); // Specified duration
+    expect(animation.tweens[1].changeDuration).toBe(500); // 2000 / 4
+    expect(animation.tweens[2].changeDuration).toBe(500); // 2000 / 4
+    expect(animation.tweens[3].changeDuration).toBe(1200); // Specified duration
   });
 
   test('First keyframe should inherit instance\'s delay', () => {
@@ -151,13 +151,13 @@ describe('Keyframes', () => {
       easing: 'easeOutQuad',
     });
 
-    expect(animation.tweens[0].duration).toBe(500); // 1500 / 3
+    expect(animation.tweens[0].changeDuration).toBe(500); // 1500 / 3
     expect(animation.tweens[0].delay).toBe(200); // Inherited because its the first keyframe
     expect(animation.tweens[0].endDelay).toBe(0); // Not inherited because not last keyframe
     expect(animation.tweens[0].easing(.5)).toBe(.75);
     expect(animation.tweens[0].round).toBe(5);
 
-    expect(animation.tweens[1].duration).toBe(100);
+    expect(animation.tweens[1].changeDuration).toBe(100);
     expect(animation.tweens[1].delay).toBe(300);
     expect(animation.tweens[1].endDelay).toBe(600);
     expect(animation.tweens[1].easing(.5)).toBe(.5);
@@ -195,13 +195,13 @@ describe('Keyframes', () => {
       easing: 'easeOutQuad',
     });
 
-    expect(animation.tweens[0].duration).toBe(300); // 1500 / 5
+    expect(animation.tweens[0].changeDuration).toBe(300); // 1500 / 5
     expect(animation.tweens[0].delay).toBe(200); // Inherited because its the first keyframe
     expect(animation.tweens[0].endDelay).toBe(0); // Not inherited because not last keyframe
     expect(animation.tweens[0].easing(.5)).toBe(.75);
     expect(animation.tweens[0].round).toBe(5);
 
-    expect(animation.tweens[1].duration).toBe(100);
+    expect(animation.tweens[1].changeDuration).toBe(100);
     expect(animation.tweens[1].delay).toBe(300);
     expect(animation.tweens[1].endDelay).toBe(600);
     expect(animation.tweens[1].easing(.5)).toBe(.5);

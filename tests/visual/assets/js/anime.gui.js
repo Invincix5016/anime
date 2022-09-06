@@ -166,8 +166,8 @@ function createTweenBlock(offset, tween, color, previousTweenEl) {
     tweenEl.appendChild(delayEl);
   }
   if (tween.changeDuration) {
-    durationEl.style.width = msToEm(tween.duration);
-    skippedDurationEl.style.width = msToEm(tween.duration - tween.changeDuration);
+    durationEl.style.width = msToEm(tween.updateDuration);
+    skippedDurationEl.style.width = msToEm(tween.updateDuration - tween.changeDuration);
     durationEl.appendChild(skippedDurationEl);
     tweenEl.appendChild(durationEl);
   }
@@ -204,12 +204,11 @@ function createIterationBlock(animation) {
       delayEl.style.width = msToEm(animation._changeStartTime);
       iterationEl.appendChild(delayEl);
     }
-    if (animation._changeDurationTime) {
-      durationEl.style.width = msToEm(animation._changeDurationTime);
-      iterationEl.appendChild(durationEl);
-    }
+    const changeDuration = animation._changeEndTime - animation._changeStartTime;
+    durationEl.style.width = msToEm(changeDuration);
+    iterationEl.appendChild(durationEl);
     if (animation._changeEndTime) {
-      endDelayEl.style.width = msToEm(animation._changeDurationTime - animation._changeEndTime);
+      endDelayEl.style.width = msToEm(changeDuration - animation._changeEndTime);
       iterationEl.appendChild(endDelayEl);
     }
     el.appendChild(iterationEl);

@@ -59,13 +59,13 @@ describe('Parameters', () => {
     expect(animation.tweens[0].easing(.5)).toBe(0.5);
     expect(animation.tweens[0].round).toBe(10);
     expect(animation.tweens[0].delay).toBe(duration * .25);
-    expect(animation.tweens[0].duration).toBe(duration * .60);
+    expect(animation.tweens[0].changeDuration).toBe(duration * .60);
     expect(animation.tweens[0].endDelay).toBe(duration * .40);
 
     expect(animation.tweens[1].easing(.5)).toBe(.75);
     expect(animation.tweens[1].round).toBe(100);
     expect(animation.tweens[1].delay).toBe(duration * .35);
-    expect(animation.tweens[1].duration).toBe(duration * .70);
+    expect(animation.tweens[1].changeDuration).toBe(duration * .70);
     expect(animation.tweens[1].endDelay).toBe(duration * .50);
   });
 

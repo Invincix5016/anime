@@ -36,7 +36,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
   let prevTween;
   const tweens = [];
   const total = animation.targets.size;
-  const animationOffsetTime = animation.timelineOffset;
+  const timelineOffset = animation.timelineOffset;
   const isOrphan = animation._isOrphan;
   const targetPropertyTweens = animation.targets.get(target)[propertyName];
 
@@ -155,15 +155,17 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
     tween.target = target;
     tween.from = from;
     tween.to = to;
-    tween.animationOffsetTime = animationOffsetTime;
-    tween.duration = parseFloat(tween.duration) || minValue;
-    tween.changeDuration = tween.duration;
+    tween.timelineOffset = timelineOffset;
+    tween.updateDuration = parseFloat(tween.duration) || minValue;
+    tween.changeDuration = tween.updateDuration;
+    tween.duration = tween.delay + tween.changeDuration + tween.endDelay;
     tween.delay = parseFloat(tween.delay);
     tween.start = prevTween ? prevTween.end : 0;
-    tween.end = tween.start + tween.delay + tween.duration + tween.endDelay;
-    tween.absoluteStart = animationOffsetTime + tween.start;
-    tween.absoluteEnd = animationOffsetTime + tween.end;
-    tween.easing = parseEasings(tween.easing, tween.duration);
+    tween.end = tween.start + tween.duration;
+    tween.absoluteStart = timelineOffset + tween.start;
+    tween.absoluteEnd = timelineOffset + tween.end;
+    tween.easing = parseEasings(tween.easing, tween.updateDuration);
+
     let tweenIndex = 0;
     while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) tweenIndex++;
     targetPropertyTweens.splice(tweenIndex, 0, tween);
@@ -202,11 +204,14 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
           previousSiblingTween.endDelay = 0;
         }
         previousSiblingTween.end = previousSiblingTween.start + previousSiblingTween.delay + previousSiblingTween.changeDuration + previousSiblingTween.endDelay;
-        previousSiblingTween.absoluteEnd = previousSiblingTween.animationOffsetTime + previousSiblingTween.end;
+        previousSiblingTween.absoluteEnd = previousSiblingTween.timelineOffset + previousSiblingTween.end;
       }
       previousSiblingTween.next = tween;
       tween.previous = previousSiblingTween;
     }
+
+    tween._changeStartTime = tween.start + tween.delay;
+    tween._changeEndTime = tween.end - tween.endDelay;
 
     prevTween = tween;
     tweens.push(tween);
