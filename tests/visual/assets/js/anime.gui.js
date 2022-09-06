@@ -2,7 +2,7 @@ const classPrefix = 'anime-gui-';
 const sideBarWidth = 80;
 const blackColor = '#2E2C2C';
 const whiteColor = '#F6F4F2';
-const blackAlpha = 'rgba(46, 44, 44, .75)';
+const blackAlpha = 'rgba(46, 44, 44, .65)';
 
 const colors = ['#FF4B4B','#FF8F42','#FFC730','#F6FF56','#A4FF4F','#18FF74','#00D672','#3CFFEC','#61C3FF','#5A87FF','#8453E3','#C26EFF','#FB89FB'];
 const colorLength = colors.length;
@@ -148,7 +148,7 @@ function createSidebarLabel(text, css) {
   return el;
 }
 
-function createTweenBlock(offset, tween, color) {
+function createTweenBlock(offset, tween, color, previousTweenEl) {
   const el = createBlock('tween-line-block', `position: relative; align-items: center; height: 16px;`);
   const tweenEl = createBlock('tween-block', `position: relative; height: 14px; background-color: currentColor; border-radius: 7px;`);
   const backgroundEl = createBlock('tween-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
@@ -156,9 +156,8 @@ function createTweenBlock(offset, tween, color) {
   const durationEl = createBlock('tween-duration-block', `position: relative; justify-content: space-between; height: 14px; background-color: currentColor; border-radius: 7px;`);
   const skippedDurationEl = createBlock('tween-skipped-duration-block', `position: absolute; top: 0; right: 0; height: 14px; background: repeating-linear-gradient(45deg,transparent,transparent 1.5px,${blackColor} 1.5px,${blackColor} 3px); border-radius: 0px 7px 7px 0px;`);
   const endDelayEl = createBlock('tween-endDelay-block', `position: relative; height: 14px;`);
-  const propertyLabelEl = createLabel(tween.property, `position: absolute; left: 0; top: 0; color: currentColor; transform: translateX(-100%)`);
-  const fromValueLabelEl = createLabel(tween.from.numbers ? tween.from.numbers[0] : tween.from.number);
-  const fromToLabelEl = createLabel(tween.to.numbers ? tween.to.numbers[0] : tween.to.number, `background: ${color}; padding: 0 2px; margin: 2px; border-radius: 5px; height: 10px;`);
+  const fromValueLabelEl = createLabel(tween.from.numbers ? tween.from.numbers[0] : tween.from.number, `padding-right: 1px;`);
+  const fromToLabelEl = createLabel(tween.to.numbers ? tween.to.numbers[0] : tween.to.number, `padding-left: 1px; text-shadow: -1px -1px 0 ${color}, 1px -1px 0 ${color}, -1px 1px 0 ${color}, 1px 1px 0 ${color};`);
   durationEl.appendChild(fromValueLabelEl);
   durationEl.appendChild(fromToLabelEl);
   tweenEl.appendChild(backgroundEl);
@@ -176,11 +175,16 @@ function createTweenBlock(offset, tween, color) {
     endDelayEl.style.width = msToEm(tween.endDelay);
     tweenEl.appendChild(endDelayEl);
   }
-  tweenEl.style.marginLeft = msToEm(offset + tween.start);
-  tweenEl.appendChild(propertyLabelEl);
-  el.appendChild(tweenEl);
-
-  return el;
+  if (!previousTweenEl) {
+    tweenEl.style.marginLeft = msToEm(offset + tween.start);
+    const propertyLabelEl = createLabel(tween.property, `position: absolute; left: 0; top: 0; color: currentColor; transform: translateX(-100%)`);
+    tweenEl.appendChild(propertyLabelEl);
+    el.appendChild(tweenEl);
+    return el;
+  } else {
+    previousTweenEl.appendChild(tweenEl);
+    return previousTweenEl;
+  }
 }
 
 function createIterationBlock(animation) {
@@ -188,9 +192,26 @@ function createIterationBlock(animation) {
   const iterationEls = [];
   const iterationCount = (animation.loop === true || animation.loop === Infinity) ? 1 : animation.loop;
   for (let i = 0; i < iterationCount; i++) {
-    const iterationEl = createBlock('iteration-block', `justify-content: center; height: 14px; background-color: currentColor; border-radius: 7px`);
-    const labelEl = createLabel('Animation ' + animation.id);
+    const iterationEl = createBlock('iteration-block', `position: relative; height: 14px; background-color: currentColor; border-radius: 0px;`);
+    const backgroundEl = createBlock('iteration-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
+    const delayEl = createBlock('iteration-delay-block', `position: relative; height: 14px;`);
+    const durationEl = createBlock('iteration-duration-block', `position: relative; justify-content: space-between; height: 14px; background-color: currentColor; border-radius: 0px;`);
+    const endDelayEl = createBlock('iteration-endDelay-block', `position: relative; height: 14px;`);
+    const labelEl = createLabel('Animation ' + animation.id, `position: absolute; left: 0; top: 0; color: currentColor; transform: translateX(-100%)`);
+    iterationEl.appendChild(backgroundEl);
     iterationEl.appendChild(labelEl);
+    if (animation._changeStartTime) {
+      delayEl.style.width = msToEm(animation._changeStartTime);
+      iterationEl.appendChild(delayEl);
+    }
+    if (animation._changeDurationTime) {
+      durationEl.style.width = msToEm(animation._changeDurationTime);
+      iterationEl.appendChild(durationEl);
+    }
+    if (animation._changeEndTime) {
+      endDelayEl.style.width = msToEm(animation._changeDurationTime - animation._changeEndTime);
+      iterationEl.appendChild(endDelayEl);
+    }
     el.appendChild(iterationEl);
     iterationEls.push(iterationEl);
   }
@@ -208,9 +229,11 @@ function createAnimationBlock(animation) {
   let currentTarget;
   let currentProperty;
   let currentTargetColor;
+  let previousTargetTweenEl;
   animation.tweens.forEach((tween, i) => {
     const target = tween.target;
     const property = tween.property;
+    let hasPreviousTween = property === currentProperty;
     if (currentTarget !== target) {
       currentTarget = target;
       currentTargetColor = getTargetColor(target);
@@ -218,7 +241,9 @@ function createAnimationBlock(animation) {
       // el.appendChild(targetNameLabel);
       // playHeadHeight++;
     }
-    const tweenBLockEl = createTweenBlock(animation.timelineOffset, tween, currentTargetColor);
+    const tweenBLockEl = createTweenBlock(animation.timelineOffset, tween, currentTargetColor, hasPreviousTween ? previousTargetTweenEl : false);
+    previousTargetTweenEl = tweenBLockEl;
+    currentProperty = property;
     tweenBLockEl.style.color = currentTargetColor;
     el.appendChild(tweenBLockEl);
     playHeadHeight++;

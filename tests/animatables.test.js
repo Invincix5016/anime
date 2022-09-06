@@ -109,9 +109,9 @@ describe('Animatables', () => {
     animation.seek(animation.duration);
     expect(animation.tweens.length).toBe(0);
     expect(animation.targets.size).toBe(0);
-    expect(animation.duration).toBe(100);
+    expect(animation.duration).toBe(130);
     expect(animation._changeStartTime).toBe(10);
-    expect(animation._changeEndTime).toBe(20);
+    expect(animation._changeEndTime).toBe(110);
   });
 
   test('Remove targets with Objects ref', () => {

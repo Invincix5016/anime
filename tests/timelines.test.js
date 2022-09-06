@@ -2,7 +2,7 @@ describe('Timelines', () => {
   function createTimeline() {
     return anime.timeline({
       targets: '.target-class',
-      delay: function(el, i) { return i * 20 }, // Can be inherited
+      delay: function(el, i) { return 10 + (i * 20) }, // Can be inherited
       endDelay: function(el, i) { return (i + 1) * 10 }, // Can be inherited
       duration: 50, // Can be inherited
       easing: 'easeOutExpo', // Can be inherited
@@ -34,14 +34,19 @@ describe('Timelines', () => {
   // const childTL2 = parameterInheritanceTL.children[2];
   // const childTL3 = parameterInheritanceTL.children[3];
 
-  test('Root timeline changeStartTime should inherit the main parameters delay', () => {
+  test('Timeline changeStartTime should be the small animation delay', () => {
     const parameterInheritanceTL = createTimeline();
-    expect(parameterInheritanceTL._changeStartTime).toBe(0);
+    expect(parameterInheritanceTL._changeStartTime).toBe(10);
   });
 
-  test('Root timeline changeEndTime should inherit the main parameters endDelay', () => {
+  test('Timeline duration should be equal to the sum of all the animation absoluteEndTime', () => {
     const parameterInheritanceTL = createTimeline();
-    expect(parameterInheritanceTL._changeEndTime).toBe(40);
+    expect(parameterInheritanceTL.duration).toBe(550);
+  });
+
+  test('Timeline changeEndTime should inherit the main parameters endDelay', () => {
+    const parameterInheritanceTL = createTimeline();
+    expect(parameterInheritanceTL._changeEndTime).toBe(550 - 40);
   });
 
   test('Basic timeline time offsets', () => {

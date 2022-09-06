@@ -42,8 +42,6 @@
   <div id="test-wrapper">
     <div id="timeline-test">
       <div id="square-1" class="square red"></div>
-      <div id="square-2" class="square red"></div>
-      <div id="square-3" class="square red"></div>
     </div>
   </div>
   <script type="module">
@@ -54,10 +52,21 @@
 
     const targetEl = document.querySelector('#square-1');
 
+    // anime({
+    //   targets: targetEl,
+    //   left: -200,
+    //   delay: 250,
+    //   endDelay: 500,
+    //   easing: 'easeInOutQuad',
+    //   loop: 42,
+    //   autoplay: true,
+    // })
+
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
       duration: 2000,
-      direction: 'alternate',
+      // direction: 'alternate',
+      loop: 42,
       autoplay: true,
     })
     .add({

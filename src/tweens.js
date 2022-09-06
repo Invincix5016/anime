@@ -176,9 +176,9 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
         const siblingsTweens = siblingsTarget[propertyName];
         if (siblingsTweens) {
           let siblingTweenIndex = 0;
-          siblingsTweens.forEach(sibling => {
-            console.log(tween.id, sibling);
-          });
+          // siblingsTweens.forEach(sibling => {
+          //   console.log(tween.id, sibling);
+          // });
           while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
             const curentSibling = siblingsTweens[siblingTweenIndex++];
             const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;

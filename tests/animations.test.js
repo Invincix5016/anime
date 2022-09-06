@@ -124,6 +124,6 @@ describe('Animations', () => {
 
     expect(animation._changeStartTime).toBe(150);
     expect(animation.duration).toBe(150 + 100 + 200 + 350 + 300 + 400 + 150 + 100 + 500);
-    expect(animation._changeEndTime).toBe(500);
+    expect(animation._changeEndTime).toBe(150 + 100 + 200 + 350 + 300 + 400 + 150 + 100);
   });
 });

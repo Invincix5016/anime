@@ -70,13 +70,13 @@ describe('Timings', () => {
 
   });
 
-  test('Duration must be the longest delay + duration of the all the animations', () => {
+  test('Duration must be equal to the highest tween end value', () => {
     const animation = anime(complexTimingsParams);
     expect(animation.duration).toBe(105);
   });
 
-  test('changeEndTime must be equal to the smallest endDelay from the the longest animation', () => {
+  test('changeEndTime must be equal to the highest changeEndTime of the the longest tween', () => {
     const animation = anime(complexTimingsParams);
-    expect(animation._changeEndTime).toBe(40);
+    expect(animation._changeEndTime).toBe(65);
   });
 });

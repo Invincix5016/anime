@@ -155,7 +155,7 @@ export function renderAnimationTweens(animation, time) {
 export function setAnimationProgress(animation, parentTime, manual) {
   const animationDuration = animation.duration;
   const animationChangeStartTime = animation._changeStartTime;
-  const animationChangeEndTime = animationDuration - animation._changeEndTime;
+  const animationChangeEndTime = animation._changeEndTime;
   const animationTime = getAdjustedAnimationTime(animation, parentTime);
   let canRender = (animationTime <= animationChangeStartTime && animation.currentTime !== 0) ||
                   (animationTime >= animationChangeEndTime && animation.currentTime !== animationDuration);
@@ -247,7 +247,7 @@ export function createAnimation(params, parentAnimation) {
     parent: parentAnimation || engine,
     tweens: [],
     children: [],
-    duration: tweenSettings.duration, // Total duration of the animation
+    duration: tweenSettings.delay + tweenSettings.duration + tweenSettings.endDelay, // Total duration of the animation
     progress: 0, // [0 to 1] range, represent the % of completion of an animation total duration
     currentTime: 0, // The curent time relative to the animation [0 to animation duration]
     _isOrphan: !parentAnimation,
@@ -256,7 +256,7 @@ export function createAnimation(params, parentAnimation) {
     _startTime: 0, // Store at what parentCurrentTime the animation started to calculate the relative currentTime
     _lastCurrentTime: 0, // Store the animation current time when the animation playback is paused to adjust the new time when played again
     _changeStartTime: tweenSettings.delay,
-    _changeEndTime: tweenSettings.endDelay,
+    _changeEndTime: tweenSettings.delay + tweenSettings.duration,
     _childrenLength: 0,
   });
 
@@ -303,7 +303,8 @@ export function createAnimation(params, parentAnimation) {
     });
     animation.duration = maxDuration;
     animation._changeStartTime = changeStartTime;
-    animation._changeEndTime = maxDuration - changeEndTime;
+    animation._changeEndTime = maxDuration - (maxDuration - changeEndTime);
+    animation._changeDurationTime = animation._changeEndTime - animation._changeStartTime;
     animation._tweensLength = animation.tweens.length;
   }
 
