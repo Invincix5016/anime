@@ -27,47 +27,74 @@ const babelOptions = {
   babelHelpers: 'bundled',
 }
 
-export default [
+const tasks = [];
+
+tasks.push(
   // ES6 UMD & Module
   {
     input: inputPath,
     output: [
-      { file: pkg.main, format: 'umd', name: outputName, banner: banner('ES6 UMD') },
       { file: pkg.module, format: 'esm', banner: banner('ES6 ESM') }
     ],
     plugins: [
       replace(replaceOptions),
     ]
-  },
-  // ES6 UMD & Module minified
-  {
-    input: inputPath,
-    output: [
-      { file: pkg.files + '/anime.umd.min.js', format: 'umd', name: outputName, banner: banner('ES6 UMD') },
-      { file: pkg.files + '/anime.esm.min.js', format: 'esm', banner: banner('ES6 ESM') }
-    ],
-    plugins: [
-      replace(replaceOptions),
-      terser(),
-    ]
-  },
-  // ES5 
-  {
-    input: inputPath,
-    output: { file: pkg.files + '/anime.es5.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
-    plugins: [
-      replace(replaceOptions),
-      babel(babelOptions),
-    ]
-  },
-  // ES5 Minified
-  {
-    input: inputPath,
-    output: { file: pkg.files + '/anime.es5.min.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
-    plugins: [
-      replace(replaceOptions),
-      babel(babelOptions),
-      terser(),
-    ]
-  },
-];
+  }
+);
+
+if (process.env.build) {
+  tasks.push(
+    // ES6 UMD & Module
+    {
+      input: inputPath,
+      output: [
+        { file: pkg.main, format: 'umd', name: outputName, banner: banner('ES6 UMD') },
+      ],
+      plugins: [
+        replace(replaceOptions),
+      ]
+    }
+  );
+
+  tasks.push(
+    // ES6 UMD & Module minified
+    {
+      input: inputPath,
+      output: [
+        { file: pkg.files + '/anime.umd.min.js', format: 'umd', name: outputName, banner: banner('ES6 UMD') },
+        { file: pkg.files + '/anime.esm.min.js', format: 'esm', banner: banner('ES6 ESM') }
+      ],
+      plugins: [
+        replace(replaceOptions),
+        terser(),
+      ]
+    }
+  );
+
+  tasks.push(
+    // ES5
+    {
+      input: inputPath,
+      output: { file: pkg.files + '/anime.es5.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
+      plugins: [
+        replace(replaceOptions),
+        babel(babelOptions),
+      ]
+    }
+  );
+
+  tasks.push(
+    // ES5 Minified
+    {
+      input: inputPath,
+      output: { file: pkg.files + '/anime.es5.min.js', format: 'iife', name: outputName, banner: banner('ES5 IIFE') },
+      plugins: [
+        replace(replaceOptions),
+        babel(babelOptions),
+        terser(),
+      ]
+    }
+  );
+}
+
+export default tasks;
