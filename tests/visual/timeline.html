@@ -114,14 +114,21 @@
         { value: 2, duration: 500, delay: 500, easing: 'easeInOutExpo' },
         { value: 1, duration: 500 }
       ],
+      rotate: [
+        { value: 90, duration: 500, delay: anime.stagger(250, {start: 0}), easing: 'easeInOutExpo' },
+        { value: 180, duration: 1000, delay: 500, easing: 'easeInOutExpo' },
+        { value: 45, duration: 500, delay: 250, easing: 'easeInOutExpo' },
+        { value: 180, duration: 500, endDelay: 500 }
+      ],
     })
     .add({
       targets: '.square',
       rotate: -180,
       scale: .5,
       backgroundColor: red,
-      delay: anime.stagger(100),
-    })
+      duration: 3000,
+      delay: anime.stagger(250),
+    }, '-=2250')
     .add({
       targets: '#square-1',
       translateY: -200,

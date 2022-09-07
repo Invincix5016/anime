@@ -184,6 +184,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
           while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
             const curentSibling = siblingsTweens[siblingTweenIndex++];
             const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
+            // console.log(tween.id, curentSiblingAbsoluteEnd);
             if (curentSiblingAbsoluteEnd > previousSiblingTweenAbsoluteEnd) {
               previousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
               previousSiblingTween = curentSibling;
@@ -205,6 +206,15 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
         }
         previousSiblingTween.end = previousSiblingTween.start + previousSiblingTween.delay + previousSiblingTween.changeDuration + previousSiblingTween.endDelay;
         previousSiblingTween.absoluteEnd = previousSiblingTween.timelineOffset + previousSiblingTween.end;
+      }
+      let next = previousSiblingTween.next;
+      while (next) {
+        let cachedNext = next;
+        next.changeDuration = minValue;
+        next.endDelay = 0;
+        next = next.next;
+        cachedNext.next = null;
+        cachedNext.previous = tween;
       }
       previousSiblingTween.next = tween;
       tween.previous = previousSiblingTween;
