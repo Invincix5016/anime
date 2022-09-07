@@ -149,7 +149,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
     }
 
     tween.id = tweenId++;
-    // tween.animation = animation;
+    tween.animation = animation;
     tween.type = animationType;
     tween.property = propertyName;
     tween.target = target;
@@ -196,6 +196,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
 
     if (previousSiblingTween) {
       if (previousSiblingTween.absoluteEnd >= tween.absoluteStart) {
+        // const endDelayOverShoot = previousSiblingTween.endDelay - (previousSiblingTween.absoluteEnd - tween.absoluteStart);
         previousSiblingTween.endDelay -= (previousSiblingTween.absoluteEnd - tween.absoluteStart);
         if (previousSiblingTween.endDelay < 0) {
           previousSiblingTween.changeDuration += previousSiblingTween.endDelay;
@@ -206,22 +207,35 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
         }
         previousSiblingTween.end = previousSiblingTween.start + previousSiblingTween.delay + previousSiblingTween.changeDuration + previousSiblingTween.endDelay;
         previousSiblingTween.absoluteEnd = previousSiblingTween.timelineOffset + previousSiblingTween.end;
+        previousSiblingTween._changeEndTime = previousSiblingTween.end - previousSiblingTween.endDelay;
+        previousSiblingTween.absoluteChangeEnd = previousSiblingTween.timelineOffset + previousSiblingTween._changeEndTime;
       }
       let next = previousSiblingTween.next;
+      // console.log(tween.id, previousSiblingTween.id);
       while (next) {
-        let cachedNext = next;
+        let cachedNext = next.next;
         next.changeDuration = minValue;
-        next.endDelay = 0;
         next = next.next;
-        cachedNext.next = null;
-        cachedNext.previous = tween;
+        // if (cachedNext) {
+        //   cachedNext.next = null;
+        //   cachedNext.previous = tween;
+        // }
       }
       previousSiblingTween.next = tween;
       tween.previous = previousSiblingTween;
+
+      if (tween.id === 66) {
+        // console.log('previous', tween.previous.id, tween.previous.absoluteStart, tween.absoluteStart);
+        // console.log('previous.next', tween.previous.next.id);
+        // console.log('next', tween.next.id);
+      }
     }
 
     tween._changeStartTime = tween.start + tween.delay;
     tween._changeEndTime = tween.end - tween.endDelay;
+
+    tween.absoluteChangeStart = timelineOffset + tween._changeStartTime;
+    tween.absoluteChangeEnd = timelineOffset + tween._changeEndTime;
 
     prevTween = tween;
     tweens.push(tween);

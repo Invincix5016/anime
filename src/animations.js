@@ -10,6 +10,7 @@ import {
   closeParenthesisWithSpaceString,
   emptyString,
   transformsFragmentStrings,
+  minValue,
 } from './consts.js';
 
 import {
@@ -92,7 +93,8 @@ export function renderAnimationTweens(animation, time) {
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
     if (
-      (tween.previous && (absTime < tween.previous.absoluteEnd)) ||
+      (tween.changeDuration === minValue) ||
+      (tween.previous && (absTime < tween.previous.absoluteChangeEnd)) ||
       (tween.next && (absTime > tween.next.absoluteStart))
     ) continue;
     const tweenProgress = tween.easing(clamp(time - tween._changeStartTime, 0, tween.changeDuration) / tween.updateDuration);
@@ -275,9 +277,7 @@ export function createAnimation(params, parentAnimation) {
         const type = getAnimationType(target, keyframesPropertyName);
         const property = sanitizePropertyName(keyframesPropertyName, target, type);
         let targetPropertyTweens = targetTweens[property];
-        if (!targetPropertyTweens) {
-          targetPropertyTweens = targetTweens[property] = [];
-        }
+        if (!targetPropertyTweens) targetPropertyTweens = targetTweens[property] = [];
         if (is.num(type)) {
           const animationPropertyTweens = convertKeyframesToTweens(animation, keyframes, target, property, type, i);
           const animationPropertyTweensLength = animationPropertyTweens.length;
