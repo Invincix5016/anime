@@ -14,10 +14,6 @@ import {
 } from './values.js';
 
 import {
-  getTimingsFromAnimationsOrInstances,
-} from './timings.js';
-
-import {
   animate,
 } from './animate.js';
 
@@ -36,29 +32,32 @@ function parseTimelineOffset(timelineOffset, timelineDuration) {
   }
 }
 
-export function createTimeline(params = {}) {
-  let tl = animate(params);
-  tl.duration = 0;
-  tl.add = function(instanceParams, timelineOffset) {
-    const tlIndex = engine.children.indexOf(tl); // TODO: investigate
-    const children = tl.children;
-    if (tlIndex > -1) engine.children.splice(tlIndex, 1); // TODO: investigate
-    let insParams = mergeObjects(instanceParams, replaceObjectProps(defaultTweenSettings, params));
-    insParams.targets = insParams.targets || params.targets;
-    const tlDuration = tl.duration;
-    insParams.autoplay = false;
-    insParams.direction = tl.direction;
-    insParams.timelineOffset = parseTimelineOffset(timelineOffset, tlDuration);
-    tl.seek(insParams.timelineOffset, true);
-    const ins = animate(insParams, tl);
-    const totalDuration = ins.duration + insParams.timelineOffset;
-    children.push(ins);
+export function createTimeline(tlParams = {}) {
+  let tl = animate(tlParams);
+  tl.duration = 0; // Total TL duration should start at 0 and grow when adding children
+  tl.add = function(animationParams, timelineOffset) {
+    // const tlIndex = engine.children.indexOf(tl); // TODO: investigate
+    // const children = tl.children;
+    // if (tlIndex > -1) engine.children.splice(tlIndex, 1); // TODO: investigate
+    let animParams = mergeObjects(animationParams, replaceObjectProps(defaultTweenSettings, tlParams));
+    animParams.targets = animParams.targets || tlParams.targets;
+    animParams.autoplay = false;
+    // animParams.direction = tl.direction; // TODO: investigate
+    animParams.timelineOffset = parseTimelineOffset(timelineOffset, tl.duration);
+    tl.seek(animParams.timelineOffset, true);
+    tl.children.push(animate(animParams, tl));
     tl._childrenLength = tl.children.length;
-    getTimingsFromAnimationsOrInstances(tl, params);
-    // const timings = getTimingsFromAnimationsOrInstances(tl, params);
-    // tl._changeStartTime = timings.changeStartTime;
-    // tl._changeEndTime = timings.changeEndTime;
-    // tl.duration = timings.duration;
+    for (let i = 0, l = tl._childrenLength; i < l; i++) {
+      const child = tl.children[i];
+      const childTLOffset = child.timelineOffset;
+      const childCST = childTLOffset + child._changeStartTime;
+      if (is.und(tl._changeStartTime) || childCST < tl._changeStartTime) tl._changeStartTime = childCST;
+      const childDur = childTLOffset + child.duration;
+      if (childDur > tl.duration) tl.duration = childDur;
+      const childCET = childTLOffset + child._changeEndTime;
+      if (childCET > tl._changeEndTime) tl._changeEndTime = childCET;
+    }
+    tl._changeEndTime = tl.duration - (tl.duration - tl._changeEndTime);
     tl.seek(0, true);
     tl.reset();
     if (tl.autoplay) tl.play();

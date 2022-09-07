@@ -49,10 +49,6 @@ import {
   engine,
 } from './engine.js';
 
-import {
-  getTimingsFromAnimationsOrInstances,
-} from './timings.js';
-
 let animationsId = 0;
 
 export function getAdjustedAnimationTime(animation, time) {
@@ -245,29 +241,30 @@ export function createAnimation(params, parentAnimation) {
     animationSettings.timelineOffset = performance.now();
   }
 
+  const { delay, duration, endDelay } = tweenSettings;
+
   const animation = mergeObjects(animationSettings, {
     id: animationsId++,
     targets: targets,
     parent: parentAnimation || engine,
     tweens: [],
     children: [],
-    duration: tweenSettings.delay + tweenSettings.duration + tweenSettings.endDelay, // Total duration of the animation
+    duration: delay + duration + endDelay, // Total duration of the animation
     progress: 0, // [0 to 1] range, represent the % of completion of an animation total duration
     currentTime: 0, // The curent time relative to the animation [0 to animation duration]
-    _isOrphan: !parentAnimation,
     _tweensLength: 0,
     _parentCurrentTime: 0, // Root animation current time for simple animations or timeline current time for timeline children
     _startTime: 0, // Store at what parentCurrentTime the animation started to calculate the relative currentTime
     _lastCurrentTime: 0, // Store the animation current time when the animation playback is paused to adjust the new time when played again
-    _changeStartTime: tweenSettings.delay,
-    _changeEndTime: tweenSettings.delay + tweenSettings.duration,
+    _changeStartTime: delay,
+    _changeEndTime: delay + duration,
     _childrenLength: 0,
   });
 
   if (targets.size) {
-    let maxDuration = 0;
-    let changeStartTime;
-    let changeEndTime = 0;
+    let animCST;
+    let animCET = 0;
+    let animDUR = 0;
     let i = 0;
     targets.forEach((targetTweens, target) => {
       let lastTransformGroupIndex;
@@ -286,10 +283,10 @@ export function createAnimation(params, parentAnimation) {
           const animationPropertyTweensLength = animationPropertyTweens.length;
           const firstTween = animationPropertyTweens[0];
           const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];
-          const lastTweenChangeEndTime = lastTween._changeEndTime;
-          if (is.und(changeStartTime) || firstTween._changeStartTime < changeStartTime) changeStartTime = firstTween._changeStartTime;
-          if (lastTween.end > maxDuration) maxDuration = lastTween.end;
-          if (lastTweenChangeEndTime > changeEndTime) changeEndTime = lastTweenChangeEndTime;
+          const lastTweenCET = lastTween._changeEndTime;
+          if (is.und(animCST) || firstTween._changeStartTime < animCST) animCST = firstTween._changeStartTime;
+          if (lastTween.end > animDUR) animDUR = lastTween.end;
+          if (lastTweenCET > animCET) animCET = lastTweenCET;
           if (type == animationTypes.TRANSFORM) {
             lastTransformGroupIndex = animation.tweens.length;
             lastTransformGroupLength = lastTransformGroupIndex + animationPropertyTweensLength;
@@ -305,9 +302,9 @@ export function createAnimation(params, parentAnimation) {
       i++;
     });
 
-    animation.duration = maxDuration;
-    animation._changeStartTime = changeStartTime;
-    animation._changeEndTime = maxDuration - (maxDuration - changeEndTime);
+    animation.duration = animDUR;
+    animation._changeStartTime = animCST;
+    animation._changeEndTime = animDUR - (animDUR - animCET);
 
     animation._tweensLength = animation.tweens.length;
   }
