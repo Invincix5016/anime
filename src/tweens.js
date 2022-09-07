@@ -166,6 +166,12 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
     tween.absoluteEnd = timelineOffset + tween.end;
     tween.easing = parseEasings(tween.easing, tween.updateDuration);
 
+    tween._changeStartTime = tween.start + tween.delay;
+    tween._changeEndTime = tween.end - tween.endDelay;
+
+    tween.absoluteChangeStart = timelineOffset + tween._changeStartTime;
+    tween.absoluteChangeEnd = timelineOffset + tween._changeEndTime;
+
     let tweenIndex = 0;
     while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) tweenIndex++;
     targetPropertyTweens.splice(tweenIndex, 0, tween);
@@ -213,13 +219,13 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
       let next = previousSiblingTween.next;
       // console.log(tween.id, previousSiblingTween.id);
       while (next) {
-        let cachedNext = next.next;
+        let cachedNext = next;
         next.changeDuration = minValue;
         next = next.next;
-        // if (cachedNext) {
-        //   cachedNext.next = null;
-        //   cachedNext.previous = tween;
-        // }
+        if (cachedNext) {
+          cachedNext.next = tween;
+          cachedNext.previous = previousSiblingTween;
+        }
       }
       previousSiblingTween.next = tween;
       tween.previous = previousSiblingTween;
@@ -230,12 +236,6 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
         // console.log('next', tween.next.id);
       }
     }
-
-    tween._changeStartTime = tween.start + tween.delay;
-    tween._changeEndTime = tween.end - tween.endDelay;
-
-    tween.absoluteChangeStart = timelineOffset + tween._changeStartTime;
-    tween.absoluteChangeEnd = timelineOffset + tween._changeEndTime;
 
     prevTween = tween;
     tweens.push(tween);

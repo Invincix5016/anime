@@ -93,9 +93,9 @@ export function renderAnimationTweens(animation, time) {
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
     if (
-      (tween.changeDuration === minValue) ||
+      // (tween.changeDuration === minValue) ||
       (tween.previous && (absTime < tween.previous.absoluteChangeEnd)) ||
-      (tween.next && (absTime > tween.next.absoluteStart))
+      (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
     const tweenProgress = tween.easing(clamp(time - tween._changeStartTime, 0, tween.changeDuration) / tween.updateDuration);
     const tweenProperty = tween.property;

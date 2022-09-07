@@ -2,7 +2,8 @@ const classPrefix = 'anime-gui-';
 const sideBarWidth = 80;
 const blackColor = '#2E2C2C';
 const whiteColor = '#F6F4F2';
-const blackAlpha = 'rgba(46, 44, 44, .65)';
+const blackAlpha1Color = 'rgba(46, 44, 44, .65)';
+const blackAlpha2Color = 'rgba(46, 44, 44, .9)';
 
 const colors = ['#FF4B4B','#FF8F42','#FFC730','#F6FF56','#A4FF4F','#18FF74','#00D672','#3CFFEC','#61C3FF','#5A87FF','#8453E3','#C26EFF','#FB89FB'];
 const colorLength = colors.length;
@@ -49,11 +50,13 @@ function createCssRules() {
       top: 0;
       align-items: flex-start;
       min-width: calc(100% + ${sideBarWidth}px);
-      height: 32px;
+      height: 48px;
       margin-left: -${sideBarWidth}px;
       margin-bottom: 2px;
+      padding-top: 4px;
       padding-left: ${sideBarWidth}px;
-      background-color: ${blackColor};
+      background-color: ${blackAlpha2Color};
+      backdrop-filter: blur(8px);
       background-repeat: repeat-x;
       background-position: left 0px bottom 0px;
       background-size: 8em 10px, 4em 7px, .2em 4px;
@@ -98,8 +101,16 @@ function createCssRules() {
     }
   `);
   styleSheet.insertRule(`
-    .${classPrefix}scrubber::-webkit-slider-thumb {
+    .${classPrefix}scrubber::-webkit-slider-runnable-track {
       -webkit-appearance: none;
+      background-color: rgba(255, 255, 255, .025);
+      height: 32px;
+      border-radius: 10px;
+    }
+  `);
+  styleSheet.insertRule(`
+    .${classPrefix}is-highlighted {
+      filter: brightness(1.5);
     }
   `);
 }
@@ -151,7 +162,7 @@ function createSidebarLabel(text, css) {
 function createTweenBlock(offset, tween, color, previousTweenEl) {
   const el = createBlock('tween-line-block', `position: relative; align-items: center; height: 16px;`);
   const tweenEl = createBlock('tween-block', `position: relative; height: 14px; background-color: currentColor; border-radius: 7px;`);
-  const backgroundEl = createBlock('tween-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
+  const backgroundEl = createBlock('tween-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha1Color};`);
   const delayEl = createBlock('tween-delay-block', `position: relative; height: 14px;`);
   const durationEl = createBlock('tween-duration-block', `position: relative; justify-content: space-between; height: 14px; background-color: currentColor; border-radius: 7px;`);
   const skippedDurationEl = createBlock('tween-skipped-duration-block', `position: absolute; top: 0; right: 0; height: 14px; background: repeating-linear-gradient(45deg,transparent,transparent 1.5px,${blackColor} 1.5px,${blackColor} 3px); border-radius: 0px 7px 7px 0px;`);
@@ -159,9 +170,12 @@ function createTweenBlock(offset, tween, color, previousTweenEl) {
   const idEl = createLabel(tween.id, `position: absolute; left: 0; right: 0; text-align: center; display: flex; justify-content: center`);
   const fromValueLabelEl = createLabel(tween.from.numbers ? tween.from.numbers[0] : tween.from.number, `padding-right: 1px;`);
   const fromToLabelEl = createLabel(tween.to.numbers ? tween.to.numbers[0] : tween.to.number, `padding-left: 1px; text-shadow: -1px -1px 0 ${color}, 1px -1px 0 ${color}, -1px 1px 0 ${color}, 1px 1px 0 ${color};`);
-  // durationEl.appendChild(fromValueLabelEl);
-  durationEl.appendChild(idEl);
-  // durationEl.appendChild(fromToLabelEl);
+  tweenEl.setAttribute('data-tween', tween.id);
+  if (tween.previous) tweenEl.setAttribute('data-previous-tween', tween.previous.id);
+  if (tween.next) tweenEl.setAttribute('data-next-tween', tween.next.id);
+  durationEl.appendChild(fromValueLabelEl);
+  // durationEl.appendChild(idEl);
+  durationEl.appendChild(fromToLabelEl);
   tweenEl.appendChild(backgroundEl);
   if (tween.delay) {
     delayEl.style.width = msToEm(tween.delay);
@@ -195,7 +209,7 @@ function createIterationBlock(animation) {
   const iterationCount = (animation.loop === true || animation.loop === Infinity) ? 1 : animation.loop;
   for (let i = 0; i < iterationCount; i++) {
     const iterationEl = createBlock('iteration-block', `position: relative; height: 14px; background-color: currentColor; border-radius: 0px;`);
-    const backgroundEl = createBlock('iteration-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha};`);
+    const backgroundEl = createBlock('iteration-background-block', `position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: ${blackAlpha1Color};`);
     const delayEl = createBlock('iteration-delay-block', `position: relative; height: 14px;`);
     const durationEl = createBlock('iteration-duration-block', `position: relative; justify-content: space-between; height: 14px; background-color: currentColor; border-radius: 0px;`);
     const endDelayEl = createBlock('iteration-endDelay-block', `position: relative; height: 14px;`);
@@ -266,22 +280,24 @@ function createTimelineBlock(animation, parentHeight) {
     justify-content: center;
     align-items: center;
     width: 64px;
-    height: 20px;
+    height: 32px;
     margin-left: -32px;
     padding-left: 8px;
     padding-right: 8px;
     font-size: 12px;
+    border-radius: 10px;
     color: ${blackColor};
-    background-color: transparent;
+    background-color: ${whiteColor};
   `);
   const playHead = createBlock('timeline-playhead', `
     pointer-events: none;
     position: absolute;
-    top: 0;
+    top: 4px;
     left: 0;
     width: 1px;
     height: ${parentHeight};
     background: currentColor;
+    font-weight: bold;
   `);
   const scrubberEl = document.createElement('input');
   scrubberEl.classList.add(`${classPrefix}scrubber`)
@@ -316,6 +332,27 @@ function createTimelineBlock(animation, parentHeight) {
   }
   requestAnimationFrame(updatePlayHeadPosition);
   return el;
+}
+
+function clearHighlightTweens(guiWrapperEl) {
+  const tweenEls = guiWrapperEl.querySelectorAll(`.${classPrefix}tween-block`);
+  for (let i = 0, l = tweenEls.length; i < l; i++) {
+    tweenEls[i].classList.remove(`${classPrefix}is-highlighted`);
+  }
+}
+
+function highlightTween(guiWrapperEl, tweenEl) {
+  clearHighlightTweens(guiWrapperEl);
+  const nextId = tweenEl.getAttribute('data-next-tween');
+  const prevId = tweenEl.getAttribute('data-previous-tween');
+  if (nextId) {
+    const nextTweenEl = guiWrapperEl.querySelector(`.${classPrefix}tween-block[data-tween="${nextId}"]`);
+    nextTweenEl.classList.add(`${classPrefix}is-highlighted`);
+  }
+  if (prevId) {
+    const prevTweenEl = guiWrapperEl.querySelector(`.${classPrefix}tween-block[data-tween="${prevId}"]`);
+    prevTweenEl.classList.add(`${classPrefix}is-highlighted`);
+  }
 }
 
 export function createGUI(animation, parentEl = document.body) {
@@ -355,4 +392,21 @@ export function createGUI(animation, parentEl = document.body) {
   createCssRules();
 
   parentEl.appendChild(guiWrapperEl);
+
+  const tweenEls = guiWrapperEl.querySelectorAll(`.${classPrefix}tween-block`);
+  console.log(`.${classPrefix}tween-block`);
+
+  for (let i = 0, l = tweenEls.length; i < l; i++) {
+    const tweenEl = tweenEls[i];
+    tweenEl.addEventListener('mouseenter', () => {
+      highlightTween(guiWrapperEl, tweenEl);
+    });
+  }
+
+  for (let i = 0, l = tweenEls.length; i < l; i++) {
+    const tweenEl = tweenEls[i];
+    tweenEl.addEventListener('mouseleave', () => {
+      highlightTween(guiWrapperEl, tweenEl);
+    });
+  }
 }

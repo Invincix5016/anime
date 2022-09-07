@@ -64,23 +64,32 @@
 
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
-      duration: 2000,
+      duration: 4000,
       // direction: 'alternate',
       loop: 42,
       autoplay: true,
     })
     .add({
       targets: targetEl,
-      left: -200,
-      delay: 250,
+      left: [{value: 200},{value: 400}],
+      scaleY: [{value: 1},{value: 3}],
+      delay: 500,
       endDelay: 500,
     })
     .add({
       targets: targetEl,
-      left: 100,
-      delay: 250,
+      left: [{value: -200},{value: -400}],
+      scaleY: [{value: 1},{value: 3}],
+      delay: 500,
       endDelay: 500,
-    }, '-=1500')
+    }, '-=2500')
+    .add({
+      targets: targetEl,
+      left: [{value: 200},{value: 400}],
+      scaleY: [{value: 1},{value: 3}],
+      delay: 500,
+      endDelay: 500,
+    }, '-=2500')
 
     createGUI(tl);
 
