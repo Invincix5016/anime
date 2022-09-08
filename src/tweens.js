@@ -32,13 +32,12 @@ import {
 
 let tweenId = 0;
 
-export function convertKeyframesToTweens(animation, keyframes, target, propertyName, animationType, index) {
+export function convertKeyframesToTweens(animation, keyframes, target, targetPropertyTweens, propertyName, animationType, index) {
   let prevTween;
   const tweens = [];
   const total = animation.targets.size;
   const timelineOffset = animation.timelineOffset;
   const isOrphan = animation._isOrphan;
-  const targetPropertyTweens = animation.targets.get(target)[propertyName];
 
   for (let i = 0, l = keyframes.length; i < l; i++) {
 
@@ -149,7 +148,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
     }
 
     tween.id = tweenId++;
-    tween.animation = animation;
+    tween.canRender = 1;
     tween.type = animationType;
     tween.property = propertyName;
     tween.target = target;
@@ -176,8 +175,8 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
     while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) tweenIndex++;
     targetPropertyTweens.splice(tweenIndex, 0, tween);
 
-    let previousSiblingTween;
-    let previousSiblingTweenAbsoluteEnd = 0;
+    let parentPreviousSiblingTween;
+    let parentPreviousSiblingTweenAbsoluteEnd = 0;
     animation.parent.children.forEach(children => {
       const siblingsTarget = children.targets.get(target);
       if (siblingsTarget) {
@@ -187,18 +186,20 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
           // siblingsTweens.forEach(sibling => {
           //   console.log(tween.id, sibling);
           // });
-          while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
+          while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].canRender && siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
             const curentSibling = siblingsTweens[siblingTweenIndex++];
             const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
             // console.log(tween.id, curentSiblingAbsoluteEnd);
-            if (curentSiblingAbsoluteEnd > previousSiblingTweenAbsoluteEnd) {
-              previousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
-              previousSiblingTween = curentSibling;
+            if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
+              parentPreviousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
+              parentPreviousSiblingTween = curentSibling;
             }
           }
         }
       }
     });
+
+    const previousSiblingTween = prevTween || parentPreviousSiblingTween;
 
     if (previousSiblingTween) {
       if (previousSiblingTween.absoluteEnd >= tween.absoluteStart) {
@@ -211,30 +212,30 @@ export function convertKeyframesToTweens(animation, keyframes, target, propertyN
           }
           previousSiblingTween.endDelay = 0;
         }
+
         previousSiblingTween.end = previousSiblingTween.start + previousSiblingTween.delay + previousSiblingTween.changeDuration + previousSiblingTween.endDelay;
         previousSiblingTween.absoluteEnd = previousSiblingTween.timelineOffset + previousSiblingTween.end;
         previousSiblingTween._changeEndTime = previousSiblingTween.end - previousSiblingTween.endDelay;
         previousSiblingTween.absoluteChangeEnd = previousSiblingTween.timelineOffset + previousSiblingTween._changeEndTime;
-      }
-      let next = previousSiblingTween.next;
-      // console.log(tween.id, previousSiblingTween.id);
-      while (next) {
-        let cachedNext = next;
-        next.changeDuration = minValue;
-        next = next.next;
-        if (cachedNext) {
-          cachedNext.next = tween;
-          cachedNext.previous = previousSiblingTween;
+        let next = previousSiblingTween.next;
+        // console.log(tween.id, previousSiblingTween.id);
+        while (next) {
+          let cachedNext = next;
+          next.changeDuration = minValue;
+          next = next.next;
+          if (cachedNext) {
+            cachedNext.canRender = 0;
+            if (cachedNext.previous) {
+              cachedNext.previous.next = cachedNext.next;
+            }
+            if (cachedNext.next) {
+              cachedNext.next.previous = cachedNext.previous;
+            }
+          }
         }
       }
       previousSiblingTween.next = tween;
       tween.previous = previousSiblingTween;
-
-      if (tween.id === 66) {
-        // console.log('previous', tween.previous.id, tween.previous.absoluteStart, tween.absoluteStart);
-        // console.log('previous.next', tween.previous.next.id);
-        // console.log('next', tween.next.id);
-      }
     }
 
     prevTween = tween;

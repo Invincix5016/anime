@@ -32,7 +32,16 @@ function tickEngine(t) {
       activeAnimation.tick(t);
       i++;
     } else {
+      engine.children[i].tweens.forEach(tween => {
+        if (tween.previous) {
+          tween.previous.next = tween.next;
+        }
+        if (tween.next) {
+          tween.next.previous = tween.previous;
+        }
+      });
       engine.children.splice(i, 1);
+
       activeProcessesLength--;
       // console.log(engine.children.length);
     }

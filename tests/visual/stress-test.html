@@ -83,18 +83,18 @@
       // opacity: [1, 0],
       translateX: [0, Math.cos(angle) * radius],
       translateY: [0, Math.sin(angle) * radius],
-      scale: [0.05, 2],
+      scale: [{value: [0.05, 1]}, {value: 0.05}],
       easing: 'easeInCubic',
       delay: delay,
       duration: duration,
-      loop: true,
-      // complete: () => {
-      //   animateParticle(particleEl, i, total);
-      // }
+      // loop: true,
+      complete: () => {
+        animateParticle(particleEl, i, total);
+      }
     });
   }
 
-  for (let i = 0, l = 1500; i < l; i++) {
+  for (let i = 0, l = 1000; i < l; i++) {
     const particleEl = createParticule();
     particlesEl.appendChild(particleEl);
     particles.push(particleEl);

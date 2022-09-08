@@ -93,7 +93,7 @@ export function renderAnimationTweens(animation, time) {
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
     if (
-      // (tween.changeDuration === minValue) ||
+      !tween.canRender ||
       (tween.previous && (absTime < tween.previous.absoluteChangeEnd)) ||
       (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
@@ -279,7 +279,7 @@ export function createAnimation(params, parentAnimation) {
         let targetPropertyTweens = targetTweens[property];
         if (!targetPropertyTweens) targetPropertyTweens = targetTweens[property] = [];
         if (is.num(type)) {
-          const animationPropertyTweens = convertKeyframesToTweens(animation, keyframes, target, property, type, i);
+          const animationPropertyTweens = convertKeyframesToTweens(animation, keyframes, target, targetPropertyTweens, property, type, i);
           const animationPropertyTweensLength = animationPropertyTweens.length;
           const firstTween = animationPropertyTweens[0];
           const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];

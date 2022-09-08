@@ -78,8 +78,9 @@
     })
     .add({
       targets: targetEl,
-      left: [{value: -200},{value: -400}],
-      scaleY: [{value: 1},{value: 3}],
+      left: {value: -200},
+      scaleY: {value: 2},
+      duration: 8000,
       delay: 500,
       endDelay: 500,
     }, '-=2500')
@@ -89,9 +90,20 @@
       scaleY: [{value: 1},{value: 3}],
       delay: 500,
       endDelay: 500,
-    }, '-=2500')
+    }, '-=6000')
 
     createGUI(tl);
+
+    tl.children[2].tweens.forEach(tween => {
+      if (tween.previous) {
+        tween.previous.next = tween.next;
+      }
+      if (tween.next) {
+        tween.next.previous = tween.previous;
+      }
+    })
+    tl.children.splice(2, 1);
+    tl._childrenLength= 2;
 
   </script>
 </body>
