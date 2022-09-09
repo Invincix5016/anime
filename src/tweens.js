@@ -172,33 +172,18 @@ export function convertKeyframesToTweens(animation, keyframes, target, targetPro
     tween.absoluteChangeEnd = timelineOffset + tween._changeEndTime;
 
     let tweenIndex = 0;
-    while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) tweenIndex++;
-    targetPropertyTweens.splice(tweenIndex, 0, tween);
-
     let parentPreviousSiblingTween;
     let parentPreviousSiblingTweenAbsoluteEnd = 0;
-    // for (let k = siblingsTweens.length; k--;) {
-    // animation.parent.children.forEach(children => {
-      // const siblingsTarget = children.targets.get(target);
-      // if (siblingsTarget) {
-    const siblingsTweens = animation.parent.targets.get(target)[propertyName];
-    if (siblingsTweens) {
-      let siblingTweenIndex = 0;
-      // siblingsTweens.forEach(sibling => {
-      //   console.log(tween.id, sibling);
-      // });
-      while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].canRender && siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
-        const curentSibling = siblingsTweens[siblingTweenIndex++];
-        const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
-        // console.log(tween.id, curentSiblingAbsoluteEnd);
-        if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
-          parentPreviousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
-          parentPreviousSiblingTween = curentSibling;
-        }
+    while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].canRender && targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) {
+      const curentSibling = targetPropertyTweens[tweenIndex++];
+      const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
+      if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
+        parentPreviousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
+        parentPreviousSiblingTween = curentSibling;
       }
     }
-      // }
-    // });
+
+    targetPropertyTweens.splice(tweenIndex, 0, tween);
 
     const previousSiblingTween = prevTween || parentPreviousSiblingTween;
 
