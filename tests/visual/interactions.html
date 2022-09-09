@@ -96,12 +96,11 @@
       el.onmouseenter = () => {
         anime({
           targets: el,
-          // scale: [{value: 1.2, duration: 900}, {value: 1.6, duration: 1000}],
-          scale: [{value: 1.2, duration: 900}],
+          scale: [{value: 1.2, duration: 1000}, {value: 1.6, duration: 2000}],
+          // scale: [{value: 1.2, duration: 900}],
           zIndex: {value: 999, round: 1, easing: 'linear', duration: 25},
           color: {value: el.dataset.clicked ? skyblue : orange, easing: 'easeOutQuad', duration: 150},
           boxShadow: '0 0 10px 0 rgba(0, 0, 0, .3)',
-          easing: 'easeInOutQuad',
           duration: 900,
           begin: () => el.dataset.hover = true,
         })
@@ -112,7 +111,7 @@
           scale: 1,
           zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
           color: {value: el.dataset.clicked ? red : kingblue, easing: 'easeOutQuad', duration: 100},
-          duration: 500,
+          duration: 400,
           begin: () => el.dataset.clicked ? el.removeAttribute('data-clicked') : el.dataset.clicked = true,
         })
       }
@@ -127,15 +126,15 @@
           begin: () => el.removeAttribute('data-hover'),
         })
       }
-      el.onmouseup = () => {
-        anime({
-          targets: el,
-          scale: el.dataset.clicked ? 1 : (el.dataset.hover ? 1.2 : 1),
-          zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
-          color: {value: el.dataset.clicked ? kingblue : (el.dataset.hover ? orange : red), easing: 'easeOutQuad', duration: 300},
-          duration: 500
-        })
-      }
+      // el.onmouseup = () => {
+      //   anime({
+      //     targets: el,
+      //     scale: el.dataset.clicked ? 1 : (el.dataset.hover ? 1.2 : 1),
+      //     zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
+      //     color: {value: el.dataset.clicked ? kingblue : (el.dataset.hover ? orange : red), easing: 'easeOutQuad', duration: 300},
+      //     duration: 500
+      //   })
+      // }
     }
 
     for (let i = 0, l = loopElements.length; i < l; i++) {

@@ -16,11 +16,11 @@ import {
 export function seek(animation, time, muteCallbacks) {
   if (muteCallbacks) {
     if (animation.children) {
-      syncAnimationChildren(animation, time, 1);
+      syncAnimationChildren(animation, time, muteCallbacks);
     }
     renderAnimationTweens(animation, time);
   } else {
-    setAnimationProgress(animation, getAdjustedAnimationTime(animation, time), 1);
+    setAnimationProgress(animation, getAdjustedAnimationTime(animation, time));
   }
   return animation;
 }

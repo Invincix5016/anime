@@ -76,4 +76,45 @@ describe('Tweens', () => {
     expect(animation.tweens[1].from.type).toBe(valueTypes.COLOR);
     expect(animation.tweens[1].to.type).toBe(valueTypes.COLOR);
   });
+
+  test('Canceled tween should not update after the next sibling has been killed', () => {
+    const targetEl = document.querySelector('#target-id');
+    const tl = anime.timeline({
+      targets: targetEl,
+      easing: 'linear',
+    })
+    .add({
+      width: 100,
+      duration: 20
+    })
+    .add({
+      width: -100,
+      duration: 5,
+      complete: () => {
+        tl.children[1].tweens.forEach(tween => {
+          if (tween.previous) {
+            tween.previous.next = tween.next;
+          }
+          if (tween.next) {
+            tween.next.previous = tween.previous;
+          }
+        })
+        tl.children.splice(1, 1);
+        tl._childrenLength = 1;
+      }
+    }, 10);
+
+    tl.seek(5);
+    expect(targetEl.style.width).toBe('25px');
+
+    tl.seek(10);
+    expect(targetEl.style.width).toBe('50px');
+
+    tl.seek(15);
+    expect(targetEl.style.width).toBe('-100px');
+
+    tl.seek(20);
+    expect(targetEl.style.width).toBe('-100px');
+
+  });
 });

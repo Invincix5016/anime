@@ -52,21 +52,53 @@
 
     const targetEl = document.querySelector('#square-1');
 
-    // anime({
-    //   targets: targetEl,
-    //   left: -200,
-    //   delay: 250,
-    //   endDelay: 500,
+    // const tl = anime.timeline({
     //   easing: 'easeInOutQuad',
+    //   duration: 4000,
+    //   // direction: 'alternate',
     //   loop: 42,
     //   autoplay: true,
     // })
+    // .add({
+    //   targets: targetEl,
+    //   left: [{value: 200},{value: 400}],
+    //   scaleY: [{value: 1},{value: 3}],
+    //   delay: 500,
+    //   endDelay: 500,
+    // })
+    // .add({
+    //   targets: targetEl,
+    //   left: {value: -200},
+    //   scaleY: {value: 2},
+    //   duration: 8000,
+    //   delay: 500,
+    //   endDelay: 500,
+    // }, '-=2500')
+    // .add({
+    //   targets: targetEl,
+    //   left: [{value: 200},{value: 400}],
+    //   scaleY: [{value: 1},{value: 3}],
+    //   delay: 500,
+    //   endDelay: 500,
+    //   complete() {
+    //   tl.children[2].tweens.forEach(tween => {
+    //     if (tween.previous) {
+    //       tween.previous.next = tween.next;
+    //     }
+    //     if (tween.next) {
+    //       tween.next.previous = tween.previous;
+    //     }
+    //   })
+    //   tl.children.splice(2, 1);
+    //   tl._childrenLength= 2;
+    //   }
+    // }, '-=6000')
 
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
       duration: 4000,
       // direction: 'alternate',
-      loop: 42,
+      // loop: 42,
       autoplay: true,
     })
     .add({
@@ -80,6 +112,7 @@
       targets: targetEl,
       left: {value: -200},
       scaleY: {value: 2},
+      backgroundColor: {value: '#FFF', duration: 1000 },
       duration: 8000,
       delay: 500,
       endDelay: 500,
@@ -88,22 +121,30 @@
       targets: targetEl,
       left: [{value: 200},{value: 400}],
       scaleY: [{value: 1},{value: 3}],
+      backgroundColor: {value: '#5A87FF', delay: 0, duration: 1000, endDelay: 0, },
       delay: 500,
       endDelay: 500,
+      complete() {
+        tl.children[2].tweens.forEach(tween => {
+          if (tween.previous) {
+            tween.previous.next = tween.next;
+          }
+          if (tween.next) {
+            tween.next.previous = tween.previous;
+          }
+        })
+        tl.children.splice(2, 1);
+        tl._childrenLength= 2;
+      }
     }, '-=6000')
 
     createGUI(tl);
 
-    tl.children[2].tweens.forEach(tween => {
-      if (tween.previous) {
-        tween.previous.next = tween.next;
-      }
-      if (tween.next) {
-        tween.next.previous = tween.previous;
-      }
-    })
-    tl.children.splice(2, 1);
-    tl._childrenLength= 2;
+    // tl.seek(10000);
+
+    // tl.play();
+
+    // tl.seek(10750);
 
   </script>
 </body>

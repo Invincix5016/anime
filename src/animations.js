@@ -72,8 +72,8 @@ export function toggleAnimationDirection(animation) {
   return animation;
 }
 
-export function syncAnimationChildren(animation, time, muteCallbacks, manual) {
-  if (!manual || (manual && !(time < animation.currentTime))) {
+export function syncAnimationChildren(animation, time, muteCallbacks) {
+  if (!(time < animation.currentTime)) {
     for (let i = 0; i < animation._childrenLength; i++) {
       const child = animation.children[i];
       child.seek(time - child.timelineOffset, muteCallbacks);
@@ -92,8 +92,11 @@ export function renderAnimationTweens(animation, time) {
   const absTime = animation.timelineOffset + time;
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
+    // console.log(tween.isCanceled);
+    // console.lo);
     if (
-      !tween.canRender ||
+      tween.isCanceled ||
+      (tween.isOverridden && absTime > tween.absoluteChangeEnd) ||
       (tween.previous && (absTime < tween.previous.absoluteChangeEnd)) ||
       (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
@@ -154,7 +157,7 @@ export function renderAnimationTweens(animation, time) {
   }
 }
 
-export function setAnimationProgress(animation, parentTime, manual) {
+export function setAnimationProgress(animation, parentTime) {
   const animationDuration = animation.duration;
   const animationChangeStartTime = animation._changeStartTime;
   const animationChangeEndTime = animation._changeEndTime;
@@ -162,7 +165,7 @@ export function setAnimationProgress(animation, parentTime, manual) {
   let canRender = (animationTime <= animationChangeStartTime && animation.currentTime !== 0) ||
                   (animationTime >= animationChangeEndTime && animation.currentTime !== animationDuration);
   animation.progress = clamp((animationTime / animationDuration), 0, 1);
-  if (animation._childrenLength) { syncAnimationChildren(animation, animationTime, 0, manual); }
+  if (animation._childrenLength) { syncAnimationChildren(animation, animationTime, 0); }
   if (!animation.began && animation.currentTime > 0) {
     animation.began = 1;
     animation.begin(animation);
