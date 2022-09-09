@@ -232,11 +232,12 @@ export function resetAnimation(animation) {
 }
 
 export function createAnimation(params, parentAnimation) {
-  const parentTargets = parentAnimation ? parentAnimation.targets : new Map();
+  // const parentTargets = parentAnimation ? parentAnimation.targets : new Map();
+  const parent = parentAnimation || engine;
   const animationSettings = replaceObjectProps(defaultAnimationSettings, params);
   const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
   const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
-  const targets = registerTargetsToMap(params.targets, parentTargets);
+  const targets = registerTargetsToMap(params.targets, parent.targets);
   const targetsLength = targets.size;
 
   if (!parentAnimation) {
@@ -248,7 +249,7 @@ export function createAnimation(params, parentAnimation) {
   const animation = mergeObjects(animationSettings, {
     id: animationsId++,
     targets: targets,
-    parent: parentAnimation || engine,
+    parent: parent,
     tweens: [],
     children: [],
     duration: delay + duration + endDelay, // Total duration of the animation

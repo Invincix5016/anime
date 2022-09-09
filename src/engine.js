@@ -14,6 +14,7 @@ import {
 export const engine = {
   activeProcesses: [],
   children: [],
+  targets: new Map(),
   elapsedTime: 0,
 }
 
@@ -24,29 +25,38 @@ let engineRaf = 0;
 
 function tickEngine(t) {
   engine.elapsedTime = t;
-  let activeProcessesLength = engine.children.length;
+  let activeAnimationsLength = engine.children.length;
   let i = 0;
-  while (i < activeProcessesLength) {
+  while (i < activeAnimationsLength) {
     const activeAnimation = engine.children[i];
     if (!activeAnimation.paused) {
       activeAnimation.tick(t);
       i++;
     } else {
-      engine.children[i].tweens.forEach(tween => {
+      // activeAnimation.tweens.forEach(tween => {
+      for (let j = activeAnimation.tweens.length; j--;) {
+        const tween = activeAnimation.tweens[j];
+        const parentTargetTweens = activeAnimation.parent.targets.get(tween.target)[tween.property];
+        for (let k = parentTargetTweens.length; k--;) {
+          if (tween === parentTargetTweens[k]) {
+            parentTargetTweens.splice(k, 1);
+          }
+        }
+        // console.log(parentTargetTweens);
         if (tween.previous) {
           tween.previous.next = tween.next;
         }
         if (tween.next) {
           tween.next.previous = tween.previous;
         }
-      });
+      }
       engine.children.splice(i, 1);
 
-      activeProcessesLength--;
+      activeAnimationsLength--;
       // console.log(engine.children.length);
     }
   }
-  engineRaf = activeProcessesLength ? raf(tickEngine) : 0;
+  engineRaf = activeAnimationsLength ? raf(tickEngine) : 0;
 }
 
 export function startEngine(engine) {

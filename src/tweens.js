@@ -177,27 +177,28 @@ export function convertKeyframesToTweens(animation, keyframes, target, targetPro
 
     let parentPreviousSiblingTween;
     let parentPreviousSiblingTweenAbsoluteEnd = 0;
-    animation.parent.children.forEach(children => {
-      const siblingsTarget = children.targets.get(target);
-      if (siblingsTarget) {
-        const siblingsTweens = siblingsTarget[propertyName];
-        if (siblingsTweens) {
-          let siblingTweenIndex = 0;
-          // siblingsTweens.forEach(sibling => {
-          //   console.log(tween.id, sibling);
-          // });
-          while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].canRender && siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
-            const curentSibling = siblingsTweens[siblingTweenIndex++];
-            const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
-            // console.log(tween.id, curentSiblingAbsoluteEnd);
-            if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
-              parentPreviousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
-              parentPreviousSiblingTween = curentSibling;
-            }
-          }
+    // for (let k = siblingsTweens.length; k--;) {
+    // animation.parent.children.forEach(children => {
+      // const siblingsTarget = children.targets.get(target);
+      // if (siblingsTarget) {
+    const siblingsTweens = animation.parent.targets.get(target)[propertyName];
+    if (siblingsTweens) {
+      let siblingTweenIndex = 0;
+      // siblingsTweens.forEach(sibling => {
+      //   console.log(tween.id, sibling);
+      // });
+      while (siblingTweenIndex < siblingsTweens.length && (siblingsTweens[siblingTweenIndex].canRender && siblingsTweens[siblingTweenIndex].absoluteStart - tween.absoluteStart) < 0) {
+        const curentSibling = siblingsTweens[siblingTweenIndex++];
+        const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
+        // console.log(tween.id, curentSiblingAbsoluteEnd);
+        if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
+          parentPreviousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
+          parentPreviousSiblingTween = curentSibling;
         }
       }
-    });
+    }
+      // }
+    // });
 
     const previousSiblingTween = prevTween || parentPreviousSiblingTween;
 
