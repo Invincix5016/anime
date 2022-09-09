@@ -173,7 +173,7 @@ function createTweenBlock(offset, tween, color, previousTweenEl) {
   tweenEl.setAttribute('data-tween', tween.id);
   if (tween.previous) tweenEl.setAttribute('data-previous-tween', tween.previous.id);
   if (tween.next) tweenEl.setAttribute('data-next-tween', tween.next.id);
-  if (!tween.canRender) tweenEl.style.opacity = .5;
+  if (tween.isOverridden) tweenEl.style.opacity = .5;
   durationEl.appendChild(fromValueLabelEl);
   // durationEl.appendChild(idEl);
   durationEl.appendChild(fromToLabelEl);

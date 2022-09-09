@@ -32,7 +32,7 @@ import {
 
 let tweenId = 0;
 
-export function convertKeyframesToTweens(animation, keyframes, target, targetPropertyTweens, propertyName, animationType, index) {
+export function convertKeyframesToTweens(animation, keyframes, target, tweenSiblings, propertyName, animationType, index) {
   let prevTween;
   const tweens = [];
   const total = animation.targets.size;
@@ -148,7 +148,8 @@ export function convertKeyframesToTweens(animation, keyframes, target, targetPro
     }
 
     tween.id = tweenId++;
-    tween.canRender = 1;
+    tween.isOverridden = false;
+    tween.isOverlapped = false;
     tween.type = animationType;
     tween.property = propertyName;
     tween.target = target;
@@ -171,11 +172,11 @@ export function convertKeyframesToTweens(animation, keyframes, target, targetPro
     tween.absoluteChangeStart = timelineOffset + tween._changeStartTime;
     tween.absoluteChangeEnd = timelineOffset + tween._changeEndTime;
 
-    let tweenIndex = 0;
+    let ti = 0;
     let parentPreviousSiblingTween;
     let parentPreviousSiblingTweenAbsoluteEnd = 0;
-    while (tweenIndex < targetPropertyTweens.length && (targetPropertyTweens[tweenIndex].canRender && targetPropertyTweens[tweenIndex].absoluteStart - tween.absoluteStart) < 0) {
-      const curentSibling = targetPropertyTweens[tweenIndex++];
+    while (ti < tweenSiblings.length && (!tweenSiblings[ti].isOverridden && tweenSiblings[ti].absoluteStart - tween.absoluteStart) < 0) {
+      const curentSibling = tweenSiblings[ti++];
       const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
       if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
         parentPreviousSiblingTweenAbsoluteEnd = curentSiblingAbsoluteEnd;
@@ -183,12 +184,12 @@ export function convertKeyframesToTweens(animation, keyframes, target, targetPro
       }
     }
 
-    targetPropertyTweens.splice(tweenIndex, 0, tween);
+    tweenSiblings.splice(ti, 0, tween);
 
     const previousSiblingTween = prevTween || parentPreviousSiblingTween;
 
     if (previousSiblingTween) {
-      previousSiblingTween.isOverridden = true;
+      previousSiblingTween.isOverlapped = true;
       if (previousSiblingTween.absoluteEnd >= tween.absoluteStart) {
         previousSiblingTween.endDelay -= (previousSiblingTween.absoluteEnd - tween.absoluteStart);
         if (previousSiblingTween.endDelay < 0) {
@@ -209,7 +210,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, targetPro
           next.changeDuration = minValue;
           next = next.next;
           if (cachedNext) {
-            cachedNext.isCanceled = true;
+            cachedNext.isOverridden = true;
             if (cachedNext.previous) {
               cachedNext.previous.next = cachedNext.next;
             }

@@ -92,11 +92,10 @@ export function renderAnimationTweens(animation, time) {
   const absTime = animation.timelineOffset + time;
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
-    // console.log(tween.isCanceled);
-    // console.lo);
     if (
-      tween.isCanceled ||
-      (tween.isOverridden && absTime > tween.absoluteChangeEnd) ||
+      tween.isOverridden ||
+      // TODO : Cleanup animation._frameInterval < 33.33333 and find a better way to test is a jump happened
+      (animation._frameInterval < 33.33333 && tween.isOverlapped && absTime > tween.absoluteChangeEnd) ||
       (tween.previous && (absTime < tween.previous.absoluteChangeEnd)) ||
       (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
@@ -181,7 +180,7 @@ export function setAnimationProgress(animation, parentTime) {
       animation.changeBegin(animation);
     }
     animation.change(animation);
-    canRender = 1;
+    canRender = true;
   } else {
     if (animation.changeBegan) {
       animation.changeCompleted = 1;
@@ -190,7 +189,9 @@ export function setAnimationProgress(animation, parentTime) {
     }
   }
   animation.currentTime = clamp(animationTime, 0, animationDuration);
+  animation._frameInterval = Math.abs(animation._lastFrameTime -  animation.currentTime);
   if (canRender) renderAnimationTweens(animation, animation.currentTime);
+  animation._lastFrameTime = animation.currentTime;
   if (animation.began) animation.update(animation);
   if (parentTime >= animationDuration) {
     animation._lastCurrentTime = 0;
@@ -262,6 +263,8 @@ export function createAnimation(params, parentAnimation) {
     _parentCurrentTime: 0, // Root animation current time for simple animations or timeline current time for timeline children
     _startTime: 0, // Store at what parentCurrentTime the animation started to calculate the relative currentTime
     _lastCurrentTime: 0, // Store the animation current time when the animation playback is paused to adjust the new time when played again
+    _lastFrameTime: 0, // Used to calculate _frameInterval to check if the animation is playing continuously or if there was a jump in time
+    _frameInterval: 0, // Used to check if the animation is playing continuously or if there was a jump in time
     _changeStartTime: delay,
     _changeEndTime: delay + duration,
     _childrenLength: 0,

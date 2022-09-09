@@ -87,8 +87,8 @@
       targets: loopElements,
       scale: [0, 1],
       easing: 'easeInOutQuad',
-      duration: 2000,
-      delay: anime.stagger(250, {grid: [5, 5], from: 'last'}),
+      duration: 500,
+      delay: anime.stagger(120, {grid: [5, 5], from: 'last', start: 240}),
     })
 
     for (let i = 0, l = hoverElements.length; i < l; i++) {
@@ -102,7 +102,7 @@
           color: {value: el.dataset.clicked ? skyblue : orange, easing: 'easeOutQuad', duration: 150},
           boxShadow: '0 0 10px 0 rgba(0, 0, 0, .3)',
           duration: 900,
-          begin: () => el.dataset.hover = true,
+          begin() { el.dataset.hover = true; },
         })
       }
       el.onclick = () => {
@@ -112,7 +112,7 @@
           zIndex: {value: 1, round: 1, easing: 'linear', duration: 25},
           color: {value: el.dataset.clicked ? red : kingblue, easing: 'easeOutQuad', duration: 100},
           duration: 400,
-          begin: () => el.dataset.clicked ? el.removeAttribute('data-clicked') : el.dataset.clicked = true,
+          begin() { el.dataset.clicked ? el.removeAttribute('data-clicked') : el.dataset.clicked = true; },
         })
       }
       el.onmouseleave = () => {
@@ -123,29 +123,18 @@
           color: {value: el.dataset.clicked ? kingblue : red, easing: 'easeOutQuad'},
           boxShadow: {value: '0 0 0 0 rgba(0, 0, 0, 0)', easing: 'linear'},
           duration: 500,
-          begin: () => el.removeAttribute('data-hover'),
+          begin() { el.removeAttribute('data-hover'); },
         })
       }
-      // el.onmouseup = () => {
-      //   anime({
-      //     targets: el,
-      //     scale: el.dataset.clicked ? 1 : (el.dataset.hover ? 1.2 : 1),
-      //     zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
-      //     color: {value: el.dataset.clicked ? kingblue : (el.dataset.hover ? orange : red), easing: 'easeOutQuad', duration: 300},
-      //     duration: 500
-      //   })
-      // }
-    }
-
-    for (let i = 0, l = loopElements.length; i < l; i++) {
-      // anime({
-      //   targets: loopElements[i],
-      //   scale: 1.1,
-      //   easing: 'easeInOutQuad',
-      //   delay: i * 125,
-      //   loop: true,
-      //   direction: 'alternate',
-      // })
+      el.onmouseup = () => {
+        anime({
+          targets: el,
+          scale: el.dataset.clicked ? 1 : (el.dataset.hover ? 1.2 : 1),
+          zIndex: {value: el.dataset.hover ? 999 : 1, round: 1, easing: 'linear', duration: 25},
+          color: {value: el.dataset.clicked ? kingblue : (el.dataset.hover ? orange : red), easing: 'easeOutQuad', duration: 300},
+          duration: 500
+        })
+      }
     }
 
     // createGUI(tl);
