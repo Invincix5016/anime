@@ -73,16 +73,10 @@ export function toggleAnimationDirection(animation) {
 }
 
 export function syncAnimationChildren(animation, time, muteCallbacks) {
-  if (!(time < animation.currentTime)) {
-    for (let i = 0; i < animation._childrenLength; i++) {
-      const child = animation.children[i];
-      child.seek(time - child.timelineOffset, muteCallbacks);
-    }
-  } else {
-    for (let j = animation._childrenLength; j--;) {
-      const child = animation.children[j];
-      child.seek(time - child.timelineOffset, muteCallbacks, true);
-    }
+  const isRunningBackwards = time < animation.currentTime;
+  for (let i = 0; i < animation._childrenLength; i++) {
+    const child = animation.children[!isRunningBackwards ? i : animation._childrenLength - 1 - i];
+    child.seek(time - child.timelineOffset, muteCallbacks, isRunningBackwards);
   }
 }
 
@@ -96,7 +90,7 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
     if (
       tween.isOverridden ||
       // TODO : Cleanup animation._frameInterval < 33.33333 and find a better way to test is a jump happened
-      (animation._frameInterval < 33.33333 && tween.isOverlapped && absTime > tween.absoluteChangeEnd) ||
+      // (animation._frameInterval < 33.33333 && tween.isOverlapped && absTime > tween.absoluteChangeEnd) ||
       (tween.previous && absTime < tween.previous.absoluteChangeEnd) ||
       (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
