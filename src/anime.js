@@ -26,7 +26,8 @@ import {
 } from './svg.js';
 
 import {
-  removeAnimatablesFromActiveAnimations,
+  parseTargets,
+  removeTweensWithTargetsFromAnimation,
 } from './animatables.js';
 
 import {
@@ -54,7 +55,7 @@ anime.settings = settings;
 anime.engine = engine;
 anime.suspendWhenDocumentHidden = true;
 anime.running = engine.children;
-anime.remove = removeAnimatablesFromActiveAnimations;
+anime.remove = targets => { const targetsSet = parseTargets(targets); for (let i = engine.children.length; i--;) removeTweensWithTargetsFromAnimation(targetsSet, engine.children[i]); }
 anime.get = getTargetValue;
 anime.set = (targets, props = {}) => { props.targets = targets; props.duration = 0; return animate(props); };
 anime.convertPx = convertValueUnit;

@@ -7,10 +7,6 @@ import {
 } from './cache.js';
 
 import {
-  engine,
-} from './engine.js';
-
-import {
   is,
   toArray,
 } from './utils.js';
@@ -64,7 +60,7 @@ function removeTweensWithTargets(targetsSet, animation) {
   }
 }
 
-function removeTweensWithTargetsFromAnimation(targetsSet, animation) {
+export function removeTweensWithTargetsFromAnimation(targetsSet, animation) {
   const children = animation.children;
   for (let i = children.length; i--;) {
     const child = children[i];
@@ -80,12 +76,4 @@ function removeTweensWithTargetsFromAnimation(targetsSet, animation) {
 export function removeAnimatablesFromAnimation(targets, animation) {
   const targetsSet = parseTargets(targets);
   removeTweensWithTargetsFromAnimation(targetsSet, animation);
-}
-
-export function removeAnimatablesFromActiveAnimations(targets) {
-  const targetsSet = parseTargets(targets);
-  for (let i = engine.children.length; i--;) {
-    const animation = engine.children[i];
-    removeTweensWithTargetsFromAnimation(targetsSet, animation);
-  }
 }
