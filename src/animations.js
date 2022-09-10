@@ -76,7 +76,7 @@ export function syncAnimationChildren(animation, time, muteCallbacks) {
   const isRunningBackwards = time < animation.currentTime;
   for (let i = 0; i < animation._childrenLength; i++) {
     const child = animation.children[!isRunningBackwards ? i : animation._childrenLength - 1 - i];
-    child.seek(time - child.timelineOffset, muteCallbacks, isRunningBackwards);
+    seekAnimation(child, time - child.timelineOffset, muteCallbacks, isRunningBackwards);
   }
 }
 
@@ -86,7 +86,7 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
   const absTime = animation.timelineOffset + time;
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
-    // tween.isUpdating = false; // For GUI debug only
+    tween.isUpdating = false; // For GUI debug only
     if (
       tween.isOverridden ||
       // TODO : Cleanup animation._frameInterval < 33.33333 and find a better way to test is a jump happened
@@ -94,7 +94,7 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
       (tween.previous && absTime < tween.previous.absoluteChangeEnd) ||
       (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
-    // tween.isUpdating = true; // For GUI debug only
+    tween.isUpdating = true; // For GUI debug only
     const tweenProgress = tween.easing(clamp(time - tween._changeStartTime, 0, tween.changeDuration) / tween.updateDuration);
     const tweenProperty = tween.property;
     const tweenRound = tween.round;
@@ -232,6 +232,24 @@ export function resetAnimation(animation) {
   if (animation.isReversed && animation.loop !== true || (animation.direction === 'alternate' && animation.loop === 1)) animation.remainingIterations++;
   renderAnimationTweens(animation, animation.isReversed ? animation.duration : 0);
   return animation;
+}
+
+export function seekAnimation(animation, time, muteCallbacks, isSeekingBackwards) {
+  if (muteCallbacks) {
+    if (animation.children) {
+      syncAnimationChildren(animation, time, muteCallbacks);
+    }
+    renderAnimationTweens(animation, time, isSeekingBackwards);
+  } else {
+    setAnimationProgress(animation, getAdjustedAnimationTime(animation, time), isSeekingBackwards);
+  }
+  return animation;
+}
+
+export function tickAnimation(animation, t) {
+  animation._parentCurrentTime = t;
+  if (!animation._startTime) animation._startTime = animation._parentCurrentTime;
+  setAnimationProgress(animation, (animation._parentCurrentTime + (animation._lastCurrentTime - animation._startTime)) * settings.speed);
 }
 
 export function createAnimation(params, parentAnimation) {

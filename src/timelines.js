@@ -14,6 +14,10 @@ import {
 } from './values.js';
 
 import {
+  createAnimation,
+} from './animations.js';
+
+import {
   animate,
 } from './animate.js';
 
@@ -45,7 +49,7 @@ export function createTimeline(tlParams = {}) {
     // animParams.direction = tl.direction; // TODO: investigate
     animParams.timelineOffset = parseTimelineOffset(timelineOffset, tl.duration);
     tl.seek(animParams.timelineOffset, true);
-    tl.children.push(animate(animParams, tl));
+    tl.children.push(createAnimation(animParams, tl));
     tl._childrenLength = tl.children.length;
     for (let i = 0, l = tl._childrenLength; i < l; i++) {
       const child = tl.children[i];

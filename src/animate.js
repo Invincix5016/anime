@@ -4,13 +4,14 @@ import {
 } from './consts.js';
 
 import {
+  seekAnimation,
+  tickAnimation,
   createAnimation,
   resetAnimation,
   setAnimationProgress,
 } from './animations.js';
 
 import {
-  seek,
   pause,
   play,
   reverse,
@@ -25,24 +26,19 @@ export function animate(params = {}, parent) {
   const animation = createAnimation(params, parent);
 
   animation.reset = () => resetAnimation(animation);
-  animation.seek = (time, muteCallbacks, isSeekingBackwards) => seek(animation, time, muteCallbacks, isSeekingBackwards);
+  animation.seek = (time, muteCallbacks, isSeekingBackwards) => seekAnimation(animation, time, muteCallbacks, isSeekingBackwards);
   animation.pause = () => pause(animation);
   animation.play = () => play(animation);
   animation.reverse = () => reverse(animation);
   animation.restart = () => restart(animation);
   animation.remove = (targets) => removeAnimatablesFromAnimation(targets, animation);
-
-  animation.tick = function(t) {
-    animation._parentCurrentTime = t;
-    if (!animation._startTime) animation._startTime = animation._parentCurrentTime;
-    setAnimationProgress(animation, (animation._parentCurrentTime + (animation._lastCurrentTime - animation._startTime)) * settings.speed);
-  }
+  animation.tick = (t) => tickAnimation(animation, t);
 
   if (animation.autoplay) {
     if (animation.duration === minValue) {
-      animation.seek(minValue);
+      seekAnimation(animation, minValue);
     } else {
-      animation.play();
+      play(animation);
     }
   }
 

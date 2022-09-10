@@ -8,6 +8,7 @@ import {
 } from './utils.js';
 
 import {
+  tickAnimation,
   resetAnimationTime,
 } from './animations.js';
 
@@ -26,10 +27,9 @@ engine.tick = function(t) {
   engine.activeAnimationsLength = engine.children.length;
   let i = 0;
   while (i < engine.activeAnimationsLength) {
-    const activeAnimation = engine.children[i];
+    const activeAnimation = engine.children[i++];
     if (!activeAnimation.paused) {
-      activeAnimation.tick(t);
-      i++;
+      tickAnimation(activeAnimation, t);
     } else {
       // TODO: Check if we should re-add the tweens on play/pause
       for (let j = activeAnimation.tweens.length; j--;) {
@@ -55,14 +55,15 @@ function mainLoop(t) {
 }
 
 export function startEngine(engine) {
-  if (settings.useDefaultAnimationLoop && !engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.children.length > 0) {
+  if (settings.useDefaultAnimationLoop && (!engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.activeAnimationsLength > 0)) {
     engineRaf = raf(mainLoop);
   }
 }
 
+let io = 0;
+
 function handleVisibilityChange() {
   if (!settings.suspendWhenDocumentHidden) return;
-
   if (isDocumentHidden()) {
     // suspend ticks
     engineRaf = cancelAnimationFrame(engineRaf);

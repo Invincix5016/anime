@@ -1,8 +1,4 @@
 import {
-  syncAnimationChildren,
-  renderAnimationTweens,
-  setAnimationProgress,
-  getAdjustedAnimationTime,
   resetAnimationTime,
   resetAnimation,
   toggleAnimationDirection,
@@ -12,18 +8,6 @@ import {
   engine,
   startEngine,
 } from './engine.js';
-
-export function seek(animation, time, muteCallbacks, isSeekingBackwards) {
-  if (muteCallbacks) {
-    if (animation.children) {
-      syncAnimationChildren(animation, time, muteCallbacks);
-    }
-    renderAnimationTweens(animation, time, isSeekingBackwards);
-  } else {
-    setAnimationProgress(animation, getAdjustedAnimationTime(animation, time), isSeekingBackwards);
-  }
-  return animation;
-}
 
 export function pause(animation) {
   animation.paused = 1;
@@ -35,6 +19,7 @@ export function play(animation) {
   if (animation.completed) resetAnimation(animation);
   animation.paused = 0;
   engine.children.push(animation);
+  engine.activeAnimationsLength++;
   resetAnimationTime(animation);
   startEngine(engine);
   return animation;
