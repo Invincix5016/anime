@@ -330,6 +330,13 @@ function createTimelineBlock(animation, parentHeight) {
     clockTimeEl.innerHTML = time;
     // animationTimeEl.innerHTML = time + 'ms';
     scrubberEl.value = animation.progress;
+    animation.children.forEach(child => {
+      child.tweens.forEach(tween => {
+        const tweenEl = document.querySelector(`.${classPrefix}tween-block[data-tween="${tween.id}"]`);
+        tweenEl.style.color = child.isUpdating && tween.isUpdating ? 'red' : 'inherit';
+        // tweenEl.style.color = child.changeCompleted ? 'red' : 'inherit';
+      })
+    })
   }
   requestAnimationFrame(updatePlayHeadPosition);
   return el;
@@ -358,7 +365,7 @@ function highlightTween(guiWrapperEl, tweenEl) {
 
 export function createGUI(animation, parentEl = document.body) {
   let width = '100%';
-  let height = '50vh';
+  let height = '70vh';
   const guiWrapperEl = createBlock('wrapper', `
     width: ${width};
     height: ${height};

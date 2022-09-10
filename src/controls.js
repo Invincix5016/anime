@@ -13,14 +13,14 @@ import {
   startEngine,
 } from './engine.js';
 
-export function seek(animation, time, muteCallbacks) {
+export function seek(animation, time, muteCallbacks, isSeekingBackwards) {
   if (muteCallbacks) {
     if (animation.children) {
       syncAnimationChildren(animation, time, muteCallbacks);
     }
-    renderAnimationTweens(animation, time);
+    renderAnimationTweens(animation, time, isSeekingBackwards);
   } else {
-    setAnimationProgress(animation, getAdjustedAnimationTime(animation, time));
+    setAnimationProgress(animation, getAdjustedAnimationTime(animation, time), isSeekingBackwards);
   }
   return animation;
 }

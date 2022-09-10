@@ -68,19 +68,19 @@
     })
     .add({
       targets: '#square-1',
-      translateY: -100,
+      translateY: -50,
       backgroundColor: green,
       duration: 1600,
     })
     .add({
       targets: '#square-2',
-      translateY: -150,
+      translateY: -100,
       backgroundColor: green,
       duration: 1600,
     })
     .add({
       targets: '#square-3',
-      translateY: -200,
+      translateY: -150,
       backgroundColor: green,
       duration: 1600,
     })
@@ -91,9 +91,9 @@
         { value: 0, duration: 1000, delay: 500 }
       ],
       translateY: [
-        { value: -50, duration: 500, delay: anime.stagger(250, {start: 0}) },
-        { value: -100, duration: 500, delay: 1000 },
-        { value: -150, duration: 500, delay: 1000 }
+        { value: 50, duration: 500, delay: anime.stagger(250, {start: 0}) },
+        { value: 75, duration: 500, delay: 1000 },
+        { value: 100, duration: 500, delay: 1000 }
       ],
       scaleX: [
         { value: .25, duration: 500, delay: anime.stagger(250, {start: 0}), easing: 'easeInOutExpo' },
@@ -125,19 +125,19 @@
     }, '-=2250')
     .add({
       targets: '#square-1',
-      translateY: -200,
+      translateY: 50,
       backgroundColor: blue,
       left: -200,
     })
     .add({
       targets: '#square-2',
-      translateY: -200,
+      translateY: 50,
       backgroundColor: blue,
       left: -150,
     }, '-=' + duration)
     .add({
       targets: '#square-3',
-      translateY: -200,
+      translateY: 50,
       backgroundColor: blue,
       left: -100,
     }, '-=' + duration)

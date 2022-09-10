@@ -175,7 +175,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, tweenSibl
     let ti = 0;
     let parentPreviousSiblingTween;
     let parentPreviousSiblingTweenAbsoluteEnd = 0;
-    while (ti < tweenSiblings.length && (!tweenSiblings[ti].isOverridden && tweenSiblings[ti].absoluteStart - tween.absoluteStart) < 0) {
+    while (ti < tweenSiblings.length && ((!tweenSiblings[ti].isOverridden || !tweenSiblings[ti].onlyUpdateTransforms) && tweenSiblings[ti].absoluteStart - tween.absoluteStart) < 0) {
       const curentSibling = tweenSiblings[ti++];
       const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
       if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
@@ -210,7 +210,14 @@ export function convertKeyframesToTweens(animation, keyframes, target, tweenSibl
           next.changeDuration = minValue;
           next = next.next;
           if (cachedNext) {
-            cachedNext.isOverridden = true;
+            if (previousSiblingTween.isOverlapped) {
+              if (previousSiblingTween.renderTransforms) {
+                cachedNext.onlyUpdateTransforms = true;
+              } else {
+                cachedNext.isOverridden = true;
+              }
+              cachedNext.isOverlapped = true;
+            }
             if (cachedNext.previous) {
               cachedNext.previous.next = cachedNext.next;
             }

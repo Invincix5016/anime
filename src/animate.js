@@ -25,7 +25,7 @@ export function animate(params = {}, parent) {
   const animation = createAnimation(params, parent);
 
   animation.reset = () => resetAnimation(animation);
-  animation.seek = (time, muteCallbacks) => seek(animation, time, muteCallbacks);
+  animation.seek = (time, muteCallbacks, isSeekingBackwards) => seek(animation, time, muteCallbacks, isSeekingBackwards);
   animation.pause = () => pause(animation);
   animation.play = () => play(animation);
   animation.reverse = () => reverse(animation);

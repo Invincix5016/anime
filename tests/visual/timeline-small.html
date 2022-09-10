@@ -97,7 +97,7 @@
     const tl = anime.timeline({
       easing: 'easeInOutQuad',
       duration: 4000,
-      // direction: 'alternate',
+      direction: 'alternate',
       // loop: 42,
       autoplay: true,
     })
@@ -119,8 +119,8 @@
     }, '-=2500')
     .add({
       targets: targetEl,
-      left: [{value: 200},{value: 400}],
-      scaleY: [{value: 1},{value: 3}],
+      left: [{value: 200}, {value: 400}],
+      scaleY: [{value: 1}, {value: 3}],
       backgroundColor: {value: '#5A87FF', delay: 0, duration: 1000, endDelay: 0, },
       delay: 500,
       endDelay: 500,
