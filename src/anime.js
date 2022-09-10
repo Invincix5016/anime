@@ -1,4 +1,8 @@
 import {
+  settings,
+} from './consts.js';
+
+import {
   clamp,
   random,
 } from './utils.js';
@@ -46,6 +50,8 @@ const anime = animate;
 
 anime.version = '__packageVersion__';
 anime.speed = 1;
+anime.settings = settings;
+anime.engine = engine;
 anime.suspendWhenDocumentHidden = true;
 anime.running = engine.children;
 anime.remove = removeAnimatablesFromActiveAnimations;

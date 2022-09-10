@@ -12,10 +12,9 @@ import {
 } from './animations.js';
 
 export const engine = {
-  activeProcesses: [],
   children: [],
   targets: new Map(),
-  elapsedTime: 0,
+  activeAnimationsLength: 0,
 }
 
 // export const rootTargets = new Map();
@@ -23,11 +22,10 @@ export const engine = {
 const raf = requestAnimationFrame;
 let engineRaf = 0;
 
-function tickEngine(t) {
-  engine.elapsedTime = t;
-  let activeAnimationsLength = engine.children.length;
+engine.tick = function(t) {
+  engine.activeAnimationsLength = engine.children.length;
   let i = 0;
-  while (i < activeAnimationsLength) {
+  while (i < engine.activeAnimationsLength) {
     const activeAnimation = engine.children[i];
     if (!activeAnimation.paused) {
       activeAnimation.tick(t);
@@ -46,15 +44,19 @@ function tickEngine(t) {
         if (tween.next) tween.next.previous = tween.previous;
       }
       engine.children.splice(i, 1);
-      activeAnimationsLength--;
+      engine.activeAnimationsLength--;
     }
   }
-  engineRaf = activeAnimationsLength ? raf(tickEngine) : 0;
+}
+
+function mainLoop(t) {
+  engine.tick(t);
+  engineRaf = engine.activeAnimationsLength ? raf(mainLoop) : 0;
 }
 
 export function startEngine(engine) {
-  if (!engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.children.length > 0) {
-    engineRaf = raf(tickEngine);
+  if (settings.useDefaultAnimationLoop && !engineRaf && (!isDocumentHidden() || !settings.suspendWhenDocumentHidden) && engine.children.length > 0) {
+    engineRaf = raf(mainLoop);
   }
 }
 

@@ -44,6 +44,7 @@ export const defaultTweenSettings = {
 export const settings = {
   speed: 1,
   suspendWhenDocumentHidden: true,
+  useDefaultAnimationLoop: true,
 }
 
 // Animation type

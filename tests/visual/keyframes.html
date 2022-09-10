@@ -52,6 +52,15 @@
     import { test, expect } from './assets/js/tests.js';
     import { createGUI } from './assets/js/anime.gui.js';
 
+    anime.settings.useDefaultAnimationLoop = false;
+
+    function customLoop(t) {
+      anime.engine.tick(t);
+      requestAnimationFrame(customLoop);
+    }
+
+    requestAnimationFrame(customLoop);
+
     const duration = 1000;
 
     const red = '#F64E4D';
@@ -90,7 +99,8 @@
       ],
       easing: 'easeInOutQuad',
       direction: 'alternate',
-      autoplay: true
+      loop: true,
+      // autoplay: true
     })
 
     console.log(tl);
