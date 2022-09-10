@@ -86,7 +86,7 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
   const absTime = animation.timelineOffset + time;
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
-    tween.isUpdating = false; // For GUI debug only
+    // tween.isUpdating = false; // For GUI debug only
     if (
       tween.isOverridden ||
       // TODO : Cleanup animation._frameInterval < 33.33333 and find a better way to test is a jump happened
@@ -94,7 +94,7 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
       (tween.previous && absTime < tween.previous.absoluteChangeEnd) ||
       (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
-    tween.isUpdating = true; // For GUI debug only
+    // tween.isUpdating = true; // For GUI debug only
     const tweenProgress = tween.easing(clamp(time - tween._changeStartTime, 0, tween.changeDuration) / tween.updateDuration);
     const tweenProperty = tween.property;
     const tweenRound = tween.round;
@@ -187,10 +187,10 @@ export function setAnimationProgress(animation, parentTime, isSeekingBackwards) 
     }
   }
   animation.currentTime = clamp(animationTime, 0, animationDuration);
-  animation._frameInterval = Math.abs(animation._lastFrameTime -  animation.currentTime);
+  // animation._frameInterval = Math.abs(animation._lastFrameTime -  animation.currentTime);
   // animation.isUpdating = canRender; // For GUI debug only
   if (canRender) renderAnimationTweens(animation, animation.currentTime, isSeekingBackwards);
-  animation._lastFrameTime = animation.currentTime;
+  // animation._lastFrameTime = animation.currentTime;
   if (animation.began) animation.update(animation);
   if (parentTime >= animationDuration) {
     animation._lastCurrentTime = 0;
