@@ -93,19 +93,14 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
   while (i < animation._tweensLength) {
     const tween = tweens[i++];
     tween.isUpdating = false;
-    // console.log(absTime > tween.absoluteChangeEnd, absTime, tween.absoluteChangeEnd, tween.isOverlapped);
     if (
       tween.isOverridden ||
       // TODO : Cleanup animation._frameInterval < 33.33333 and find a better way to test is a jump happened
-      // (animation._frameInterval < 33.33333 && tween.isOverlapped && absTime > tween.absoluteChangeEnd) ||
-      // (tween.hasUpdated && tween.isOverlapped && absTime > tween.absoluteChangeEnd) ||
+      (animation._frameInterval < 33.33333 && tween.isOverlapped && absTime > tween.absoluteChangeEnd) ||
       (tween.previous && absTime < tween.previous.absoluteChangeEnd) ||
-      (tween.next && absTime > tween.next.absoluteStart) ||
-      (tween.hasUpdated && tween.isOverlapped && absTime > tween.absoluteChangeEnd)
+      (tween.next && absTime > tween.next.absoluteStart)
     ) continue;
     tween.isUpdating = true;
-    tween.hasUpdated = !tween.hasUpdated;
-    // tween.hasUpdated = isSeekingBackwards ? absTime < tween.absoluteChangeStart : absTime > tween.absoluteChangeEnd;
     const tweenProgress = tween.easing(clamp(time - tween._changeStartTime, 0, tween.changeDuration) / tween.updateDuration);
     const tweenProperty = tween.property;
     const tweenRound = tween.round;
@@ -151,18 +146,11 @@ export function renderAnimationTweens(animation, time, isSeekingBackwards) {
         tween.cachedTransforms[tweenProperty] = value;
       }
       if (tween.renderTransforms) {
-        // THE PROBLEM IS HERE
         let str = emptyString;
         for (let key in tween.cachedTransforms) {
           str += transformsFragmentStrings[key]+tween.cachedTransforms[key]+closeParenthesisWithSpaceString;
         }
         tweenTarget.style.transform = str;
-        // if (tween.id === 7) {
-        //   console.log(7, value);
-        // }
-        // if (tween.id === 10) {
-        //   console.log(10, value);
-        // }
       }
     } else if (tweenType == animationTypes.CSS) {
       tweenTarget.style[tweenProperty] = value;

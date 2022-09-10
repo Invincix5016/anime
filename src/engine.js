@@ -33,7 +33,7 @@ function tickEngine(t) {
       activeAnimation.tick(t);
       i++;
     } else {
-      // activeAnimation.tweens.forEach(tween => {
+      // TODO: Check if we should re-add the tweens on play/pause
       for (let j = activeAnimation.tweens.length; j--;) {
         const tween = activeAnimation.tweens[j];
         const parentTargetTweens = activeAnimation.parent.targets.get(tween.target)[tween.property];
@@ -42,18 +42,11 @@ function tickEngine(t) {
             parentTargetTweens.splice(k, 1);
           }
         }
-        // console.log(parentTargetTweens);
-        if (tween.previous) {
-          tween.previous.next = tween.next;
-        }
-        if (tween.next) {
-          tween.next.previous = tween.previous;
-        }
+        if (tween.previous) tween.previous.next = tween.next;
+        if (tween.next) tween.next.previous = tween.previous;
       }
       engine.children.splice(i, 1);
-
       activeAnimationsLength--;
-      // console.log(engine.children.length);
     }
   }
   engineRaf = activeAnimationsLength ? raf(tickEngine) : 0;
