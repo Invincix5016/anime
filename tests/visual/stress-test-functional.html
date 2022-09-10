@@ -39,7 +39,9 @@
   <div id="particles"></div>
 </body>
 <script type="module">
-  import anime from '../../lib/anime.esm.js';
+  // import anime from '../../lib/anime.esm.js';
+  import { createAnimation } from '../../src/animations.js';
+  import { play } from '../../src/controls.js';
   // import anime from './assets/anime.3.3.0.backup.js';
   // import anime from './assets/anime.3.2.1.backup.js';
 
@@ -77,7 +79,7 @@
     const angle = Math.random() * Math.PI * 2;
     const duration = 2000;
     const delay = (duration / total) * i;
-    const animation = anime({
+    const animation = createAnimation({
       targets: particleEl,
       // rotate: [angle, angle],
       // opacity: [1, 0],
@@ -92,6 +94,7 @@
         animateParticle(particleEl, i, total);
       }
     });
+    play(animation);
     // console.log(animation);
   }
 
