@@ -40,7 +40,8 @@
 </body>
 <script type="module">
   import anime from '../../lib/anime.esm.js';
-  // import anime from './assets/anime.3.3.0.backup.js';
+  // import anime from './assets/anime.3.3.0.a-backup.js';
+  // import anime from './assets/anime.3.3.0.b-backup.js';
   // import anime from './assets/anime.3.2.1.backup.js';
 
   const particlesEl = document.querySelector('#particles');
@@ -95,7 +96,7 @@
     // console.log(animation);
   }
 
-  for (let i = 0, l = 2000; i < l; i++) {
+  for (let i = 0, l = 1500; i < l; i++) {
     const particleEl = createParticule();
     particlesEl.appendChild(particleEl);
     particles.push(particleEl);

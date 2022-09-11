@@ -1,5 +1,6 @@
 import {
   settings,
+  noop,
   defaultAnimationSettings,
   defaultTweenSettings,
   animationTypes,
@@ -34,7 +35,8 @@ import {
 } from './svg.js';
 
 import {
-  getKeyframesFromProperties,
+  convertPropertyValueToKeyframes,
+  flattenParamsKeyframes,
 } from './keyframes.js';
 
 import {
@@ -252,28 +254,38 @@ export function tickAnimation(animation, t) {
   setAnimationProgress(animation, (animation._parentCurrentTime + (animation._lastCurrentTime - animation._startTime)) * settings.speed);
 }
 
-export function createAnimation(params, parentAnimation) {
+export function createAnimation(parameters, parentAnimation) {
   // const parentTargets = parentAnimation ? parentAnimation.targets : new Map();
+  const params = parameters.keyframes ? mergeObjects(flattenParamsKeyframes(parameters.keyframes), parameters) : parameters;
+  const { update, begin, loopBegin, changeBegin, change, changeComplete, loopComplete, complete, loop, direction, autoplay, timelineOffset, duration, delay, endDelay, easing, round } = params;
   const parent = parentAnimation || engine;
-  const animationSettings = replaceObjectProps(defaultAnimationSettings, params);
-  const tweenSettings = replaceObjectProps(defaultTweenSettings, params);
-  const propertyKeyframes = getKeyframesFromProperties(tweenSettings, params);
   const targets = registerTargetsToMap(params.targets, parent.targets);
-  const targetsLength = targets.size;
+  const tDuration = !is.und(duration) ? duration : defaultTweenSettings.duration;
+  const tDelay = !is.und(delay) ? delay : defaultTweenSettings.delay;
+  const tEndDelay = !is.und(endDelay) ? endDelay : defaultTweenSettings.endDelay;
+  const tEasing = easing || defaultTweenSettings.easing;
+  const tRound = !is.und(round) ? round : defaultTweenSettings.round;
 
-  if (!parentAnimation) {
-    animationSettings.timelineOffset = performance.now();
-  }
-
-  const { delay, duration, endDelay } = tweenSettings;
-
-  const animation = mergeObjects(animationSettings, {
+  const animation = {
+    params: parameters,
+    update: update || noop,
+    begin: begin || noop,
+    loopBegin: loopBegin || noop,
+    changeBegin: changeBegin || noop,
+    change: change || noop,
+    changeComplete: changeComplete || noop,
+    loopComplete: loopComplete || noop,
+    complete: complete || noop,
+    loop: !is.und(loop) ? loop : defaultAnimationSettings.loop,
+    direction: direction || defaultAnimationSettings.direction,
+    autoplay: !is.und(autoplay) ? autoplay : defaultAnimationSettings.autoplay,
+    timelineOffset: !parentAnimation ? performance.now() : !is.und(timelineOffset) ? timelineOffset : 0,
     id: animationsId++,
     targets: targets,
     parent: parent,
     tweens: [],
     children: [],
-    duration: delay + duration + endDelay, // Total duration of the animation
+    duration: tDelay + tDuration + tEndDelay, // Total duration of the animation
     progress: 0, // [0 to 1] range, represent the % of completion of an animation total duration
     currentTime: 0, // The curent time relative to the animation [0 to animation duration]
     _tweensLength: 0,
@@ -282,10 +294,10 @@ export function createAnimation(params, parentAnimation) {
     _lastCurrentTime: 0, // Store the animation current time when the animation playback is paused to adjust the new time when played again
     _lastFrameTime: 0, // Used to calculate _frameInterval to check if the animation is playing continuously or if there was a jump in time
     _frameInterval: 0, // Used to check if the animation is playing continuously or if there was a jump in time
-    _changeStartTime: delay,
-    _changeEndTime: delay + duration,
+    _changeStartTime: tDelay,
+    _changeEndTime: tDelay + tDuration,
     _childrenLength: 0,
-  });
+  };
 
   if (targets.size) {
     let animCST;
@@ -295,29 +307,33 @@ export function createAnimation(params, parentAnimation) {
     targets.forEach((targetTweens, target) => {
       let lastTransformGroupIndex;
       let lastTransformGroupLength;
-      for (let j = 0, keysLength = propertyKeyframes.length; j < keysLength; j++) {
-        const keyframes = propertyKeyframes[j];
-        const keyframesPropertyName = keyframes[0].property;
-        const type = getAnimationType(target, keyframesPropertyName);
-        const property = sanitizePropertyName(keyframesPropertyName, target, type);
-        let targetPropertyTweens = targetTweens[property];
-        if (!targetPropertyTweens) targetPropertyTweens = targetTweens[property] = [];
-        if (is.num(type)) {
-          const animationPropertyTweens = convertKeyframesToTweens(animation, keyframes, target, targetPropertyTweens, property, type, i);
-          const animationPropertyTweensLength = animationPropertyTweens.length;
-          const firstTween = animationPropertyTweens[0];
-          const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];
-          const lastTweenCET = lastTween._changeEndTime;
-          if (is.und(animCST) || firstTween._changeStartTime < animCST) animCST = firstTween._changeStartTime;
-          if (lastTween.end > animDUR) animDUR = lastTween.end;
-          if (lastTweenCET > animCET) animCET = lastTweenCET;
-          if (type == animationTypes.TRANSFORM) {
-            lastTransformGroupIndex = animation.tweens.length;
-            lastTransformGroupLength = lastTransformGroupIndex + animationPropertyTweensLength;
+
+      for (let p in params) {
+        if (is.key(p)) {
+          const keyframes = convertPropertyValueToKeyframes(p, params[p], tDuration, tDelay, tEndDelay, tEasing, tRound);
+          const keyframesPropertyName = keyframes[0].property;
+          const type = getAnimationType(target, keyframesPropertyName);
+          const property = sanitizePropertyName(keyframesPropertyName, target, type);
+          let targetPropertyTweens = targetTweens[property];
+          if (!targetPropertyTweens) targetPropertyTweens = targetTweens[property] = [];
+          if (is.num(type)) {
+            const animationPropertyTweens = convertKeyframesToTweens(animation, keyframes, target, targetPropertyTweens, property, type, i);
+            const animationPropertyTweensLength = animationPropertyTweens.length;
+            const firstTween = animationPropertyTweens[0];
+            const lastTween = animationPropertyTweens[animationPropertyTweensLength - 1];
+            const lastTweenCET = lastTween._changeEndTime;
+            if (is.und(animCST) || firstTween._changeStartTime < animCST) animCST = firstTween._changeStartTime;
+            if (lastTween.end > animDUR) animDUR = lastTween.end;
+            if (lastTweenCET > animCET) animCET = lastTweenCET;
+            if (type == animationTypes.TRANSFORM) {
+              lastTransformGroupIndex = animation.tweens.length;
+              lastTransformGroupLength = lastTransformGroupIndex + animationPropertyTweensLength;
+            }
+            animation.tweens.push(...animationPropertyTweens);
           }
-          animation.tweens.push(...animationPropertyTweens);
         }
       }
+
       if (!is.und(lastTransformGroupIndex)) {
         for (let t = lastTransformGroupIndex; t < lastTransformGroupLength; t++) {
           animation.tweens[t].renderTransforms = true;

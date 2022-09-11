@@ -11,21 +11,20 @@ import {
   spring,
 } from './easings.js';
 
-function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings) {
+export function convertPropertyValueToKeyframes(property, propertyValue, duration, delay, endDelay, easing, round) {
   let value = propertyValue;
-  const settings = {...tweenSettings};
-  settings.property = propertyName;
+  const settings = { property, duration, delay, endDelay, easing, round };
   // Override duration if easing is a spring
-  if (springTestRgx.test(settings.easing)) {
-    settings.duration = spring(settings.easing);
+  if (springTestRgx.test(easing)) {
+    settings.duration = spring(easing);
   }
   if (is.arr(value)) {
     const l = value.length;
     const isFromTo = (l === 2 && !is.obj(value[0]));
     if (!isFromTo) {
       // In case of a keyframes array, duration is divided by the number of tweens
-      if (!is.fnc(tweenSettings.duration)) {
-        settings.duration = tweenSettings.duration / l;
+      if (!is.fnc(duration)) {
+        settings.duration = duration / l;
       }
     } else {
       // Transform [from, to] values shorthand to a valid tween value
@@ -37,18 +36,18 @@ function convertPropertyValueToTweens(propertyName, propertyValue, tweenSettings
     const obj = (is.obj(v) && !v.isPath) ? v : { value: v };
     // Default delay value should only be applied to the first tween
     if (is.und(obj.delay)) {
-      obj.delay = !i ? tweenSettings.delay : 0;
+      obj.delay = !i ? delay : 0;
     }
     // Default endDelay value should only be applied to the last tween
     if (is.und(obj.endDelay)) {
-      obj.endDelay = i === valuesArray.length - 1 ? tweenSettings.endDelay : 0;
+      obj.endDelay = i === valuesArray.length - 1 ? endDelay : 0;
     }
     return obj;
   }).map(k => mergeObjects(k, settings));
 }
 
 
-function flattenParamsKeyframes(keyframes) {
+export function flattenParamsKeyframes(keyframes) {
   const properties = {};
   const propertyNames = keyframes.map(key => Object.keys(key)).filter(is.key).reduce((a,b) => {
     if (a.indexOf(b) < 0) { a.push(b); };
@@ -71,22 +70,4 @@ function flattenParamsKeyframes(keyframes) {
     });
   }
   return properties;
-}
-
-function getKeyframesFromProperties(tweenSettings, params) {
-  const keyframes = [];
-  const paramsKeyframes = params.keyframes;
-  if (paramsKeyframes) {
-    params = mergeObjects(flattenParamsKeyframes(paramsKeyframes), params);;
-  }
-  for (let p in params) {
-    if (is.key(p)) {
-      keyframes.push(convertPropertyValueToTweens(p, params[p], tweenSettings));
-    }
-  }
-  return keyframes;
-}
-
-export {
-  getKeyframesFromProperties
 }
