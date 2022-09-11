@@ -150,6 +150,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, tweenSibl
     tween.id = tweenId++;
     tween.isOverridden = false;
     tween.isOverlapped = false;
+    tween.isSkipped = false;
     tween.type = animationType;
     tween.property = propertyName;
     tween.target = target;
@@ -175,7 +176,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, tweenSibl
     let ti = 0;
     let parentPreviousSiblingTween;
     let parentPreviousSiblingTweenAbsoluteEnd = 0;
-    while (ti < tweenSiblings.length && ((!tweenSiblings[ti].isOverridden || !tweenSiblings[ti].onlyUpdateTransforms) && tweenSiblings[ti].absoluteStart - tween.absoluteStart) < 0) {
+    while (ti < tweenSiblings.length && ((!tweenSiblings[ti].isSkipped) && tweenSiblings[ti].absoluteStart - tween.absoluteStart) < 0) {
       const curentSibling = tweenSiblings[ti++];
       const curentSiblingAbsoluteEnd = curentSibling.absoluteEnd;
       if (curentSiblingAbsoluteEnd > parentPreviousSiblingTweenAbsoluteEnd) {
@@ -185,6 +186,10 @@ export function convertKeyframesToTweens(animation, keyframes, target, tweenSibl
     }
 
     tweenSiblings.splice(ti, 0, tween);
+
+    if (tween.id === 28) {
+      console.log(tween, prevTween, parentPreviousSiblingTween);
+    }
 
     const previousSiblingTween = prevTween || parentPreviousSiblingTween;
 
@@ -216,6 +221,7 @@ export function convertKeyframesToTweens(animation, keyframes, target, tweenSibl
               } else {
                 cachedNext.isOverridden = true;
               }
+              cachedNext.isSkipped = true;
               cachedNext.isOverlapped = true;
             }
             if (cachedNext.previous) {
